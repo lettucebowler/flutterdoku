@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'domains/sudoku/SudokuProblem.dart';
 import 'domains/sudoku/SudokuState.dart';
 import 'dart:ui';
@@ -58,6 +59,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   SudokuProblem problem;
   GridView board;
+  List button_grid;
   var menuHeight = 70;
 
 
@@ -65,6 +67,9 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       problem = SudokuProblem();
     });
+  }
+
+  void _highLightOnClick() {
   }
 
   double getConstraint() {
@@ -80,7 +85,7 @@ class _MyHomePageState extends State<MyHomePage> {
     int col = index % problem.board_size;
 
     double thickness = 2;
-    double defaultThickness = 0.5;
+    double defaultThickness = 1;
     double right = defaultThickness;
     double top = defaultThickness;
     double left = defaultThickness;
@@ -114,7 +119,6 @@ class _MyHomePageState extends State<MyHomePage> {
     SudokuState currentState = problem.getCurrentState();
     List currentBoard = currentState.getTiles();
     board = GridView.count(
-//        color: Colors.black,
         padding: EdgeInsets.all(1),
         crossAxisCount: problem.board_size,
         childAspectRatio: 1,
@@ -124,39 +128,34 @@ class _MyHomePageState extends State<MyHomePage> {
           var cellNum = currentBoard[row][col];
           String toPlace = cellNum == 0 ? '' : cellNum.toString();
 
-          return Container(
+          Container button = Container(
             padding: getBoardPadding(index),
             child: FlatButton(
               color: Colors.white,
               hoverColor: Colors.teal[400],
               splashColor: Colors.deepOrange,
               onPressed: () {
-
               },
-              child: Center(
-                child: Text(
+//              child: Expanded(
+                child: AutoSizeText(
                   toPlace,
                   textAlign: TextAlign.center,
+                  maxLines: 1,
                   style: TextStyle(
                     fontFamily: 'FiraCode-Bold',
-                    fontSize: 18,
+                    fontSize: 40,
                   ),
                 ),
               ),
-            ),
+//            ),
           );
+          return button;
         })
     );
 
     return Scaffold(
-//      backgroundColor: Colors.black,
-//      appBar: AppBar(
-//        // Here we take the value from the MyHomePage object that was created by
-//        // the App.build method, and use it to set our appbar title.
-//        title: Text(widget.title),
-//      ),
       body: Container(
-          padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+          padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top + 5),
           height: MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top - MediaQuery.of(context).padding.bottom,
           width: MediaQuery.of(context).size.width,
           child: Column (
@@ -164,26 +163,29 @@ class _MyHomePageState extends State<MyHomePage> {
             children: <Widget>[
               Container(
                 height: 40,
-//                padding: EdgeInsets.only(left: 8),
+                padding: EdgeInsets.only(left: 8),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
-                    Text(
-                      'LettuceSudoku',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontFamily: 'FiraCode-Bold',
-                        fontSize: 26,
+                    Expanded(
+                      child: Text(
+                        'LettuceSudoku',
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                          fontFamily: 'FiraCode-Bold',
+                          fontSize: 26,
+                        ),
                       ),
                     ),
-                    FlatButton.icon(
-                      icon: Icon(Icons.menu),
-                      label: Text(
-                        '',
+                    InkWell(
+                      hoverColor: Colors.teal[400],
+                      splashColor: Colors.deepOrange,
+                      child: Container(
+                        height: 40,
+                        width: 40,
+                        child: Icon(Icons.menu, color: Colors.black, size: 30),
                       ),
-                      onPressed: () {
-
-                      },
+                      onTap: () {},
                     ),
                   ],
                 ),
