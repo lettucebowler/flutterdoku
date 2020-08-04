@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'domains/sudoku/SudokuProblem.dart';
 import 'domains/sudoku/SudokuState.dart';
@@ -78,14 +79,33 @@ class _MyHomePageState extends State<MyHomePage> {
     SudokuState currentState = problem.getCurrentState();
     List currentBoard = currentState.getTiles();
     board = GridView.count(
+//        color: Colors.black,
+        padding: const EdgeInsets.all(8),
         crossAxisCount: problem.board_size,
+        crossAxisSpacing: 2,
+        mainAxisSpacing: 2,
         children: List.generate(problem.board_size * problem.board_size, (index) {
-          var cellNum = currentBoard[index ~/ problem.board_size][index % problem.board_size];
+          var row = index ~/ problem.board_size;
+          var col = index % problem.board_size;
+          var cellNum = currentBoard[row][col];
           String toPlace = cellNum == 0 ? '' : cellNum.toString();
           return Center(
-            child: Text(
-              toPlace,
+            child: FlatButton(
+//              padding: const EdgeInsets.all(8),
+              color: Colors.teal[400],
+              onPressed: () {
+
+              },
+              child: Center(
+                child: Text(
+                  toPlace,
+                  textAlign: TextAlign.center,
+                ),
+              ),
             ),
+//            child: Text(
+//              toPlace,
+//            ),
           );
         })
     );
@@ -99,30 +119,31 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Center(
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            board,
+        child: board,
+//        child: Column(
+//          // Column is also a layout widget. It takes a list of children and
+//          // arranges them vertically. By default, it sizes itself to fit its
+//          // children horizontally, and tries to be as tall as its parent.
+//          //
+//          // Invoke "debug painting" (press "p" in the console, choose the
+//          // "Toggle Debug Paint" action from the Flutter Inspector in Android
+//          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
+//          // to see the wireframe for each widget.
+//          //
+//          // Column has various properties to control how it sizes itself and
+//          // how it positions its children. Here we use mainAxisAlignment to
+//          // center the children vertically; the main axis here is the vertical
+//          // axis because Columns are vertical (the cross axis would be
+//          // horizontal).
+//          mainAxisAlignment: MainAxisAlignment.start,
+//          children: <Widget>[
+//            board,
 //            Text(
 //              problem.getStateAsString(problem.getCurrentState()),
 //                style: TextStyle(fontSize: 20),
 //            ),
-          ],
-        ),
+//          ],
+//        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _updateBoard,
