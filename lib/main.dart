@@ -55,27 +55,15 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   SudokuProblem problem;
+  GridView board;
 
 
   void _updateBoard() {
     setState(() {
-
+      problem = SudokuProblem();
     });
-    problem = SudokuProblem();
-    SudokuState currentState = problem.getCurrentState();
-    List currentBoard = currentState.getTiles();
-    GridView grid = GridView.count(
-        crossAxisCount: problem.board_size,
-        children: List.generate(problem.board_size * problem.board_size, (index) {
-          var cellNum = currentBoard[index ~/ problem.board_size][index % problem.board_size];
-          String toPlace = cellNum == 0 ? '' : cellNum.toString();
-          return Center(
-            child: Text(
-              toPlace,
-            ),
-          );
-        })
-    );
+
+
   }
 
   @override
@@ -87,6 +75,20 @@ class _MyHomePageState extends State<MyHomePage> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     SudokuProblem problem = new SudokuProblem();
+    SudokuState currentState = problem.getCurrentState();
+    List currentBoard = currentState.getTiles();
+    board = GridView.count(
+        crossAxisCount: problem.board_size,
+        children: List.generate(problem.board_size * problem.board_size, (index) {
+          var cellNum = currentBoard[index ~/ problem.board_size][index % problem.board_size];
+          String toPlace = cellNum == 0 ? '' : cellNum.toString();
+          return Center(
+            child: Text(
+              toPlace,
+            ),
+          );
+        })
+    );
 
     return Scaffold(
       appBar: AppBar(
@@ -112,9 +114,9 @@ class _MyHomePageState extends State<MyHomePage> {
           // center the children vertically; the main axis here is the vertical
           // axis because Columns are vertical (the cross axis would be
           // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            _updateBoard()
+            board,
 //            Text(
 //              problem.getStateAsString(problem.getCurrentState()),
 //                style: TextStyle(fontSize: 20),
