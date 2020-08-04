@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'domains/sudoku/SudokuProblem.dart';
 import 'domains/sudoku/SudokuState.dart';
 import 'dart:ui';
@@ -80,19 +81,21 @@ class _MyHomePageState extends State<MyHomePage> {
     List currentBoard = currentState.getTiles();
     board = GridView.count(
 //        color: Colors.black,
-        padding: const EdgeInsets.all(8),
+        padding: EdgeInsets.all(4),
         crossAxisCount: problem.board_size,
         crossAxisSpacing: 2,
         mainAxisSpacing: 2,
+        childAspectRatio: 1,
         children: List.generate(problem.board_size * problem.board_size, (index) {
           var row = index ~/ problem.board_size;
           var col = index % problem.board_size;
           var cellNum = currentBoard[row][col];
           String toPlace = cellNum == 0 ? '' : cellNum.toString();
+
           return Center(
             child: FlatButton(
 //              padding: const EdgeInsets.all(8),
-              color: Colors.teal[400],
+              color: Colors.white,
               onPressed: () {
 
               },
@@ -100,17 +103,19 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: Text(
                   toPlace,
                   textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontFamily: 'FiraCode-Bold',
+                    fontSize: 26,
+                  ),
                 ),
               ),
             ),
-//            child: Text(
-//              toPlace,
-//            ),
           );
         })
     );
 
     return Scaffold(
+//      backgroundColor: Colors.black,
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
@@ -119,31 +124,40 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Center(
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
-        child: board,
-//        child: Column(
-//          // Column is also a layout widget. It takes a list of children and
-//          // arranges them vertically. By default, it sizes itself to fit its
-//          // children horizontally, and tries to be as tall as its parent.
-//          //
-//          // Invoke "debug painting" (press "p" in the console, choose the
-//          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-//          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-//          // to see the wireframe for each widget.
-//          //
-//          // Column has various properties to control how it sizes itself and
-//          // how it positions its children. Here we use mainAxisAlignment to
-//          // center the children vertically; the main axis here is the vertical
-//          // axis because Columns are vertical (the cross axis would be
-//          // horizontal).
-//          mainAxisAlignment: MainAxisAlignment.start,
-//          children: <Widget>[
-//            board,
-//            Text(
-//              problem.getStateAsString(problem.getCurrentState()),
-//                style: TextStyle(fontSize: 20),
-//            ),
-//          ],
-//        ),
+//        child: board,
+        child: Column(
+          // Column is also a layout widget. It takes a list of children and
+          // arranges them vertically. By default, it sizes itself to fit its
+          // children horizontally, and tries to be as tall as its parent.
+          //
+          // Invoke "debug painting" (press "p" in the console, choose the
+          // "Toggle Debug Paint" action from the Flutter Inspector in Android
+          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
+          // to see the wireframe for each widget.
+          //
+          // Column has various properties to control how it sizes itself and
+          // how it positions its children. Here we use mainAxisAlignment to
+          // center the children vertically; the main axis here is the vertical
+          // axis because Columns are vertical (the cross axis would be
+          // horizontal).
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            Container (
+              padding: const EdgeInsets.all(8),
+              child: AspectRatio (
+                aspectRatio: 1,
+                child: Expanded(
+                  child: Container (
+                    color: Colors.black,
+                    child: Expanded (
+                      child: board,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _updateBoard,
