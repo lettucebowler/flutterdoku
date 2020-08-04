@@ -132,22 +132,23 @@ class _MyHomePageState extends State<MyHomePage> {
             padding: getBoardPadding(index),
             child: FlatButton(
               color: Colors.white,
+//              elevation: 0,
+//              hoverElevation: 0,
+//              focusElevation: 0,
               hoverColor: Colors.teal[400],
               splashColor: Colors.deepOrange,
               onPressed: () {
               },
-//              child: Expanded(
-                child: AutoSizeText(
-                  toPlace,
-                  textAlign: TextAlign.center,
-                  maxLines: 1,
-                  style: TextStyle(
-                    fontFamily: 'FiraCode-Bold',
-                    fontSize: 40,
-                  ),
+              child: AutoSizeText(
+                toPlace,
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                style: TextStyle(
+                  fontFamily: 'FiraCode-Bold',
+                  fontSize: 40,
                 ),
               ),
-//            ),
+            ),
           );
           return button;
         })
