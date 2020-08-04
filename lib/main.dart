@@ -64,8 +64,45 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       problem = SudokuProblem();
     });
+  }
 
+  double getConstraint() {
+    var padding = MediaQuery.of(context).padding;
+    var width = MediaQuery.of(context).size.width;
+    var height = MediaQuery.of(context).size.height - padding.top - padding.bottom;
+    var constraint = width <= height ? width : height;
+    return constraint;
+  }
 
+  EdgeInsets getBoardPadding(int index) {
+    print('index ' + index.toString());
+    int row = index ~/ problem.board_size;
+    int col = index % problem.board_size;
+    print('row ' + row.toString());
+    print('col ' + col.toString());
+    print('insets');
+
+    double thickness = 2;
+    double defaultThickness = 0.5;
+    double right = defaultThickness;
+    double top = defaultThickness;
+    double left = defaultThickness;
+    double bottom = defaultThickness;
+
+    if(row == 0) {
+      top = thickness;
+    }
+    if(col == 0) {
+      left = thickness;
+    }
+    if(row % problem.cell_size == problem.cell_size - 1) {
+      bottom = thickness;
+    }
+    if(col % problem.cell_size == problem.cell_size - 1) {
+      right = thickness;
+    }
+
+    return EdgeInsets.fromLTRB(left.toDouble(), top.toDouble(), right.toDouble(), bottom.toDouble());
   }
 
   @override
@@ -76,15 +113,13 @@ class _MyHomePageState extends State<MyHomePage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
-    SudokuProblem problem = new SudokuProblem();
+    problem = new SudokuProblem();
     SudokuState currentState = problem.getCurrentState();
     List currentBoard = currentState.getTiles();
     board = GridView.count(
 //        color: Colors.black,
-        padding: EdgeInsets.all(4),
+        padding: EdgeInsets.all(1),
         crossAxisCount: problem.board_size,
-        crossAxisSpacing: 2,
-        mainAxisSpacing: 2,
         childAspectRatio: 1,
         children: List.generate(problem.board_size * problem.board_size, (index) {
           var row = index ~/ problem.board_size;
@@ -92,13 +127,14 @@ class _MyHomePageState extends State<MyHomePage> {
           var cellNum = currentBoard[row][col];
           String toPlace = cellNum == 0 ? '' : cellNum.toString();
 
-          return Center(
+          return Container(
+            padding: getBoardPadding(index),
             child: FlatButton(
-//              padding: const EdgeInsets.all(8),
               color: Colors.white,
               onPressed: () {
 
               },
+              hoverColor: Colors.teal[400],
               child: Center(
                 child: Text(
                   toPlace,
@@ -116,35 +152,35 @@ class _MyHomePageState extends State<MyHomePage> {
 
     return Scaffold(
 //      backgroundColor: Colors.black,
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
+//      appBar: AppBar(
+//        // Here we take the value from the MyHomePage object that was created by
+//        // the App.build method, and use it to set our appbar title.
+//        title: Text(widget.title),
+//      ),
       body: Center(
+        child: Container(
+          padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+          child: Column (
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Container(
+                width: getConstraint(),
+                height: getConstraint(),
+                padding: EdgeInsets.all(4),
+                child: Container(
+
+                  color: Colors.black,
+                  child: board,
+                ),
+              ),
+            ],
+          ),
+        ),
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
 //        child: board,
-        child: Column (
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            Flexible(
-              child: AspectRatio (
-                aspectRatio: 1,
-                child: Expanded (
-                  child: Container (
-                    padding: const EdgeInsets.all(8),
-                    child: Container(
-                      color: Colors.black,
-                      child: board,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
+
         ),
-      ),
       floatingActionButton: FloatingActionButton(
         onPressed: _updateBoard,
         tooltip: 'Increment',
