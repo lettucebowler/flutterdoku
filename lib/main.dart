@@ -144,17 +144,22 @@ class _MyHomePageState extends State<MyHomePage> {
           children: <Widget>[
             Container (
               padding: const EdgeInsets.all(8),
-              child: AspectRatio (
-                aspectRatio: 1,
-                child: Expanded(
-                  child: Container (
-                    color: Colors.black,
-                    child: Expanded (
-                      child: board,
-                    ),
-                  ),
+              child: Container(
+                color: Colors.black,
+                child: AspectRatio (
+                  aspectRatio: 1,
+                  child: board,
+//                child: Expanded(
+//                  child: Container (
+//
+//                    child: Expanded (
+//                      child: board,
+////                    ),
+//                  ),
+//                ),
                 ),
               ),
+
             ),
           ],
         ),
