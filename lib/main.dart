@@ -58,6 +58,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   SudokuProblem problem;
   GridView board;
+  var menuHeight = 70;
 
 
   void _updateBoard() {
@@ -69,18 +70,14 @@ class _MyHomePageState extends State<MyHomePage> {
   double getConstraint() {
     var padding = MediaQuery.of(context).padding;
     var width = MediaQuery.of(context).size.width;
-    var height = MediaQuery.of(context).size.height - padding.top - padding.bottom;
+    var height = MediaQuery.of(context).size.height - padding.top - padding.bottom - menuHeight;
     var constraint = width <= height ? width : height;
     return constraint;
   }
 
   EdgeInsets getBoardPadding(int index) {
-    print('index ' + index.toString());
     int row = index ~/ problem.board_size;
     int col = index % problem.board_size;
-    print('row ' + row.toString());
-    print('col ' + col.toString());
-    print('insets');
 
     double thickness = 2;
     double defaultThickness = 0.5;
@@ -131,17 +128,18 @@ class _MyHomePageState extends State<MyHomePage> {
             padding: getBoardPadding(index),
             child: FlatButton(
               color: Colors.white,
+              hoverColor: Colors.teal[400],
+              splashColor: Colors.deepOrange,
               onPressed: () {
 
               },
-              hoverColor: Colors.teal[400],
               child: Center(
                 child: Text(
                   toPlace,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontFamily: 'FiraCode-Bold',
-                    fontSize: 26,
+                    fontSize: 18,
                   ),
                 ),
               ),
@@ -157,20 +155,51 @@ class _MyHomePageState extends State<MyHomePage> {
 //        // the App.build method, and use it to set our appbar title.
 //        title: Text(widget.title),
 //      ),
-      body: Center(
-        child: Container(
+      body: Container(
           padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+          height: MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top - MediaQuery.of(context).padding.bottom,
+          width: MediaQuery.of(context).size.width,
           child: Column (
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               Container(
-                width: getConstraint(),
-                height: getConstraint(),
-                padding: EdgeInsets.all(4),
-                child: Container(
+                height: 40,
+//                padding: EdgeInsets.only(left: 8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    Text(
+                      'LettuceSudoku',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontFamily: 'FiraCode-Bold',
+                        fontSize: 26,
+                      ),
+                    ),
+                    FlatButton.icon(
+                      icon: Icon(Icons.menu),
+                      label: Text(
+                        '',
+                      ),
+                      onPressed: () {
 
-                  color: Colors.black,
-                  child: board,
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              Flexible(
+                child: AspectRatio(
+                  aspectRatio: 1,
+                  child: Container(
+//                  width: getConstraint(),
+//                  height: getConstraint(),
+                    padding: EdgeInsets.all(4),
+                    child: Container(
+                      color: Colors.black,
+                      child: board,
+                    ),
+                  ),
                 ),
               ),
             ],
@@ -179,8 +208,6 @@ class _MyHomePageState extends State<MyHomePage> {
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
 //        child: board,
-
-        ),
       floatingActionButton: FloatingActionButton(
         onPressed: _updateBoard,
         tooltip: 'Increment',
