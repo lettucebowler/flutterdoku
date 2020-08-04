@@ -142,13 +142,14 @@ class _MyHomePageState extends State<MyHomePage> {
           // horizontal).
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            Container (
-              padding: const EdgeInsets.all(8),
-              child: Container(
-                color: Colors.black,
-                child: AspectRatio (
-                  aspectRatio: 1,
-                  child: board,
+            Expanded (
+              child: Container (
+                padding: const EdgeInsets.all(8),
+                child: Container(
+                  color: Colors.black,
+                  child: AspectRatio (
+                    aspectRatio: 1,
+                    child: board,
 //                child: Expanded(
 //                  child: Container (
 //
@@ -157,9 +158,9 @@ class _MyHomePageState extends State<MyHomePage> {
 ////                    ),
 //                  ),
 //                ),
+                  ),
                 ),
-              ),
-
+            ),
             ),
           ],
         ),
