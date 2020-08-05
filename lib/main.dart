@@ -1,7 +1,10 @@
+//import 'dart:html';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:flutter/services.dart';
 import 'package:lettuce_sudoku/sudoku_dart.dart';
 import 'domains/sudoku/SudokuProblem.dart';
 import 'domains/sudoku/SudokuState.dart';
@@ -247,23 +250,26 @@ class _MyHomePageState extends State<MyHomePage> {
     return board;
   }
 
-  Widget _getMoveButtons() {
-    var buttons = Flex(
-      direction: Axis.horizontal,
-        children: <Widget>[
-          Flexible(
-
-            child: GridView.count(
+  Widget _getMoveButtons(double aspect) {
+    var buttons =
+//    Flex(
+//      direction: Axis.horizontal,
+//        children: <Widget>[
+//          Flexible(
+//            flex: 4,
+//            child:
+            GridView.count(
               padding: EdgeInsets.all(1),
-              crossAxisCount: 5,
-              children: List.generate(10, (index) {
+              physics: const NeverScrollableScrollPhysics(),
+              crossAxisCount: 3,
+              childAspectRatio: aspect,
+              children: List.generate(9, (index) {
                 int num = (index + 1) % (problem.board_size + 1);
                 String toPlace = num == 0 ? 'X' : (index + 1).toString();
                 Container button = Container(
                   height: MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top - MediaQuery.of(context).padding.bottom / 5,
                   child: Material(
                     child: InkWell(
-                      splashColor: Colors.deepOrange,
                       onTap: () {
                         _doMove(num, selectedRow, selectedCol);
                         setState(() {});
@@ -285,30 +291,21 @@ class _MyHomePageState extends State<MyHomePage> {
                 button_grid.add(button);
                 return button;
               }),
-            ),
-          ),
-        ],
+//            ),
+//          ),
+//        ],
       );
     return buttons;
   }
 
   Widget _getBody() {
-    var body;
+    final _focusNode = FocusNode();
     var isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
-    if(isPortrait) {
-      body = Container(
-        height: MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top - MediaQuery.of(context).padding.bottom,
-        width: MediaQuery.of(context).size.width,
-        child: _makeBoardCol(),
-      );
-    }
-    else {
-      body = Container(
-        height: MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top - MediaQuery.of(context).padding.bottom,
-        width: MediaQuery.of(context).size.width,
-        child: _makeBoardRow(),
-      );
-    }
+    var body = Container(
+      height: MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top - MediaQuery.of(context).padding.bottom,
+      width: MediaQuery.of(context).size.width,
+      child: isPortrait ? _makeBoardCol() : _makeBoardRow(),
+    );
     return body;
   }
 
@@ -316,65 +313,6 @@ class _MyHomePageState extends State<MyHomePage> {
     Column col = Column (
       mainAxisAlignment: MainAxisAlignment.start,
       children: <Widget>[
-        Flexible( // board
-          flex: 7,
-          child: AspectRatio(
-            aspectRatio: 1,
-            child: Container(
-              padding: EdgeInsets.all(4),
-              child: Container(
-                color: Colors.black,
-                child: _getBoard(),
-              ),
-            ),
-          ),
-        ),
-        Flexible( // spacer
-          flex: 1,
-          child: Material(
-//                color: Colors.blue,
-            child: InkWell(
-//              onTap: () {},
-              splashColor: Colors.deepOrange,
-            ),
-          ),
-        ),
-        Flexible( // move buttons
-          flex: 3,
-          child: Container(
-//                width: getConstraint(),
-            child: _getMoveButtons(),
-          ),
-
-        ),
-        Flexible(
-          flex: 1,
-          child: Material(
-//                color: Colors.blue,
-            child: InkWell(
-              splashColor: Colors.deepOrange,
-            ),
-          ),
-        ),
-      ],
-    );
-    return col;
-  }
-
-  Widget _makeBoardRow() {
-    Row row = Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: <Widget>[
-        Flexible( // spacer
-          flex: 2,
-          child: Material(
-//                color: Colors.blue,
-            child: InkWell(
-//              onTap: () {},
-              splashColor: Colors.deepOrange,
-            ),
-          ),
-        ),
         Flexible( // board
           flex: 4,
           child: AspectRatio(
@@ -388,17 +326,63 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
         ),
-
         Flexible( // move buttons
-          flex: 2,
-          child: Material(
-//                color: Colors.blue,
-            child: InkWell(
-//              onTap: () {},
-              splashColor: Colors.deepOrange,
+          flex: 3,
+          child: Container(
+            child: _getMoveButtons(1.5),
+          ),
+        ),
+      ],
+    );
+    return col;
+  }
+
+  Widget _makeBoardRow() {
+    Row row = Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+//        Flexible( // spacer
+//          flex: 2,
+//          child: Material(
+//            child: InkWell(
+////              onTap: () {},
+//              splashColor: Colors.deepOrange,
+//            ),
+//          ),
+//        ),
+        Flexible( // board
+          flex: 4,
+          child: AspectRatio(
+            aspectRatio: 1,
+            child: Container(
+              padding: EdgeInsets.all(4),
+              child: Container(
+                color: Colors.black,
+                child: _getBoard(),
+              ),
             ),
           ),
         ),
+        Flexible( // move buttons
+          flex: 4,
+          child: Container(
+            height: getConstraint(),
+            width: getConstraint(),
+            padding: EdgeInsets.all(4),
+            child: _getMoveButtons(1),
+          ),
+        ),
+//
+//        Flexible( // move buttons
+//          flex: 2,
+//          child: Material(
+////                color: Colors.blue,
+//            child: InkWell(
+////              onTap: () {},
+//              splashColor: Colors.deepOrange,
+//            ),
+//          ),
+//        ),
       ],
     );
     return row;
