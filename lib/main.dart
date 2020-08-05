@@ -144,6 +144,46 @@ class _MyHomePageState extends State<MyHomePage> {
     return color;
   }
 
+  Widget _makeBoardButton(int index, SudokuProblem problem) {
+    var row = index ~/ problem.board_size;
+    var col = index % problem.board_size;
+    SudokuState currentState = problem.getCurrentState();
+    List currentBoard = currentState.getTiles();
+    var cellNum = currentBoard[row][col];
+    String toPlace = cellNum == 0 ? '' : cellNum.toString();
+
+    Ink button = Ink(
+      padding: getBoardPadding(index),
+      child: Material(
+        color: _getColor(row, col),
+        child: InkWell(
+          splashColor: Colors.deepOrange,
+          hoverColor: Colors.red,
+          onTap: () {
+            selectedRow = row;
+            selectedCol = col;
+            cell_selected = true;
+            setState(() {
+            });
+          },
+          child: Center(
+            child: AutoSizeText(
+              toPlace,
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              style: TextStyle(
+                fontFamily: 'FiraCode-Bold',
+                fontSize: 40,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    return button;
+  }
+
   @override
   Widget build(BuildContext context) {
     if(problem == null) {
@@ -153,92 +193,55 @@ class _MyHomePageState extends State<MyHomePage> {
     if(button_grid == null) {
       button_grid = List();
     }
-    SudokuState currentState = problem.getCurrentState();
-    List currentBoard = currentState.getTiles();
+
     board = GridView.count(
         padding: EdgeInsets.all(1),
         crossAxisCount: problem.board_size,
         childAspectRatio: 1,
         children: List.generate(problem.board_size * problem.board_size, (index) {
-          var row = index ~/ problem.board_size;
-          var col = index % problem.board_size;
-          var cellNum = currentBoard[row][col];
-          String toPlace = cellNum == 0 ? '' : cellNum.toString();
-
-          Container button = Container(
-            padding: getBoardPadding(index),
-            child: Material(
-              color: _getColor(row, col),
-              child: InkWell(
-                splashColor: Colors.deepOrange,
-                onTap: () {
-                  selectedRow = row;
-                  selectedCol = col;
-                  cell_selected = true;
-                  setState(() {
-                  });
-                },
-                child: AutoSizeText(
-                  toPlace,
-                  textAlign: TextAlign.center,
-                  maxLines: 1,
-                  style: TextStyle(
-                    fontFamily: 'FiraCode-Bold',
-                    fontSize: 40,
-                  ),
-                ),
-              ),
-            ),
-          );
-
+          Ink button = _makeBoardButton(index, problem);
           button_grid.add(button);
           return button;
         })
     );
 
     return Scaffold(
+      appBar: AppBar(
+        leading: Container(
+//          child: Material(
+            child: InkWell(
+//              splashColor: Colors.deepOrange,
+              child: Container(
+                height: 30,
+                width: 30,
+                child: Icon(Icons.menu, color: Colors.white, size: 30),
+              ),
+              onTap: () {
+                _solveGame(problem);
+                setState(() {});
+              },
+            ),
+//          ),
+        ),
+        title: Text(
+          'LettuceSudoku',
+          textAlign: TextAlign.left,
+          style: TextStyle(
+            fontFamily: 'FiraCode-Bold',
+            fontSize: 26,
+          ),
+        ),
+      ),
       body: Container(
-        padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top + 5),
+//        padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top + 5),
         height: MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top - MediaQuery.of(context).padding.bottom,
         width: MediaQuery.of(context).size.width,
         child: Column (
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
 //            _getGridAndButtons(),
-            Container(
-              height: 40,
-              padding: EdgeInsets.only(left: 8),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: <Widget>[
-                  Expanded(
-                    child: Text(
-                      'LettuceSudoku',
-                      textAlign: TextAlign.left,
-                      style: TextStyle(
-                        fontFamily: 'FiraCode-Bold',
-                        fontSize: 26,
-                      ),
-                    ),
-                  ),
-                  InkWell(
-                    splashColor: Colors.deepOrange,
-                    child: Container(
-                      height: 40,
-                      width: 40,
-                      child: Icon(Icons.menu, color: Colors.black, size: 30),
-                    ),
-                    onTap: () {
-                      _solveGame(problem);
-                      setState(() {
-
-                      });
-                    },
-                  ),
-                ],
-              ),
-            ),
             Flexible(
+              flex: 7,
               child: AspectRatio(
                 aspectRatio: 1,
                 child: Container(
@@ -250,58 +253,100 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ),
             ),
-            Container(
-              height: 60,
+            Flexible(
+              flex: 1,
+              child: Material(
+//                color: Colors.blue,
+                child: InkWell(
+                  onTap: () {},
+                  splashColor: Colors.deepOrange,
+                ),
+              ),
             ),
-            AspectRatio(
-              aspectRatio: 2,
-              child: GridView.count(
-                padding: EdgeInsets.all(1),
-                crossAxisCount: 5,
-                childAspectRatio: 1,
-                children: List.generate(10, (index) {
-                  int num = (index + 1) % (problem.board_size + 1);
-                  String toPlace = num == 0 ? 'X' : (index + 1).toString();
-                  Container button = Container(
-                    padding: getBoardPadding(index),
-                    child: Material(
-                      color: Colors.white,
-                      child: InkWell(
-                        splashColor: Colors.deepOrange,
-                        hoverColor: Colors.teal[400],
-                        onTap: () {
-                          _doMove(num, selectedRow, selectedCol);
-                          setState(() {});
-                        },
-                        child: AutoSizeText(
-                          toPlace,
-                          textAlign: TextAlign.center,
-                          maxLines: 1,
-                          style: TextStyle(
-                            fontFamily: 'FiraCode-Bold',
-                            fontSize: 40,
+            Flexible(
+              flex: 3,
+              child: Container(
+                width: getConstraint(),
+                child: GridView.count(
+                  padding: EdgeInsets.all(1),
+                  crossAxisCount: 5,
+                  physics: new NeverScrollableScrollPhysics(),
+                  children: List.generate(10, (index) {
+                    int num = (index + 1) % (problem.board_size + 1);
+                    String toPlace = num == 0 ? 'X' : (index + 1).toString();
+                    Container button = Container(
+//                      padding: getBoardPadding(index),
+                      child: Material(
+//                        color: Colors.white,
+                        child: InkWell(
+                          splashColor: Colors.deepOrange,
+//                          hoverColor: Colors.teal[400],
+                          onTap: () {
+                            _doMove(num, selectedRow, selectedCol);
+                            setState(() {});
+                          },
+                          child: Center(
+                            child: AutoSizeText(
+                              toPlace,
+                              textAlign: TextAlign.center,
+                              maxLines: 1,
+                              style: TextStyle(
+                                fontFamily: 'FiraCode-Bold',
+                                fontSize: 40,
+                              ),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  );
+                    );
 
                     button_grid.add(button);
                     return button;
                   }
+                  ),
                 ),
               ),
+
             ),
+            Flexible(
+              flex: 1,
+              child:
+//              Container(
+//                width: MediaQuery.of(context).size.width,
+//                height: 40,
+////                child: Row(
+////                  mainAxisAlignment: MainAxisAlignment.start,
+////                  children: <Widget>[
+//                    child: Container(
+                      Material(
+                        color: Colors.blue,
+                        child: InkWell(
+                          splashColor: Colors.deepOrange,
+                        ),
+                      ),
+                    ),
+//                    Container(
+//                      child: Material(
+//                        child: InkWell(
+//                          splashColor: Colors.deepOrange,
+//                        ),
+//                      ),
+//                    ),
+//
+//                  ],
+//                ),
+//              ),
+//            ),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          _resetBoard();
-        },
-        tooltip: 'Increment',
-        child: Icon(Icons.android),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+//      floatingActionButton: FloatingActionButton(
+//        onPressed: () {
+//          _resetBoard();
+//        },
+//        tooltip: 'Increment',
+//        child: Icon(Icons.android),
+//      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 
