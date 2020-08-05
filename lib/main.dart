@@ -94,7 +94,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _doMove(int num, int row, int col) {
     assistant = SolvingAssistant(problem);
-    if (!problem.success()) {
+    SudokuState initialState = problem.getInitialState();
+    var initialBoard = initialState.getTiles();
+    var notInitialHint = initialBoard[row][col] == 0;
+    if (!problem.success() && notInitialHint) {
       var move = 'Place ' +
           num.toString() +
           ' at ' +
@@ -177,6 +180,7 @@ class _MyHomePageState extends State<MyHomePage> {
               style: TextStyle(
                 fontFamily: 'FiraCode-Bold',
                 fontSize: 40,
+                color: _getTextColor(row, col),
               ),
             ),
           ),
@@ -252,12 +256,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Widget _getMoveButtons(double aspect) {
     var buttons =
-//    Flex(
-//      direction: Axis.horizontal,
-//        children: <Widget>[
-//          Flexible(
-//            flex: 4,
-//            child:
             GridView.count(
               padding: EdgeInsets.all(1),
               physics: const NeverScrollableScrollPhysics(),
@@ -270,6 +268,8 @@ class _MyHomePageState extends State<MyHomePage> {
                   height: MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top - MediaQuery.of(context).padding.bottom / 5,
                   child: Material(
                     child: InkWell(
+                      hoverColor: Colors.grey,
+                      splashColor: Colors.grey,
                       onTap: () {
                         _doMove(num, selectedRow, selectedCol);
                         setState(() {});
@@ -298,8 +298,18 @@ class _MyHomePageState extends State<MyHomePage> {
     return buttons;
   }
 
+  Color _getTextColor(int row, int col) {
+    SudokuState initialState = problem.getInitialState();
+    var initialBoard = initialState.getTiles();
+    var initialHint = initialBoard[row][col] != 0;
+    var color = Colors.blue;
+    if(initialHint) {
+      color = Colors.black;
+    }
+    return color;
+  }
+
   Widget _getBody() {
-    final _focusNode = FocusNode();
     var isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
     var body = Container(
       height: MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top - MediaQuery.of(context).padding.bottom,
@@ -327,9 +337,16 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ),
         Flexible( // move buttons
-          flex: 3,
-          child: Container(
-            child: _getMoveButtons(1.5),
+          flex: 4,
+          child: AspectRatio(
+            aspectRatio: 1,
+            child: Container(
+              padding: EdgeInsets.all(4),
+              child: Container(
+//                color: Colors.black,
+                child: _getMoveButtons(1),
+              ),
+            ),
           ),
         ),
       ],
@@ -341,15 +358,6 @@ class _MyHomePageState extends State<MyHomePage> {
     Row row = Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-//        Flexible( // spacer
-//          flex: 2,
-//          child: Material(
-//            child: InkWell(
-////              onTap: () {},
-//              splashColor: Colors.deepOrange,
-//            ),
-//          ),
-//        ),
         Flexible( // board
           flex: 4,
           child: AspectRatio(
@@ -365,11 +373,15 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         Flexible( // move buttons
           flex: 4,
-          child: Container(
-            height: getConstraint(),
-            width: getConstraint(),
-            padding: EdgeInsets.all(4),
-            child: _getMoveButtons(1),
+          child: AspectRatio(
+            aspectRatio: 1,
+            child: Container(
+              padding: EdgeInsets.all(4),
+              child: Container(
+//                color: Colors.black,
+                child: _getMoveButtons(1),
+              ),
+            ),
           ),
         ),
 //
