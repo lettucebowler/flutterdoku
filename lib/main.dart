@@ -60,7 +60,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  SudokuProblem problem;
+  SudokuProblem problem = SudokuProblem();
   GridView board;
   List button_grid;
   bool cell_selected = false;
@@ -76,11 +76,11 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {});
   }
 
-  void _highLightOnClick(int row, int col) {
-    for(var i = 0; i < problem.board_size; i++) {
-//      button_grid[row * problem.cell_size + col].
-    }
-  }
+//  void _highLightOnClick(int row, int col) {
+//    for(var i = 0; i < problem.board_size; i++) {
+////      button_grid[row * problem.cell_size + col].
+//    }
+//  }
 
   double getConstraint() {
     var padding = MediaQuery.of(context).padding;
@@ -117,7 +117,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return EdgeInsets.fromLTRB(left.toDouble(), top.toDouble(), right.toDouble(), bottom.toDouble());
   }
 
-  void doMove(int num, int row, int col) {
+  void _doMove(int num, int row, int col) {
     assistant = SolvingAssistant(problem);
     if (!problem.success()) {
       var move = 'Place ' +
@@ -127,6 +127,23 @@ class _MyHomePageState extends State<MyHomePage> {
           ' ' +
           col.toString();
       assistant.tryMove(move);
+    }
+  }
+
+  void _solveGame(SudokuProblem problem) {
+    cell_size = problem.cell_size;
+    board_size = problem.board_size;
+    for (var i = 0; i < board_size; i++) {
+      for (var j = 0; j < board_size; j++) {
+        for (var k = 1; k <= board_size; k++) {
+          if (!problem.isCorrect(i, j)) {
+            _doMove(k, i, j);
+            if (problem.isCorrect(i, j)) {
+              break;
+            }
+          }
+        }
+      }
     }
   }
 
@@ -149,6 +166,9 @@ class _MyHomePageState extends State<MyHomePage> {
     else {
       color = Colors.white;
     }
+    if(problem.success()) {
+      color = Colors.deepOrange;
+    }
     return color;
   }
 
@@ -160,7 +180,7 @@ class _MyHomePageState extends State<MyHomePage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
-    if(problem == null || problem.success()) {
+    if(problem == null) {
       problem = SudokuProblem();
     }
 
@@ -218,6 +238,7 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column (
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
+//            _getGridAndButtons(),
             Container(
               height: 40,
               padding: EdgeInsets.only(left: 8),
@@ -235,14 +256,18 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                   ),
                   InkWell(
-                    hoverColor: Colors.teal[400],
                     splashColor: Colors.deepOrange,
                     child: Container(
                       height: 40,
                       width: 40,
                       child: Icon(Icons.menu, color: Colors.black, size: 30),
                     ),
-                    onTap: () {},
+                    onTap: () {
+                      _solveGame(problem);
+                      setState(() {
+
+                      });
+                    },
                   ),
                 ],
               ),
@@ -259,6 +284,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ),
             ),
+            Container(
+              height: 60,
+            ),
             AspectRatio(
               aspectRatio: 2,
               child: GridView.count(
@@ -274,8 +302,9 @@ class _MyHomePageState extends State<MyHomePage> {
                       color: Colors.white,
                       child: InkWell(
                         splashColor: Colors.deepOrange,
+                        hoverColor: Colors.teal[400],
                         onTap: () {
-                          doMove(num, selectedRow, selectedCol);
+                          _doMove(num, selectedRow, selectedCol);
                           setState(() {});
                         },
                         child: AutoSizeText(
@@ -309,6 +338,11 @@ class _MyHomePageState extends State<MyHomePage> {
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
+
+  Widget _getGridAndButtons() {
+    return Container();
+  }
+
 }
 
 //class BoardButton extends StatefulWidget {
