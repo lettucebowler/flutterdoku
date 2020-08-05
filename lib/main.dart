@@ -14,25 +14,12 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'LettuceSudoku',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
         primarySwatch: Colors.blue,
-        // This makes the visual density adapt to the platform that you run
-        // the app on. For desktop platforms, the controls will be smaller and
-        // closer together (more dense) than on mobile platforms.
         visualDensity: VisualDensity.adaptivePlatformDensity,
         fontFamily: 'FiraCode',
       ),
@@ -44,16 +31,8 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
 
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
   final String title;
+
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
@@ -69,18 +48,11 @@ class _MyHomePageState extends State<MyHomePage> {
   int selectedCol = 0;
   SolvingAssistant assistant;
 
-
   void _resetBoard() {
     problem = SudokuProblem();
     cell_selected = false;
     setState(() {});
   }
-
-//  void _highLightOnClick(int row, int col) {
-//    for(var i = 0; i < problem.board_size; i++) {
-////      button_grid[row * problem.cell_size + col].
-//    }
-//  }
 
   double getConstraint() {
     var padding = MediaQuery.of(context).padding;
@@ -174,12 +146,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     if(problem == null) {
       problem = SudokuProblem();
     }
@@ -342,104 +308,4 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget _getGridAndButtons() {
     return Container();
   }
-
 }
-
-//class BoardButton extends StatefulWidget {
-//
-//  int index;
-//  int cell;
-//  int num;
-//
-//  BoardButton({Key key}) : super(key: key) {
-//    index = 0;
-//    cell = 3;
-//  }
-//
-//  BoardButton.withInfo(int index, int cell, num) {
-//    this.index = index;
-//    this.cell = cell;
-//    this.num = num;
-//  }
-//
-//  @override
-//  _BoardButtonState createState() => _BoardButtonState.withInfo(index, cell, num);
-//}
-//
-//class _BoardButtonState extends State<BoardButton> {
-//  bool selected = false;
-//  int index;
-//  int cellSize;
-//  int boardSize;
-//  int num;
-//
-//  _BoardButtonState.withInfo(int index, int cell, int num) {
-//    print('constructor');
-//    this.index = index;
-//    this.cellSize = cell;
-//    this.boardSize = cell * cell;
-//    this.num = num;
-//  }
-//
-//  @override
-//  Widget build(BuildContext context) {
-//    print('build');
-//    var toPlace = num == 0 ? '' : num.toString();
-//    print('num ' + toPlace + ' ' + num.toString());
-//    return GestureDetector(
-//      onTap: () {
-//        setState(() {
-//          selected = !selected;
-//        });
-//      },
-//      child: Center(
-//        child: Container(
-//          padding: EdgeInsets.all(1),
-//          color: Colors.black,
-//          child: Material(
-//            child: InkWell(
-//              splashColor: Colors.deepOrange,
-//              onTap: () {},
-//              child: AutoSizeText(
-//                toPlace,
-//                textAlign: TextAlign.center,
-//                maxLines: 1,
-//                style: TextStyle(
-//                  fontFamily: 'FiraCode-Bold',
-//                  fontSize: 40,
-//                ),
-//              ),
-//            ),
-//          ),
-//        ),
-//      ),
-//    );
-//  }
-//
-//  EdgeInsets getBoardPadding(int index) {
-//    int row = index ~/ boardSize;
-//    int col = index % boardSize;
-//
-//    double thickness = 2;
-//    double defaultThickness = 0.5;
-//    double right = defaultThickness;
-//    double top = defaultThickness;
-//    double left = defaultThickness;
-//    double bottom = defaultThickness;
-//
-//    if(row == 0) {
-//      top = thickness;
-//    }
-//    if(col == 0) {
-//      left = thickness;
-//    }
-//    if(row % cellSize == cellSize - 1) {
-//      bottom = thickness;
-//    }
-//    if(col % cellSize == cellSize - 1) {
-//      right = thickness;
-//    }
-//
-//    return EdgeInsets.fromLTRB(left.toDouble(), top.toDouble(), right.toDouble(), bottom.toDouble());
-//  }
-//}
