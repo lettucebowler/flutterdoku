@@ -63,12 +63,9 @@ class _MyHomePageState extends State<MyHomePage> {
   var menuHeight = 70;
 
 
-  void _updateBoard(bool newGame) {
-    setState(() {
-      if(problem.success() || newGame) {
-        problem = SudokuProblem();
-      }
-    });
+  void _resetBoard() {
+    problem = SudokuProblem();
+    setState(() {});
   }
 
   void _highLightOnClick() {
@@ -117,6 +114,9 @@ class _MyHomePageState extends State<MyHomePage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
+    if(problem == null || problem.success()) {
+      problem = SudokuProblem();
+    }
     SudokuState currentState = problem.getCurrentState();
     List currentBoard = currentState.getTiles();
     board = GridView.count(
@@ -240,7 +240,7 @@ class _MyHomePageState extends State<MyHomePage> {
 //        child: board,
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          _updateBoard(true);
+          _resetBoard();
         },
         tooltip: 'Increment',
         child: Icon(Icons.android),
