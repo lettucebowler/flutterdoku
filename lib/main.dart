@@ -194,16 +194,7 @@ class _MyHomePageState extends State<MyHomePage> {
       button_grid = List();
     }
 
-    board = GridView.count(
-        padding: EdgeInsets.all(1),
-        crossAxisCount: problem.board_size,
-        childAspectRatio: 1,
-        children: List.generate(problem.board_size * problem.board_size, (index) {
-          Ink button = _makeBoardButton(index, problem);
-          button_grid.add(button);
-          return button;
-        })
-    );
+//    board = _getBoard();
 
     return Scaffold(
       appBar: AppBar(
@@ -232,125 +223,184 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ),
       ),
-      body: Container(
-//        padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top + 5),
-        height: MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top - MediaQuery.of(context).padding.bottom,
-        width: MediaQuery.of(context).size.width,
-        child: Column (
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-//            _getGridAndButtons(),
-            Flexible(
-              flex: 7,
-              child: AspectRatio(
-                aspectRatio: 1,
-                child: Container(
-                  padding: EdgeInsets.all(4),
-                  child: Container(
-                    color: Colors.black,
-                    child: board,
-                  ),
-                ),
-              ),
-            ),
-            Flexible(
-              flex: 1,
-              child: Material(
-//                color: Colors.blue,
-                child: InkWell(
-                  onTap: () {},
-                  splashColor: Colors.deepOrange,
-                ),
-              ),
-            ),
-            Flexible(
-              flex: 3,
-              child: Container(
-                width: getConstraint(),
-                child: GridView.count(
-                  padding: EdgeInsets.all(1),
-                  crossAxisCount: 5,
-                  physics: new NeverScrollableScrollPhysics(),
-                  children: List.generate(10, (index) {
-                    int num = (index + 1) % (problem.board_size + 1);
-                    String toPlace = num == 0 ? 'X' : (index + 1).toString();
-                    Container button = Container(
-//                      padding: getBoardPadding(index),
-                      child: Material(
-//                        color: Colors.white,
-                        child: InkWell(
-                          splashColor: Colors.deepOrange,
-//                          hoverColor: Colors.teal[400],
-                          onTap: () {
-                            _doMove(num, selectedRow, selectedCol);
-                            setState(() {});
-                          },
-                          child: Center(
-                            child: AutoSizeText(
-                              toPlace,
-                              textAlign: TextAlign.center,
-                              maxLines: 1,
-                              style: TextStyle(
-                                fontFamily: 'FiraCode-Bold',
-                                fontSize: 40,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    );
-
-                    button_grid.add(button);
-                    return button;
-                  }
-                  ),
-                ),
-              ),
-
-            ),
-            Flexible(
-              flex: 1,
-              child:
-//              Container(
-//                width: MediaQuery.of(context).size.width,
-//                height: 40,
-////                child: Row(
-////                  mainAxisAlignment: MainAxisAlignment.start,
-////                  children: <Widget>[
-//                    child: Container(
-                      Material(
-                        color: Colors.blue,
-                        child: InkWell(
-                          splashColor: Colors.deepOrange,
-                        ),
-                      ),
-                    ),
-//                    Container(
-//                      child: Material(
-//                        child: InkWell(
-//                          splashColor: Colors.deepOrange,
-//                        ),
-//                      ),
-//                    ),
-//
-//                  ],
-//                ),
-//              ),
-//            ),
-          ],
-        ),
-      ),
-//      floatingActionButton: FloatingActionButton(
-//        onPressed: () {
-//          _resetBoard();
-//        },
-//        tooltip: 'Increment',
-//        child: Icon(Icons.android),
-//      ), // This trailing comma makes auto-formatting nicer for build methods.
+      body: _getBody(),
     );
   }
 
-  Widget _getGridAndButtons() {
-    return Container();
+  Widget _getBoard() {
+    AspectRatio board = AspectRatio(
+      aspectRatio: 1,
+      child: Container(
+        color: Colors.black,
+        child: GridView.count(
+            padding: EdgeInsets.all(1),
+            crossAxisCount: problem.board_size,
+            childAspectRatio: 1,
+            children: List.generate(problem.board_size * problem.board_size, (index) {
+              Ink button = _makeBoardButton(index, problem);
+              button_grid.add(button);
+              return button;
+            })
+        ),
+      ),
+    );
+    return board;
+  }
+
+  Widget _getMoveButtons() {
+    var buttons = Flex(
+      direction: Axis.horizontal,
+        children: <Widget>[
+          Flexible(
+
+            child: GridView.count(
+              padding: EdgeInsets.all(1),
+              crossAxisCount: 5,
+              children: List.generate(10, (index) {
+                int num = (index + 1) % (problem.board_size + 1);
+                String toPlace = num == 0 ? 'X' : (index + 1).toString();
+                Container button = Container(
+                  height: MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top - MediaQuery.of(context).padding.bottom / 5,
+                  child: Material(
+                    child: InkWell(
+                      splashColor: Colors.deepOrange,
+                      onTap: () {
+                        _doMove(num, selectedRow, selectedCol);
+                        setState(() {});
+                      },
+                      child: Center(
+                        child: AutoSizeText(
+                          toPlace,
+                          textAlign: TextAlign.center,
+                          maxLines: 1,
+                          style: TextStyle(
+                            fontFamily: 'FiraCode-Bold',
+                            fontSize: 40,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+                button_grid.add(button);
+                return button;
+              }),
+            ),
+          ),
+        ],
+      );
+    return buttons;
+  }
+
+  Widget _getBody() {
+    var body;
+    var isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
+    if(isPortrait) {
+      body = Container(
+        height: MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top - MediaQuery.of(context).padding.bottom,
+        width: MediaQuery.of(context).size.width,
+        child: _makeBoardCol(),
+      );
+    }
+    else {
+      body = Container(
+        height: MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top - MediaQuery.of(context).padding.bottom,
+        width: MediaQuery.of(context).size.width,
+        child: _makeBoardRow(),
+      );
+    }
+    return body;
+  }
+
+  Widget _makeBoardCol() {
+    Column col = Column (
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: <Widget>[
+        Flexible( // board
+          flex: 7,
+          child: AspectRatio(
+            aspectRatio: 1,
+            child: Container(
+              padding: EdgeInsets.all(4),
+              child: Container(
+                color: Colors.black,
+                child: _getBoard(),
+              ),
+            ),
+          ),
+        ),
+        Flexible( // spacer
+          flex: 1,
+          child: Material(
+//                color: Colors.blue,
+            child: InkWell(
+//              onTap: () {},
+              splashColor: Colors.deepOrange,
+            ),
+          ),
+        ),
+        Flexible( // move buttons
+          flex: 3,
+          child: Container(
+//                width: getConstraint(),
+            child: _getMoveButtons(),
+          ),
+
+        ),
+        Flexible(
+          flex: 1,
+          child: Material(
+//                color: Colors.blue,
+            child: InkWell(
+              splashColor: Colors.deepOrange,
+            ),
+          ),
+        ),
+      ],
+    );
+    return col;
+  }
+
+  Widget _makeBoardRow() {
+    Row row = Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: <Widget>[
+        Flexible( // spacer
+          flex: 2,
+          child: Material(
+//                color: Colors.blue,
+            child: InkWell(
+//              onTap: () {},
+              splashColor: Colors.deepOrange,
+            ),
+          ),
+        ),
+        Flexible( // board
+          flex: 4,
+          child: AspectRatio(
+            aspectRatio: 1,
+            child: Container(
+              padding: EdgeInsets.all(4),
+              child: Container(
+                color: Colors.black,
+                child: _getBoard(),
+              ),
+            ),
+          ),
+        ),
+
+        Flexible( // move buttons
+          flex: 2,
+          child: Material(
+//                color: Colors.blue,
+            child: InkWell(
+//              onTap: () {},
+              splashColor: Colors.deepOrange,
+            ),
+          ),
+        ),
+      ],
+    );
+    return row;
   }
 }
