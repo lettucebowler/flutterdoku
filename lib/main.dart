@@ -63,9 +63,11 @@ class _MyHomePageState extends State<MyHomePage> {
   var menuHeight = 70;
 
 
-  void _updateBoard() {
+  void _updateBoard(bool newGame) {
     setState(() {
-      problem = SudokuProblem();
+      if(problem.success() || newGame) {
+        problem = SudokuProblem();
+      }
     });
   }
 
@@ -85,7 +87,7 @@ class _MyHomePageState extends State<MyHomePage> {
     int col = index % problem.board_size;
 
     double thickness = 2;
-    double defaultThickness = 1;
+    double defaultThickness = 0.5;
     double right = defaultThickness;
     double top = defaultThickness;
     double left = defaultThickness;
@@ -115,7 +117,6 @@ class _MyHomePageState extends State<MyHomePage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
-    problem = new SudokuProblem();
     SudokuState currentState = problem.getCurrentState();
     List currentBoard = currentState.getTiles();
     board = GridView.count(
@@ -128,28 +129,54 @@ class _MyHomePageState extends State<MyHomePage> {
           var cellNum = currentBoard[row][col];
           String toPlace = cellNum == 0 ? '' : cellNum.toString();
 
+//          InkWell button = InkWell(
+//            onTap: () {}, // needed
+//            child: Ink( // use Ink
+//              width: 200,
+//              height: 200,
+//              color: Colors.blue,
+//            ),
+//          );
+
           Container button = Container(
+            color: Colors.black,
             padding: getBoardPadding(index),
-            child: FlatButton(
-              color: Colors.white,
-//              elevation: 0,
-//              hoverElevation: 0,
-//              focusElevation: 0,
-              hoverColor: Colors.teal[400],
-              splashColor: Colors.deepOrange,
-              onPressed: () {
-              },
-              child: AutoSizeText(
-                toPlace,
-                textAlign: TextAlign.center,
-                maxLines: 1,
-                style: TextStyle(
-                  fontFamily: 'FiraCode-Bold',
-                  fontSize: 40,
+            child: Material(
+              child: InkWell(
+                splashColor: Colors.deepOrange,
+                onTap: () {},
+                child: AutoSizeText(
+                  toPlace,
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  style: TextStyle(
+                    fontFamily: 'FiraCode-Bold',
+                    fontSize: 40,
+                  ),
                 ),
               ),
             ),
           );
+
+//          Container button = Container(
+//            padding: getBoardPadding(index),
+//            child: FlatButton(
+//              color: Colors.white,
+//              hoverColor: Colors.teal[400],
+//              splashColor: Colors.deepOrange,
+//              onPressed: () {
+//              },
+//              child: AutoSizeText(
+//                toPlace,
+//                textAlign: TextAlign.center,
+//                maxLines: 1,
+//                style: TextStyle(
+//                  fontFamily: 'FiraCode-Bold',
+//                  fontSize: 40,
+//                ),
+//              ),
+//            ),
+//          );
           return button;
         })
     );
@@ -212,7 +239,9 @@ class _MyHomePageState extends State<MyHomePage> {
         // in the middle of the parent.
 //        child: board,
       floatingActionButton: FloatingActionButton(
-        onPressed: _updateBoard,
+        onPressed: () {
+          _updateBoard(true);
+        },
         tooltip: 'Increment',
         child: Icon(Icons.android),
       ), // This trailing comma makes auto-formatting nicer for build methods.
