@@ -48,4 +48,36 @@ class CustomColors {
       900: Color(0xFF000000),
     },
   );
+
+  static const MaterialColor frost = MaterialColor(
+    0x8fbcbb,
+    <int, Color>{
+      50: Color(0xFF000000),
+      100: Color(0xFF8fbcbb),
+      200: Color(0xFF88c0d0),
+      300: Color(0xFF81a1c1),
+      400: Color(0xFF5e81ac),
+      500: Color(0xFF000000),
+      600: Color(0xFF000000),
+      700: Color(0xFF000000),
+      800: Color(0xFF000000),
+      900: Color(0xFF000000),
+    },
+  );
+
+  static const MaterialColor aurora = MaterialColor(
+    0xbf616a,
+    <int, Color>{
+      50: Color(0xFF000000),
+      100: Color(0xFFbf616a),
+      200: Color(0xFFd08770),
+      300: Color(0xFFebcb8b),
+      400: Color(0xFFa3be8c),
+      500: Color(0xFFb48ead),
+      600: Color(0xFF000000),
+      700: Color(0xFF000000),
+      800: Color(0xFF000000),
+      900: Color(0xFF000000),
+    },
+  );
 }
