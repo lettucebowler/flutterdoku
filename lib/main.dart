@@ -211,7 +211,7 @@ class _MyHomePageState extends State<MyHomePage> {
         color: _getCellColor(row, col),
         child: InkWell(
           splashColor: CustomStyles.frost[2],
-          hoverColor: Colors.red,
+          hoverColor: CustomStyles.frost[3],
           onTap: () {
             selectedRow = row;
             selectedCol = col;
@@ -330,7 +330,7 @@ class _MyHomePageState extends State<MyHomePage> {
     SudokuState initialState = problem.getInitialState();
     var initialBoard = initialState.getTiles();
     var initialHint = initialBoard[row][col] != 0;
-    Color color;
+    Color color = CustomStyles.frost[3];
     if (initialHint) {
       color = CustomStyles.polarNight[1];
     }
