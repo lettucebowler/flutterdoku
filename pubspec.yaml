@@ -65,7 +65,7 @@ flutter:
     - family: FiraCode
       fonts:
         - asset: fonts/FiraCode-Regular.ttf
-    - family: FiraCode Bold
+    - family: FiraCode-Bold
       fonts:
         - asset: fonts/FiraCode-Bold.ttf
   #

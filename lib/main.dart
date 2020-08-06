@@ -4,8 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-//import 'package:lettuce_sudoku/sudoku_dart.dart';
-import 'CustomColors.dart';
+import 'CustomStyles.dart';
 import 'domains/sudoku/SudokuProblem.dart';
 import 'domains/sudoku/SudokuState.dart';
 import 'dart:ui';
@@ -23,9 +22,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'LettuceSudoku',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: CustomStyles.themeColor,
         visualDensity: VisualDensity.adaptivePlatformDensity,
-        fontFamily: 'FiraCode',
+//        fontFamily: 'FiraCode',
       ),
       home: MyHomePage(title: 'LettuceSudoku'),
     );
@@ -44,7 +43,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   SudokuProblem problem = SudokuProblem();
   GridView board;
-  bool cell_selected = false;
+  bool cellSelected = false;
   var menuHeight = 70;
   int selectedRow = 0;
   int selectedCol = 0;
@@ -54,7 +53,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _resetBoard() {
     problem = SudokuProblem();
-    cell_selected = false;
+    cellSelected = false;
     setState(() {});
     hintsLeft = 5;
     hintsGiven.clear();
@@ -170,27 +169,30 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  Color _getColor(int row, int col) {
+  Color _getCellColor(int row, int col) {
+    Color peerCell = CustomStyles.frost[1];
+    Color backgroud = CustomStyles.snowStorm[2];
+    Color peerDigit = CustomStyles.frost[2];
     Color color;
-    if (cell_selected == null) {
-      cell_selected = false;
+    if (cellSelected == null) {
+      cellSelected = false;
     }
-    if (cell_selected) {
+    if (cellSelected) {
       if (row == selectedRow || col == selectedCol) {
-        color = Colors.deepOrange;
+        color = peerCell;
       }
       if (row ~/ problem.cell_size == selectedRow ~/ problem.cell_size &&
           col ~/ problem.cell_size == selectedCol ~/ problem.cell_size) {
-        color = Colors.deepOrange;
+        color = peerCell;
       }
       if (row == selectedRow && col == selectedCol) {
-        color = Colors.white;
+        color = backgroud;
       }
     } else {
-      color = Colors.white;
+      color = backgroud;
     }
     if (problem.success()) {
-      color = Colors.deepOrange;
+      color = peerCell;
     }
     return color;
   }
@@ -206,14 +208,14 @@ class _MyHomePageState extends State<MyHomePage> {
     Ink button = Ink(
       padding: getBoardPadding(index),
       child: Material(
-        color: _getColor(row, col),
+        color: _getCellColor(row, col),
         child: InkWell(
-          splashColor: Colors.deepOrange,
+          splashColor: CustomStyles.frost[2],
           hoverColor: Colors.red,
           onTap: () {
             selectedRow = row;
             selectedCol = col;
-            cell_selected = true;
+            cellSelected = true;
             setState(() {});
           },
           child: Center(
@@ -221,12 +223,7 @@ class _MyHomePageState extends State<MyHomePage> {
               toPlace,
               textAlign: TextAlign.center,
               maxLines: 1,
-              style: TextStyle(
-                fontFamily: 'FiraCode-Bold',
-                fontSize: 40,
-                color: _getTextColor(row, col),
-//                color: _getTextColor(row, col),
-              ),
+              style: CustomStyles.getFiraCode(_getTextColor(row, col), 30),
             ),
           ),
         ),
@@ -243,6 +240,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }
 
     return Scaffold(
+      backgroundColor: CustomStyles.snowStorm[2],
       appBar: AppBar(
         leading: Container(
 //          child: Material(
@@ -251,7 +249,7 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Container(
               height: 30,
               width: 30,
-              child: Icon(Icons.menu, color: Colors.white, size: 30),
+              child: Icon(Icons.menu, color: CustomStyles.snowStorm[2], size: 30),
             ),
             onTap: () {
               _solveGame(problem);
@@ -262,11 +260,8 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         title: Text(
           'LettuceSudoku',
-          textAlign: TextAlign.left,
-          style: TextStyle(
-            fontFamily: 'FiraCode-Bold',
-            fontSize: 26,
-          ),
+          textAlign: TextAlign.center,
+          style: CustomStyles.titleText,
         ),
       ),
       body: _getBody(),
@@ -277,7 +272,7 @@ class _MyHomePageState extends State<MyHomePage> {
     AspectRatio board = AspectRatio(
       aspectRatio: 1,
       child: Container(
-        color: Colors.black,
+        color: CustomStyles.polarNight[3],
         child: GridView.count(
             padding: EdgeInsets.all(1),
             crossAxisCount: problem.board_size,
@@ -293,7 +288,6 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget _getMoveButtons() {
-
     var buttons = GridView.count(
       padding: EdgeInsets.all(1),
       physics: const NeverScrollableScrollPhysics(),
@@ -305,11 +299,12 @@ class _MyHomePageState extends State<MyHomePage> {
         String toPlace = num == 0 ? 'X' : (index + 1).toString();
         Container button = Container(
           child: Material(
+            color: CustomStyles.snowStorm[2],
             child: InkWell(
               hoverColor: Colors.grey,
               splashColor: Colors.grey,
               onTap: () {
-                if(cell_selected) {
+                if(cellSelected) {
                   _doMove(num, selectedRow, selectedCol);
                   setState(() {});
                 }
@@ -319,10 +314,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   toPlace,
                   textAlign: TextAlign.center,
                   maxLines: 1,
-                  style: TextStyle(
-                    fontFamily: 'FiraCode-Bold',
-                    fontSize: 40,
-                  ),
+                  style: CustomStyles.getFiraCode(CustomStyles.polarNight[3], 30),
                 ),
               ),
             ),
@@ -338,27 +330,12 @@ class _MyHomePageState extends State<MyHomePage> {
     SudokuState initialState = problem.getInitialState();
     var initialBoard = initialState.getTiles();
     var initialHint = initialBoard[row][col] != 0;
-    var color = Colors.blue;
+    Color color;
     if (initialHint) {
-      color = CustomColors.black;
+      color = CustomStyles.polarNight[1];
     }
     if(_givenAsHint(row, col)) {
-      const int _cyanPrimaryValue = 0xFF00FFFF;
-      color = MaterialColor(
-        _cyanPrimaryValue,
-        <int, Color>{
-          50: Color(0xFF00FFFF),
-          100: Color(0xFF00FFFF),
-          200: Color(0xFF00FFFF),
-          300: Color(0xFF00FFFF),
-          400: Color(0xFF00FFFF),
-          500: Color(0xFF00FFFF),
-          600: Color(0xFF00FFFF),
-          700: Color(0xFF00FFFF),
-          800: Color(0xFF00FFFF),
-          900: Color(0xFF00FFFF),
-        },
-      );
+      color = CustomStyles.aurora[4];
     }
     return color;
   }
@@ -410,51 +387,52 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Container(padding: EdgeInsets.only(right: 16),
-              child: Material(
-                child: InkWell(
-                  hoverColor: Colors.grey,
-                  splashColor: Colors.grey,
-                  onTap: () {
-                    _resetBoard();
-                  },
-                  child: Text(
-                    'New Game',
-                    textAlign: TextAlign.left,
-                    maxLines: 1,
-                    style: TextStyle(
-                      fontFamily: 'FiraCode-Bold',
-                      fontSize: 30,
+        Container(
+//          height: 120,
+          child: Flex(
+            mainAxisAlignment: MainAxisAlignment.center,
+            direction: Axis.horizontal,
+            children: <Widget>[
+              Flexible(
+//                flex: 3,
+//                padding: EdgeInsets.only(right: 16),
+//                child: Material(
+//                  color: CustomStyles.snowStorm[2],
+                fit: FlexFit.tight,
+                  child: FlatButton(
+                    hoverColor: CustomStyles.snowStorm[0],
+                    splashColor: CustomStyles.snowStorm[0],
+                    onPressed: () {
+                      _resetBoard();
+                    },
+                    child: Text(
+                      'New Game',
+                      textAlign: TextAlign.center,
+                      maxLines: 1,
+                      style: CustomStyles.getFiraCode(CustomStyles.polarNight[3], 26),
                     ),
                   ),
-                ),
+//                ),
               ),
-            ),
-            Container(
-              padding: EdgeInsets.only(left: 16),
-              child: Material(
-                child: InkWell(
-                  hoverColor: Colors.grey,
-                  splashColor: Colors.grey,
-                  onTap: () {
-                    _giveHint();
-                  },
-                  child: Text(
-                    'Get hint ($hintsLeft)',
-                    textAlign: TextAlign.right,
-                    maxLines: 1,
-                    style: TextStyle(
-                      fontFamily: 'FiraCode-Bold',
-                      fontSize: 30,
+              Flexible(
+//                flex: 2,
+                fit: FlexFit.tight,
+                  child: FlatButton(
+                    hoverColor: CustomStyles.snowStorm[0],
+                    splashColor: CustomStyles.snowStorm[0],
+                    onPressed: () {
+                      _giveHint();
+                    },
+                    child: Text(
+                      'hint ($hintsLeft)',
+                      textAlign: TextAlign.center,
+                      maxLines: 1,
+                      style: CustomStyles.getFiraCode(CustomStyles.polarNight[3], 26),
                     ),
                   ),
-                ),
               ),
-            )
-          ],
+            ],
+          ),
         ),
       ],
     );
@@ -473,7 +451,7 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Container(
               padding: EdgeInsets.all(4),
               child: Container(
-                color: Colors.black,
+                color: CustomStyles.polarNight[3],
                 child: _getBoard(),
               ),
             ),
