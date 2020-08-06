@@ -4,10 +4,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:lettuce_sudoku/sudoku_dart.dart';
+//import 'package:lettuce_sudoku/sudoku_dart.dart';
+import 'CustomColors.dart';
 import 'domains/sudoku/SudokuProblem.dart';
 import 'domains/sudoku/SudokuState.dart';
 import 'dart:ui';
+import 'dart:math';
 
 import 'framework/problem/SolvingAssistant.dart';
 
@@ -42,17 +44,20 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   SudokuProblem problem = SudokuProblem();
   GridView board;
-  List button_grid;
   bool cell_selected = false;
   var menuHeight = 70;
   int selectedRow = 0;
   int selectedCol = 0;
   SolvingAssistant assistant;
+  int hintsLeft = 5;
+  List hintsGiven = [];
 
   void _resetBoard() {
     problem = SudokuProblem();
     cell_selected = false;
     setState(() {});
+    hintsLeft = 5;
+    hintsGiven.clear();
   }
 
   double getConstraint() {
@@ -94,6 +99,44 @@ class _MyHomePageState extends State<MyHomePage> {
         left.toDouble(), top.toDouble(), right.toDouble(), bottom.toDouble());
   }
 
+  int _getRandom(int max) {
+    var random = Random();
+    return random.nextInt(max);
+  }
+
+  bool _givenAsHint(int row, int col) {
+    bool hint = false;
+    for(List pair in hintsGiven) {
+      if(pair[0] == row && pair[1] == col) {
+        hint = true;
+      }
+    }
+    return hint;
+  }
+
+  void _giveHint() {
+    if (!problem.success() && hintsLeft > 0) {
+      SudokuState currentState = problem.getCurrentState();
+      List currentBoard = currentState.getTiles();
+      SudokuState finalState = problem.getFinalState();
+      List finalBoard = finalState.getTiles();
+      var pos1;
+      var pos2;
+      do {
+        pos1 = _getRandom(problem.board_size);
+        pos2 = _getRandom(problem.board_size);
+      } while(currentBoard[pos1][pos2] != 0);
+      var num = finalBoard[pos1][pos2];
+      _doMove(num, pos1, pos2);
+      setState(() {
+        selectedRow = pos1;
+        selectedCol = pos2;
+        hintsGiven.add([pos1, pos2]);
+        hintsLeft--;
+      });
+    }
+  }
+
   void _doMove(int num, int row, int col) {
     assistant = SolvingAssistant(problem);
     SudokuState initialState = problem.getInitialState();
@@ -111,8 +154,8 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _solveGame(SudokuProblem problem) {
-    cell_size = problem.cell_size;
-    board_size = problem.board_size;
+    int cell_size = problem.cell_size;
+    int board_size = problem.board_size;
     for (var i = 0; i < board_size; i++) {
       for (var j = 0; j < board_size; j++) {
         for (var k = 1; k <= board_size; k++) {
@@ -181,6 +224,7 @@ class _MyHomePageState extends State<MyHomePage> {
               style: TextStyle(
                 fontFamily: 'FiraCode-Bold',
                 fontSize: 40,
+                color: _getTextColor(row, col),
 //                color: _getTextColor(row, col),
               ),
             ),
@@ -196,10 +240,6 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     if (problem == null) {
       problem = SudokuProblem();
-    }
-
-    if (button_grid == null) {
-      button_grid = List();
     }
 
     return Scaffold(
@@ -245,7 +285,6 @@ class _MyHomePageState extends State<MyHomePage> {
             children:
                 List.generate(problem.board_size * problem.board_size, (index) {
               Ink button = _makeBoardButton(index, problem);
-              button_grid.add(button);
               return button;
             })),
       ),
@@ -253,14 +292,14 @@ class _MyHomePageState extends State<MyHomePage> {
     return board;
   }
 
-  Widget _getMoveButtons(double aspect) {
+  Widget _getMoveButtons() {
+
     var buttons = GridView.count(
       padding: EdgeInsets.all(1),
       physics: const NeverScrollableScrollPhysics(),
       crossAxisCount: 5,
       mainAxisSpacing: 2,
       crossAxisSpacing: 2,
-      childAspectRatio: aspect,
       children: List.generate(10, (index) {
         int num = (index + 1) % (problem.board_size + 1);
         String toPlace = num == 0 ? 'X' : (index + 1).toString();
@@ -289,7 +328,6 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
         );
-        button_grid.add(button);
         return button;
       }),
     );
@@ -302,7 +340,25 @@ class _MyHomePageState extends State<MyHomePage> {
     var initialHint = initialBoard[row][col] != 0;
     var color = Colors.blue;
     if (initialHint) {
-      color = Colors.black;
+      color = CustomColors.black;
+    }
+    if(_givenAsHint(row, col)) {
+      const int _cyanPrimaryValue = 0xFF00FFFF;
+      color = MaterialColor(
+        _cyanPrimaryValue,
+        <int, Color>{
+          50: Color(0xFF00FFFF),
+          100: Color(0xFF00FFFF),
+          200: Color(0xFF00FFFF),
+          300: Color(0xFF00FFFF),
+          400: Color(0xFF00FFFF),
+          500: Color(0xFF00FFFF),
+          600: Color(0xFF00FFFF),
+          700: Color(0xFF00FFFF),
+          800: Color(0xFF00FFFF),
+          900: Color(0xFF00FFFF),
+        },
+      );
     }
     return color;
   }
@@ -333,7 +389,7 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Container(
               padding: EdgeInsets.all(4),
               child: Container(
-                color: Colors.black,
+//                color: Colors.black,
                 child: _getBoard(),
               ),
             ),
@@ -341,67 +397,65 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         Flexible(
           flex: 2,
-          child: Center(
-            child: Container(
-              padding: EdgeInsets.all(4),
+          fit: FlexFit.tight,
+//          color: Colors.red,
+          child: Container(
+//            color: Colors.black,
+            padding: EdgeInsets.all(4),
+            child: Center(
               child: Container(
-                child: _getMoveButtons(1),
+//                color: Colors.blue,
+                child: _getMoveButtons(),
               ),
             ),
           ),
         ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Container(
-                width: 150,
-                child: Material(
-                  child: InkWell(
-                    hoverColor: Colors.grey,
-                    splashColor: Colors.grey,
-                    onTap: () {
-                      _resetBoard();
-                    },
-//                    child: Center(
-                      child: AutoSizeText(
-                        'New Game',
-                        textAlign: TextAlign.left,
-                        maxLines: 1,
-                        style: TextStyle(
-                          fontFamily: 'FiraCode-Bold',
-                          fontSize: 30,
-                        ),
-                      ),
-//                    ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Container(padding: EdgeInsets.only(right: 16),
+              child: Material(
+                child: InkWell(
+                  hoverColor: Colors.grey,
+                  splashColor: Colors.grey,
+                  onTap: () {
+                    _resetBoard();
+                  },
+                  child: Text(
+                    'New Game',
+                    textAlign: TextAlign.left,
+                    maxLines: 1,
+                    style: TextStyle(
+                      fontFamily: 'FiraCode-Bold',
+                      fontSize: 30,
+                    ),
                   ),
                 ),
               ),
-              Container(
-                width: 150,
-                child: Material(
-                  child: InkWell(
-                    hoverColor: Colors.grey,
-                    splashColor: Colors.grey,
-                    onTap: () {
-                      _resetBoard();
-                    },
-//                    child: Center(
-                      child: AutoSizeText(
-                        'Get hint',
-                        textAlign: TextAlign.right,
-                        maxLines: 1,
-                        style: TextStyle(
-                          fontFamily: 'FiraCode-Bold',
-                          fontSize: 30,
-                        ),
-                      ),
-//                    ),
+            ),
+            Container(
+              padding: EdgeInsets.only(left: 16),
+              child: Material(
+                child: InkWell(
+                  hoverColor: Colors.grey,
+                  splashColor: Colors.grey,
+                  onTap: () {
+                    _giveHint();
+                  },
+                  child: Text(
+                    'Get hint ($hintsLeft)',
+                    textAlign: TextAlign.right,
+                    maxLines: 1,
+                    style: TextStyle(
+                      fontFamily: 'FiraCode-Bold',
+                      fontSize: 30,
+                    ),
                   ),
                 ),
-              )
-            ],
-          ),
-//        ),
+              ),
+            )
+          ],
+        ),
       ],
     );
     return col;
@@ -433,7 +487,7 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Container(
               padding: EdgeInsets.all(4),
               child: Container(
-                child: _getMoveButtons(1),
+                child: _getMoveButtons(),
               ),
             ),
           ),
