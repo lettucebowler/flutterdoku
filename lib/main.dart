@@ -293,7 +293,11 @@ class _MyHomePageState extends State<MyHomePage> {
                 children: [
                   _getToggle('Highlight Peer Cells', globals.doPeerCells),
                   _getToggle('Highlight Peer Digits', globals.doPeerDigits),
+                  _getToggle('Color on Correctness/Legality', globals.doLegality),
                   _getSlider('Difficulty', globals.hintOffset, 0, 33, 3),
+//                  Radio(
+//
+//                  ),
                 ],
               ),
             ),
@@ -320,11 +324,7 @@ class _MyHomePageState extends State<MyHomePage> {
             textAlign: TextAlign.left,
           ),
         ),
-//        Transform.scale(
-//          scale: 1.3,
-//          child:
         Container(
-//          color: Colors.red,
           child: Switch(
             value: setting.value,
             onChanged: (bool val) {
@@ -338,7 +338,6 @@ class _MyHomePageState extends State<MyHomePage> {
             inactiveTrackColor: CustomStyles.aurora[0],
           ),
         ),
-//        ),
       ],
     );
   }
@@ -376,6 +375,10 @@ class _MyHomePageState extends State<MyHomePage> {
       ],
     );
   }
+
+//  _getRadio(List<String> labels, ) {
+//
+//  }
 
   Widget _getBoard() {
     AspectRatio board = AspectRatio(
