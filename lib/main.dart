@@ -310,12 +310,57 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
             Flex(
-              direction: Axis.horizontal,
+              direction: Axis.vertical,
               children: [
-                Row(
-                children: [
-                  Text('Highlight Peer Cells'),
-                ],
+                Flex(
+                  direction: Axis.horizontal,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text(
+                      'Highlight peer cells',
+                      style: CustomStyles.getFiraCode(CustomStyles.polarNight[3], 16)
+                    ),
+                    Transform.scale(
+                      scale: 1.3,
+                      child: Switch(
+                        value: globals.doPeerCells,
+                        onChanged: (bool val) {
+                          setState(() {
+                            globals.doPeerCells = val;
+                          });
+                        },
+                        activeColor: CustomStyles.polarNight[3],
+                        inactiveThumbColor: CustomStyles.polarNight[3],
+                        activeTrackColor: CustomStyles.aurora[3],
+                        inactiveTrackColor: CustomStyles.aurora[0],
+                      ),
+                    ),
+                  ],
+                ),
+                Flex(
+                  direction: Axis.horizontal,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text(
+                        'Highlight peer digits',
+                        style: CustomStyles.getFiraCode(CustomStyles.polarNight[3], 16)
+                    ),
+                    Transform.scale(
+                      scale: 1.3,
+                      child: Switch(
+                        value: globals.doPeerDigits,
+                        onChanged: (bool val) {
+                          setState(() {
+                            globals.doPeerDigits = val;
+                          });
+                        },
+                        activeColor: CustomStyles.polarNight[3],
+                        inactiveThumbColor: CustomStyles.polarNight[3],
+                        activeTrackColor: CustomStyles.aurora[3],
+                        inactiveTrackColor: CustomStyles.aurora[0],
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),

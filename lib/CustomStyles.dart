@@ -47,7 +47,7 @@ class CustomStyles {
     const Color(0xFFbf616a),
     const Color(0xFFd08770),
     const Color(0xFFebcb8b),
-    const Color(0xFFebcb8b),
+    const Color(0xFFa3be8c),
     const Color(0xFFb48ead)
   ];
 
