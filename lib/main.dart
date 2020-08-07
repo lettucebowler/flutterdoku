@@ -13,6 +13,7 @@ import 'dart:ui';
 import 'dart:math';
 
 import 'framework/problem/SolvingAssistant.dart';
+//import 'globals.dart';
 
 void main() {
   runApp(MyApp());
@@ -177,10 +178,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   int _getHintsLeft() {
-    print('maxHints: ' + globals.maxHints.toString());
-    print('globals.hintsGiven: ' + globals.hintsGiven.toString());
-    print('globals.hintsGiven.length: ' + globals.hintsGiven.length.toString());
-    var hintsLeft = globals.maxHints - globals.hintsGiven.length;
+    var hintsLeft = globals.maxHints.value - globals.hintsGiven.length;
     return hintsLeft;
   }
 
@@ -194,7 +192,7 @@ class _MyHomePageState extends State<MyHomePage> {
       color = peerDigit;
     }
 
-    if(globals.doPeerCells) {
+    if(globals.doPeerCells.value) {
       if (_cellSelected()) {
         if (row == globals.selectedRow || col == globals.selectedCol) {
           color = peerCell;
@@ -211,7 +209,7 @@ class _MyHomePageState extends State<MyHomePage> {
       }
     }
 
-    if(globals.doPeerDigits) {
+    if(globals.doPeerDigits.value) {
       SudokuState currentState = _problem.getCurrentState();
       List currentBoard = currentState.getTiles();
       if(_cellSelected()) {
@@ -221,7 +219,7 @@ class _MyHomePageState extends State<MyHomePage> {
       }
     }
 
-    if(globals.doPeerCells && globals.doPeerDigits && row == globals.selectedRow && col == globals.selectedCol) {
+    if(globals.doPeerCells.value && globals.doPeerDigits.value && row == globals.selectedRow && col == globals.selectedCol) {
       color = background;
     }
 
@@ -268,7 +266,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    globals.maxHints = 5;
+//    globals.maxHints = 5;
 //    globals.doPeerDigits = true;
     if (_problem == null) {
       _problem = SudokuProblem();
@@ -312,62 +310,42 @@ class _MyHomePageState extends State<MyHomePage> {
             Flex(
               direction: Axis.vertical,
               children: [
-                Flex(
-                  direction: Axis.horizontal,
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Text(
-                      'Highlight peer cells',
-                      style: CustomStyles.getFiraCode(CustomStyles.polarNight[3], 16)
-                    ),
-                    Transform.scale(
-                      scale: 1.3,
-                      child: Switch(
-                        value: globals.doPeerCells,
-                        onChanged: (bool val) {
-                          setState(() {
-                            globals.doPeerCells = val;
-                          });
-                        },
-                        activeColor: CustomStyles.polarNight[3],
-                        inactiveThumbColor: CustomStyles.polarNight[3],
-                        activeTrackColor: CustomStyles.aurora[3],
-                        inactiveTrackColor: CustomStyles.aurora[0],
-                      ),
-                    ),
-                  ],
-                ),
-                Flex(
-                  direction: Axis.horizontal,
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Text(
-                        'Highlight peer digits',
-                        style: CustomStyles.getFiraCode(CustomStyles.polarNight[3], 16)
-                    ),
-                    Transform.scale(
-                      scale: 1.3,
-                      child: Switch(
-                        value: globals.doPeerDigits,
-                        onChanged: (bool val) {
-                          setState(() {
-                            globals.doPeerDigits = val;
-                          });
-                        },
-                        activeColor: CustomStyles.polarNight[3],
-                        inactiveThumbColor: CustomStyles.polarNight[3],
-                        activeTrackColor: CustomStyles.aurora[3],
-                        inactiveTrackColor: CustomStyles.aurora[0],
-                      ),
-                    ),
-                  ],
-                ),
+                _getToggle('Highlight Peer Cells', globals.doPeerCells),
+                _getToggle('Highlight Peer Digits', globals.doPeerDigits),
               ],
             ),
           ],
         ),
       ),
       body: _getBody(),
+    );
+  }
+
+  _getToggle(String label, globals.BoolWrapper setting) {
+    return Flex(
+      direction: Axis.horizontal,
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        Text(
+            label,
+            style: CustomStyles.getFiraCode(CustomStyles.polarNight[3], 16)
+        ),
+        Transform.scale(
+          scale: 1.3,
+          child: Switch(
+            value: setting.value,
+            onChanged: (bool val) {
+              setState(() {
+                setting.value = val;
+              });
+            },
+            activeColor: CustomStyles.polarNight[3],
+            inactiveThumbColor: CustomStyles.polarNight[3],
+            activeTrackColor: CustomStyles.aurora[3],
+            inactiveTrackColor: CustomStyles.aurora[0],
+          ),
+        ),
+      ],
     );
   }
 
