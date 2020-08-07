@@ -45,12 +45,12 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  SudokuProblem _problem = SudokuProblem();
+  SudokuProblem _problem = SudokuProblem.withMoreHints(globals.hintOffset.value);
   var menuHeight = 70;
   SolvingAssistant _assistant;
 
   void _resetBoard() {
-    _problem = SudokuProblem();
+    _problem = SudokuProblem.withMoreHints(globals.hintOffset.value);
     globals.selectedRow = -1;
     globals.selectedCol = -1;
     setState(() {});
@@ -262,7 +262,7 @@ class _MyHomePageState extends State<MyHomePage> {
 //    globals.maxHints = 5;
 //    globals.doPeerDigits = true;
     if (_problem == null) {
-      _problem = SudokuProblem();
+      _problem = SudokuProblem.withMoreHints(globals.hintOffset.value);
     }
 
     return Scaffold(

@@ -22,7 +22,7 @@ class SudokuProblem extends Problem {
     board_size = cell_size * cell_size;
     super.setMover(SudokuMover(cell_size * cell_size));
     super.setInitialState(SudokuState(sudoku.initial_board));
-    super.setCurrentState(SudokuState(sudoku.initial_board));
+    super.setCurrentState(super.getInitialState());
     super.setFinalState(SudokuState(sudoku.final_board));
   }
 
@@ -40,7 +40,7 @@ class SudokuProblem extends Problem {
     sudoku = Sudoku.withMoreHints(hint_offset);
     super.setMover(SudokuMover(cell_size * cell_size));
     super.setInitialState(SudokuState(sudoku.initial_board));
-    super.setCurrentState(SudokuState(sudoku.initial_board));
+    super.setCurrentState(super.getInitialState());
     super.setFinalState(SudokuState(sudoku.final_board));
   }
 
