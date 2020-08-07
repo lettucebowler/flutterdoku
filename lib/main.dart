@@ -27,7 +27,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: CustomStyles.themeColor,
         visualDensity: VisualDensity.adaptivePlatformDensity,
-//        fontFamily: 'FiraCode',
+        canvasColor: CustomStyles.snowStorm[2],
+        fontFamily: 'FiraCode',
       ),
       home: MyHomePage(title: 'LettuceSudoku'),
     );
@@ -45,16 +46,8 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   SudokuProblem _problem = SudokuProblem();
-//  GridView board;
   var menuHeight = 70;
-//  int _selectedRow = -1;
-//  int _selectedCol = -1;
   SolvingAssistant _assistant;
-//  int globals.maxHints;
-//  List globals.hintsGiven = [];
-//  bool globals.doLegality = false;
-//  bool globals.doPeerCells = true;
-//  bool globals.doPeerDigits = false;
 
   void _resetBoard() {
     _problem = SudokuProblem();
@@ -229,10 +222,10 @@ class _MyHomePageState extends State<MyHomePage> {
     return color;
   }
 
-  Widget _makeBoardButton(int index, SudokuProblem problem) {
-    var row = index ~/ problem.board_size;
-    var col = index % problem.board_size;
-    SudokuState currentState = problem.getCurrentState();
+  Widget _makeBoardButton(int index) {
+    var row = index ~/ _problem.board_size;
+    var col = index % _problem.board_size;
+    SudokuState currentState = _problem.getCurrentState();
     List currentBoard = currentState.getTiles();
     var cellNum = currentBoard[row][col];
     String toPlace = cellNum == 0 ? '' : cellNum.toString();
@@ -273,7 +266,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }
 
     return Scaffold(
-      backgroundColor: CustomStyles.snowStorm[2],
+//      backgroundColor: CustomStyles.snowStorm[2],
       appBar: AppBar(
 //        leading: Container(
 //          child: InkWell(
@@ -294,8 +287,9 @@ class _MyHomePageState extends State<MyHomePage> {
           style: CustomStyles.titleText,
         ),
       ),
-      endDrawer: Drawer(
+      drawer: Drawer(
         child: ListView(
+          padding: EdgeInsets.all(0),
           children: [
             DrawerHeader(
               child: Center(
@@ -307,12 +301,16 @@ class _MyHomePageState extends State<MyHomePage> {
                 color: CustomStyles.polarNight[3],
               ),
             ),
-            Flex(
-              direction: Axis.vertical,
-              children: [
-                _getToggle('Highlight Peer Cells', globals.doPeerCells),
-                _getToggle('Highlight Peer Digits', globals.doPeerDigits),
-              ],
+            Container(
+              padding: EdgeInsets.fromLTRB(8, 0, 8, 8),
+              child: Flex(
+                direction: Axis.vertical,
+                children: [
+                  _getToggle('Highlight Peer Cells', globals.doPeerCells),
+                  _getToggle('Highlight Peer Digits', globals.doPeerDigits),
+                  _getSlider('Difficulty', globals.hintOffset, 0, 33, 3),
+                ],
+              ),
             ),
           ],
         ),
@@ -326,12 +324,22 @@ class _MyHomePageState extends State<MyHomePage> {
       direction: Axis.horizontal,
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        Text(
+        Flexible(
+          fit: FlexFit.tight,
+          child: Text(
             label,
-            style: CustomStyles.getFiraCode(CustomStyles.polarNight[3], 16)
+            style: TextStyle(
+              color: CustomStyles.polarNight[3],
+              fontSize: 16,
+            ),
+            textAlign: TextAlign.left,
+          ),
         ),
-        Transform.scale(
-          scale: 1.3,
+//        Transform.scale(
+//          scale: 1.3,
+//          child:
+        Container(
+//          color: Colors.red,
           child: Switch(
             value: setting.value,
             onChanged: (bool val) {
@@ -345,7 +353,67 @@ class _MyHomePageState extends State<MyHomePage> {
             inactiveTrackColor: CustomStyles.aurora[0],
           ),
         ),
+//        ),
       ],
+    );
+  }
+
+  _getSlider(String label, globals.IntWrapper setting, double min, double max, int divisions) {
+    return
+//      Container(
+//      height: 70,
+////      color: Colors,
+////      fit: FlexFit.loose,
+//      child:
+      Column(
+//        direction: Axis.horizontal,
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+//          Flexible(
+//            flex: 3,
+//            fit: FlexFit.tight,
+//            child:
+            Text(
+              label,
+              style: TextStyle(
+                color: CustomStyles.polarNight[3],
+                fontSize: 16,
+              ),
+              textAlign: TextAlign.center,
+            ),
+//          ),
+//          Flexible(
+//            flex: 3,
+//            fit: FlexFit.tight,
+////            color: Colors.blue,
+//            child:
+        Row(
+          children: [
+            Expanded(
+              child: Slider(
+                value: setting.value.toDouble(),
+                onChanged: (val) {
+                  setState(() {
+                    setting.value = val.toInt();
+                  });
+                },
+                min: min,
+                max: max,
+                divisions: divisions,
+//            activeColor: CustomStyles.polarNight[3],
+//            inactiveThumbColor: CustomStyles.polarNight[3],
+//            activeTrackColor: CustomStyles.aurora[3],
+//            inactiveTrackColor: CustomStyles.aurora[0],
+              ),
+            ),
+
+          ],
+        ),
+
+//          ),
+        ],
+//      ),
     );
   }
 
@@ -360,7 +428,7 @@ class _MyHomePageState extends State<MyHomePage> {
             childAspectRatio: 1,
             children:
                 List.generate(_problem.board_size * _problem.board_size, (index) {
-              Ink button = _makeBoardButton(index, _problem);
+              Ink button = _makeBoardButton(index);
               return button;
             })),
       ),

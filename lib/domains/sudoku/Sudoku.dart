@@ -10,7 +10,8 @@ class Sudoku {
   Sudoku() {
     _initialize();
     _scrambleBoards();
-    _addClues(hint_offset);
+//    _addClues(hint_offset);
+    print(toString());
   }
 
   Sudoku.withMoreHints(int hint_offset) {

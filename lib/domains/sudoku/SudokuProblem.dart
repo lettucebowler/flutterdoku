@@ -22,7 +22,7 @@ class SudokuProblem extends Problem {
     board_size = cell_size * cell_size;
     super.setMover(SudokuMover(cell_size * cell_size));
     super.setInitialState(SudokuState(sudoku.initial_board));
-    super.setCurrentState(super.getInitialState());
+    super.setCurrentState(SudokuState(sudoku.initial_board));
     super.setFinalState(SudokuState(sudoku.final_board));
   }
 
@@ -39,9 +39,9 @@ class SudokuProblem extends Problem {
         'The game is finished when the grid is full.');
     sudoku = Sudoku.withMoreHints(hint_offset);
     super.setMover(SudokuMover(cell_size * cell_size));
-    super.setInitialState(super.getInitialState());
-    super.setCurrentState(super.getInitialState());
-    super.setFinalState(super.getFinalState());
+    super.setInitialState(SudokuState(sudoku.initial_board));
+    super.setCurrentState(SudokuState(sudoku.initial_board));
+    super.setFinalState(SudokuState(sudoku.final_board));
   }
 
   SudokuProblem.resume(

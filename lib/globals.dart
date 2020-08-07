@@ -2,6 +2,7 @@ BoolWrapper doLegality = BoolWrapper(false);
 BoolWrapper doPeerCells = BoolWrapper(true);
 BoolWrapper doPeerDigits = BoolWrapper(true);
 IntWrapper maxHints = IntWrapper(5);
+IntWrapper hintOffset = IntWrapper(13);
 int selectedRow = -1;
 int selectedCol = -1;
 List hintsGiven = [];
