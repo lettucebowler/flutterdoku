@@ -277,19 +277,19 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       backgroundColor: CustomStyles.snowStorm[2],
       appBar: AppBar(
-        leading: Container(
-          child: InkWell(
-            child: Container(
-              height: 30,
-              width: 30,
-              child: Icon(Icons.menu, color: CustomStyles.snowStorm[2], size: 30),
-            ),
-            onTap: () {
-              _solveGame(_problem);
-              setState(() {});
-            },
-          ),
-        ),
+//        leading: Container(
+//          child: InkWell(
+//            child: Container(
+//              height: 30,
+//              width: 30,
+//              child: Icon(Icons.menu, color: CustomStyles.snowStorm[2], size: 30),
+//            ),
+//            onTap: () {
+//              _solveGame(_problem);
+//              setState(() {});
+//            },
+//          ),
+//        ),
         title: Text(
           'LettuceSudoku',
           textAlign: TextAlign.center,
@@ -417,7 +417,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   toPlace,
                   textAlign: TextAlign.center,
                   maxLines: 1,
-                  style: CustomStyles.getFiraCode(CustomStyles.polarNight[3], 30),
+                  style: CustomStyles.getFiraCode(CustomStyles.polarNight[3], 36),
                 ),
               ),
             ),
@@ -488,12 +488,13 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ),
         Container(
+          padding: EdgeInsets.fromLTRB(8, 0, 8, 0),
           child: Flex(
             mainAxisAlignment: MainAxisAlignment.center,
             direction: Axis.horizontal,
             children: <Widget>[
               Flexible(
-                fit: FlexFit.tight,
+                fit: FlexFit.loose,
                   child: FlatButton(
                     hoverColor: CustomStyles.snowStorm[0],
                     splashColor: CustomStyles.snowStorm[0],
@@ -502,7 +503,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     },
                     child: Text(
                       'New Game',
-                      textAlign: TextAlign.center,
+                      textAlign: TextAlign.left,
                       maxLines: 1,
                       style: CustomStyles.getFiraCode(CustomStyles.polarNight[3], 26),
                     ),
@@ -510,7 +511,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               Flexible(
 //                flex: 2,
-                fit: FlexFit.tight,
+                fit: FlexFit.loose,
                   child: FlatButton(
                     hoverColor: CustomStyles.snowStorm[0],
                     splashColor: CustomStyles.snowStorm[0],
@@ -519,7 +520,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     },
                     child: Text(
                       'hint(' + hintsLeft.toString() + ')',
-                      textAlign: TextAlign.center,
+                      textAlign: TextAlign.right,
                       maxLines: 1,
                       style: CustomStyles.getFiraCode(CustomStyles.polarNight[3], 26),
                     ),
