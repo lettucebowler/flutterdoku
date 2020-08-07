@@ -259,8 +259,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-//    globals.maxHints = 5;
-//    globals.doPeerDigits = true;
     if (_problem == null) {
       _problem = SudokuProblem.withMoreHints(globals.hintOffset.value);
     }
@@ -268,19 +266,6 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
 //      backgroundColor: CustomStyles.snowStorm[2],
       appBar: AppBar(
-//        leading: Container(
-//          child: InkWell(
-//            child: Container(
-//              height: 30,
-//              width: 30,
-//              child: Icon(Icons.menu, color: CustomStyles.snowStorm[2], size: 30),
-//            ),
-//            onTap: () {
-//              _solveGame(_problem);
-//              setState(() {});
-//            },
-//          ),
-//        ),
         title: Text(
           'LettuceSudoku',
           textAlign: TextAlign.center,
@@ -359,35 +344,18 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   _getSlider(String label, globals.IntWrapper setting, double min, double max, int divisions) {
-    return
-//      Container(
-//      height: 70,
-////      color: Colors,
-////      fit: FlexFit.loose,
-//      child:
-      Column(
-//        direction: Axis.horizontal,
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-//          Flexible(
-//            flex: 3,
-//            fit: FlexFit.tight,
-//            child:
-            Text(
-              label,
-              style: TextStyle(
-                color: CustomStyles.polarNight[3],
-                fontSize: 16,
-              ),
-              textAlign: TextAlign.center,
-            ),
-//          ),
-//          Flexible(
-//            flex: 3,
-//            fit: FlexFit.tight,
-////            color: Colors.blue,
-//            child:
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            color: CustomStyles.polarNight[3],
+            fontSize: 16,
+          ),
+          textAlign: TextAlign.center,
+        ),
         Row(
           children: [
             Expanded(
@@ -401,19 +369,11 @@ class _MyHomePageState extends State<MyHomePage> {
                 min: min,
                 max: max,
                 divisions: divisions,
-//            activeColor: CustomStyles.polarNight[3],
-//            inactiveThumbColor: CustomStyles.polarNight[3],
-//            activeTrackColor: CustomStyles.aurora[3],
-//            inactiveTrackColor: CustomStyles.aurora[0],
               ),
             ),
-
           ],
         ),
-
-//          ),
-        ],
-//      ),
+      ],
     );
   }
 
@@ -479,13 +439,14 @@ class _MyHomePageState extends State<MyHomePage> {
     SudokuState initialState = _problem.getInitialState();
     var initialBoard = initialState.getTiles();
     var initialHint = initialBoard[row][col] != 0;
+    var legal = _problem.isLegal(row, col);
+    var correct = _problem.isCorrect(row, col);
     Color color = CustomStyles.frost[3];
-    if (initialHint) {
-      color = CustomStyles.polarNight[1];
-    }
-    if(_givenAsHint(row, col)) {
-      color = CustomStyles.aurora[4];
-    }
+
+    color = globals.doLegality.value && !legal ? CustomStyles.aurora[0] : color;
+    color = !globals.doLegality.value && !correct ? CustomStyles.aurora[0] : color;
+    color = initialHint ? CustomStyles.polarNight[3] : color;
+    color = _givenAsHint(row, col) ? CustomStyles.aurora[4] : color;
     return color;
   }
 
