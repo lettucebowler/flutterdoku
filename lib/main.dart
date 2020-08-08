@@ -11,9 +11,7 @@ import 'domains/sudoku/SudokuState.dart';
 import 'globals.dart' as globals;
 import 'dart:ui';
 import 'dart:math';
-
 import 'framework/problem/SolvingAssistant.dart';
-//import 'globals.dart';
 
 void main() {
   runApp(MyApp());
