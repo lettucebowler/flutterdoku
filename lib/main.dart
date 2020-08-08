@@ -102,21 +102,40 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
           Flex(
-            direction: Axis.horizontal,
-            mainAxisAlignment: MainAxisAlignment.center,
+            direction: Axis.vertical,
             children: [
-              FlatButton(
-                color: CustomStyles.polarNight[3],
-                splashColor: CustomStyles.polarNight[0],
-                child: Text('Solve Game', style: CustomStyles.getFiraCode(CustomStyles.snowStorm[2], 17)),
-                onPressed: () => _solveGame(_problem),
+              Flex(
+                direction: Axis.horizontal,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  FlatButton(
+                    color: CustomStyles.polarNight[3],
+                    splashColor: CustomStyles.polarNight[0],
+                    child: Text('Solve Game', style: CustomStyles.getFiraCode(CustomStyles.snowStorm[2], 17)),
+                    onPressed: () => _solveGame(_problem),
+                  ),
+                  Container(width: 6),
+                  FlatButton(
+                    color: CustomStyles.polarNight[3],
+                    splashColor: CustomStyles.polarNight[0],
+                    child: Text('Reset Game', style: CustomStyles.getFiraCode(CustomStyles.snowStorm[2], 17)),
+                    onPressed: () => _resetBoard(),
+                  ),
+                ],
               ),
-              Container(width: 6),
-              FlatButton(
+              RaisedButton(
+                elevation: 10,
                 color: CustomStyles.polarNight[3],
                 splashColor: CustomStyles.polarNight[0],
-                child: Text('Reset Game', style: CustomStyles.getFiraCode(CustomStyles.snowStorm[2], 17)),
-                onPressed: () => _resetBoard(),
+                onPressed: () {
+                  _newGame();
+                },
+                child: Text(
+                  'New Game',
+                  textAlign: TextAlign.left,
+                  maxLines: 1,
+                  style: CustomStyles.getFiraCode(CustomStyles.snowStorm[2], 17),
+                ),
               ),
             ],
           ),
