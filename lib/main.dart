@@ -110,17 +110,6 @@ class _MyHomePageState extends State<MyHomePage> {
     globals.hintsGiven.clear();
   }
 
-  double getConstraint() {
-    var padding = MediaQuery.of(context).padding;
-    var width = MediaQuery.of(context).size.width;
-    var height = MediaQuery.of(context).size.height -
-        padding.top -
-        padding.bottom -
-        menuHeight;
-    var constraint = width <= height ? width : height;
-    return constraint;
-  }
-
   EdgeInsets _getBoardPadding(int index) {
     int row = index ~/ _problem.board_size;
     int col = index % _problem.board_size;
