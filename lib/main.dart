@@ -446,13 +446,10 @@ class _MyHomePageState extends State<MyHomePage> {
       children: List.generate(10, (index) {
         int num = (index + 1) % (_problem.board_size + 1);
         String toPlace = num == 0 ? 'X' : (index + 1).toString();
-        FlatButton button = FlatButton(
+        RaisedButton button = RaisedButton(
+          elevation: 10,
           color: CustomStyles.polarNight[3],
           splashColor: CustomStyles.polarNight[1],
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12.0),
-              side: BorderSide(color: CustomStyles.polarNight[3])
-          ),
           onPressed: () {
             setState(() {
               if(_cellSelected()) {
@@ -534,17 +531,19 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
         ),
-        Container(
-          padding: EdgeInsets.fromLTRB(8, 0, 8, 0),
-          child: Flex(
-            mainAxisAlignment: MainAxisAlignment.center,
-            direction: Axis.horizontal,
-            children: <Widget>[
-              Flexible(
-                fit: FlexFit.tight,
-                  child: FlatButton(
+        Flexible(
+          child: Container(
+            padding: EdgeInsets.fromLTRB(8, 0, 8, 0),
+            child: Flex(
+              mainAxisAlignment: MainAxisAlignment.center,
+              direction: Axis.horizontal,
+              children: <Widget>[
+                Flexible(
+                  fit: FlexFit.tight,
+                  child: RaisedButton(
+                    elevation: 10,
                     color: CustomStyles.polarNight[3],
-                    hoverColor: CustomStyles.polarNight[0],
+//                    hoverColor: CustomStyles.polarNight[0],
                     splashColor: CustomStyles.polarNight[0],
                     onPressed: () {
                       _newGame();
@@ -555,21 +554,17 @@ class _MyHomePageState extends State<MyHomePage> {
                       maxLines: 1,
                       style: CustomStyles.getFiraCode(CustomStyles.snowStorm[2], 26),
                     ),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12.0),
-                        side: BorderSide(color: CustomStyles.polarNight[3])
-                    ),
                   ),
-              ),
-              Container(
-                width: 8,
-              ),
-              Flexible(
-//                flex: 2,
-                fit: FlexFit.tight,
-                  child: FlatButton(
+                ),
+                Container(
+                  width: 8,
+                ),
+                Flexible(
+                  fit: FlexFit.tight,
+                  child: RaisedButton(
+                    elevation: 10,
                     color: CustomStyles.polarNight[3],
-                    hoverColor: CustomStyles.polarNight[0],
+//                    hoverColor: CustomStyles.polarNight[0],
                     splashColor: CustomStyles.polarNight[0],
                     onPressed: () {
                       _giveHint();
@@ -580,13 +575,10 @@ class _MyHomePageState extends State<MyHomePage> {
                       maxLines: 1,
                       style: CustomStyles.getFiraCode(CustomStyles.snowStorm[2], 26),
                     ),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12.0),
-                        side: BorderSide(color: CustomStyles.polarNight[3])
-                    ),
                   ),
-              ),
-            ],
+                ),
+              ],
+            ),
           ),
         ),
       ],
