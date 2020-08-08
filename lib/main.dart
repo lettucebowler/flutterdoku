@@ -468,7 +468,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Function _getMove(bool selected, int num, int row, int col) {
-    return selected ? () => setState((){_doMove(num, globals.selectedRow, globals.selectedCol);}) : null;
+    return selected ? () => setState((){_doMove(num, globals.selectedRow, globals.selectedCol);}) : () => setState(() {});
   }
 
   Color _getTextColor(int row, int col) {
