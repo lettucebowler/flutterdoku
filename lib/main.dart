@@ -61,68 +61,71 @@ class _MyHomePageState extends State<MyHomePage> {
           style: CustomStyles.titleText,
         ),
       ),
-      drawer: Drawer(
-        child: Column(
-//          padding: EdgeInsets.all(0),
-          children: [
-            DrawerHeader(
-              child: Center(
-                child: Text('Settings',
-                  style: CustomStyles.titleText,
-                ),
-              ),
-              decoration: BoxDecoration(
-                color: CustomStyles.polarNight[3],
-              ),
-            ),
-            Container(
-              padding: EdgeInsets.fromLTRB(16, 0, 8, 0),
-              child: Flex(
-                direction: Axis.vertical,
-                children: [
-                  _getToggle('Highlight Peer Cells', globals.doPeerCells),
-                  _getToggle('Highlight Peer Digits', globals.doPeerDigits),
-                  _getToggle('Show Mistakes', globals.doMistakes),
-                  AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 250),
-                    transitionBuilder: (Widget child, Animation<double> animation) =>
-                      SizeTransition(
-                        child: child, sizeFactor: animation,
-                      ),
-                    child: _getMistakeRadioGroup(),
-                    ),
-                  _getSliderNoDivisions('Initial Hints: ' + globals.initialHints.value.toString(), globals.initialHints, 17, 50),
-                ],
-              ),
-            ),
-            Flex(
-              direction: Axis.horizontal,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                FlatButton(
-                  color: CustomStyles.polarNight[3],
-                  splashColor: CustomStyles.polarNight[0],
-                  child: Text('Solve Game', style: CustomStyles.getFiraCode(CustomStyles.snowStorm[2], 17)),
-                  onPressed: () => _solveGame(_problem),
-                ),
-                Container(width: 6),
-                FlatButton(
-                  color: CustomStyles.polarNight[3],
-                  splashColor: CustomStyles.polarNight[0],
-                  child: Text('Reset Game', style: CustomStyles.getFiraCode(CustomStyles.snowStorm[2], 17)),
-                  onPressed: () => _resetBoard(),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
+      drawer: _getDrawer(),
       body: _getBody(),
     );
   }
 
-  void _newGame() {
+  Drawer _getDrawer() {
+    return Drawer(
+      child: Column(
+//          padding: EdgeInsets.all(0),
+        children: [
+          DrawerHeader(
+            child: Center(
+              child: Text('Settings',
+                style: CustomStyles.titleText,
+              ),
+            ),
+            decoration: BoxDecoration(
+              color: CustomStyles.polarNight[3],
+            ),
+          ),
+          Container(
+            padding: EdgeInsets.fromLTRB(16, 0, 8, 0),
+            child: Flex(
+              direction: Axis.vertical,
+              children: [
+                _getToggle('Highlight Peer Cells', globals.doPeerCells),
+                _getToggle('Highlight Peer Digits', globals.doPeerDigits),
+                _getToggle('Show Mistakes', globals.doMistakes),
+                AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 250),
+                  transitionBuilder: (Widget child, Animation<double> animation) =>
+                      SizeTransition(
+                        child: child, sizeFactor: animation,
+                      ),
+                  child: _getMistakeRadioGroup(),
+                ),
+                _getSliderNoDivisions('Initial Hints: ' + globals.initialHints.value.toString(), globals.initialHints, 17, 50),
+              ],
+            ),
+          ),
+          Flex(
+            direction: Axis.horizontal,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              FlatButton(
+                color: CustomStyles.polarNight[3],
+                splashColor: CustomStyles.polarNight[0],
+                child: Text('Solve Game', style: CustomStyles.getFiraCode(CustomStyles.snowStorm[2], 17)),
+                onPressed: () => _solveGame(_problem),
+              ),
+              Container(width: 6),
+              FlatButton(
+                color: CustomStyles.polarNight[3],
+                splashColor: CustomStyles.polarNight[0],
+                child: Text('Reset Game', style: CustomStyles.getFiraCode(CustomStyles.snowStorm[2], 17)),
+                onPressed: () => _resetBoard(),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
 
+  void _newGame() {
     setState(() {
       _problem = SudokuProblem.withMoreHints(globals.initialHints.value - 17);
       globals.selectedRow = -1;
