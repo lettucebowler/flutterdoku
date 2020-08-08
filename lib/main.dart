@@ -62,8 +62,8 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.all(0),
+        child: Column(
+//          padding: EdgeInsets.all(0),
           children: [
             DrawerHeader(
               child: Center(
@@ -76,7 +76,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
             Container(
-              padding: EdgeInsets.fromLTRB(8, 0, 8, 8),
+              padding: EdgeInsets.fromLTRB(16, 0, 8, 0),
               child: Flex(
                 direction: Axis.vertical,
                 children: [
@@ -91,9 +91,28 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                     child: _getMistakeRadioGroup(),
                     ),
-                  _getSliderNoDivisions('Initial Hints', globals.initialHints, 17, 50),
+                  _getSliderNoDivisions('Initial Hints: ' + globals.initialHints.value.toString(), globals.initialHints, 17, 50),
                 ],
               ),
+            ),
+            Flex(
+              direction: Axis.horizontal,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                FlatButton(
+                  color: CustomStyles.polarNight[3],
+                  splashColor: CustomStyles.polarNight[0],
+                  child: Text('Solve Game', style: CustomStyles.getFiraCode(CustomStyles.snowStorm[2], 17)),
+                  onPressed: () => _solveGame(_problem),
+                ),
+                Container(width: 6),
+                FlatButton(
+                  color: CustomStyles.polarNight[3],
+                  splashColor: CustomStyles.polarNight[0],
+                  child: Text('Reset Game', style: CustomStyles.getFiraCode(CustomStyles.snowStorm[2], 17)),
+                  onPressed: () => _resetBoard(),
+                ),
+              ],
             ),
           ],
         ),
@@ -102,19 +121,31 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+  void _newGame() {
+
+    setState(() {
+      _problem = SudokuProblem.withMoreHints(globals.initialHints.value - 17);
+      globals.selectedRow = -1;
+      globals.selectedCol = -1;
+      globals.hintsGiven.clear();
+    });
+
+  }
+
   void _resetBoard() {
-    _problem = SudokuProblem.withMoreHints(globals.initialHints.value - 17);
-    globals.selectedRow = -1;
-    globals.selectedCol = -1;
-    setState(() {});
-    globals.hintsGiven.clear();
+    setState(() {
+      _problem.setCurrentState(_problem.getInitialState());
+      globals.selectedRow = -1;
+      globals.selectedCol = -1;
+      globals.hintsGiven.clear();
+    });
   }
 
   EdgeInsets _getBoardPadding(int index) {
     int row = index ~/ _problem.board_size;
     int col = index % _problem.board_size;
 
-    double thickness = 1.5;
+    double thickness = 2;
     double defaultThickness = 0.5;
     double right = defaultThickness;
     double top = defaultThickness;
@@ -204,6 +235,7 @@ class _MyHomePageState extends State<MyHomePage> {
         }
       }
     }
+    setState(() {});
   }
 
   bool _cellSelected() {
@@ -250,28 +282,35 @@ class _MyHomePageState extends State<MyHomePage> {
     var cellNum = currentBoard[row][col];
     String toPlace = cellNum == 0 ? '' : cellNum.toString();
 
-    Ink button = Ink(
+    Color cellColor = _getCellColor(row, col);
+
+    FlatButton button = FlatButton(
       padding: _getBoardPadding(index),
-      child: Material(
-        color: _getCellColor(row, col),
-        child: InkWell(
-          splashColor: CustomStyles.frost[2],
-          hoverColor: CustomStyles.frost[3],
-          onTap: () {
-            globals.selectedRow = row;
-            globals.selectedCol = col;
-            setState(() {});
-          },
-          child: Center(
-            child: AutoSizeText(
-              toPlace,
-              textAlign: TextAlign.center,
-              maxLines: 1,
-              style: CustomStyles.getFiraCode(_getTextColor(row, col), 30),
+      color: cellColor,
+      child: Container(
+        child: Material(
+          color: _getCellColor(row, col),
+          child: InkWell(
+            splashColor: CustomStyles.frost[2],
+            hoverColor: CustomStyles.frost[3],
+            onTap: () {
+              setState(() {
+                globals.selectedRow = row;
+                globals.selectedCol = col;
+              });
+            },
+            child: Center(
+              child: AutoSizeText(
+                toPlace,
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                style: CustomStyles.getFiraCode(_getTextColor(row, col), 30),
+              ),
             ),
           ),
         ),
       ),
+
     );
 
     return button;
@@ -298,7 +337,7 @@ class _MyHomePageState extends State<MyHomePage> {
             label,
             style: TextStyle(
               color: CustomStyles.polarNight[3],
-              fontSize: 16,
+              fontSize: 17,
             ),
             textAlign: TextAlign.left,
           ),
@@ -352,12 +391,13 @@ class _MyHomePageState extends State<MyHomePage> {
           label,
           style: TextStyle(
             color: CustomStyles.polarNight[3],
-            fontSize: 16,
+            fontSize: 17,
           ),
           textAlign: TextAlign.center,
         ),
         Row(
           children: [
+            Text('17'),
             Expanded(
               child: Slider(
                 value: setting.value.toDouble(),
@@ -370,6 +410,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 max: max,
               ),
             ),
+            Text('50'),
           ],
         ),
       ],
@@ -387,7 +428,7 @@ class _MyHomePageState extends State<MyHomePage> {
             childAspectRatio: 1,
             children:
                 List.generate(_problem.board_size * _problem.board_size, (index) {
-              Ink button = _makeBoardButton(index);
+              FlatButton button = _makeBoardButton(index);
               return button;
             })),
       ),
@@ -405,26 +446,26 @@ class _MyHomePageState extends State<MyHomePage> {
       children: List.generate(10, (index) {
         int num = (index + 1) % (_problem.board_size + 1);
         String toPlace = num == 0 ? 'X' : (index + 1).toString();
-        Container button = Container(
-          child: Material(
-            color: CustomStyles.snowStorm[2],
-            child: InkWell(
-              hoverColor: Colors.grey,
-              splashColor: Colors.grey,
-              onTap: () {
-                if(_cellSelected()) {
-                  _doMove(num, globals.selectedRow, globals.selectedCol);
-                  setState(() {});
-                }
-              },
-              child: Center(
-                child: AutoSizeText(
-                  toPlace,
-                  textAlign: TextAlign.center,
-                  maxLines: 1,
-                  style: CustomStyles.getFiraCode(CustomStyles.polarNight[3], 36),
-                ),
-              ),
+        FlatButton button = FlatButton(
+          color: CustomStyles.polarNight[3],
+          splashColor: CustomStyles.polarNight[1],
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12.0),
+              side: BorderSide(color: CustomStyles.polarNight[3])
+          ),
+          onPressed: () {
+            setState(() {
+              if(_cellSelected()) {
+                _doMove(num, globals.selectedRow, globals.selectedCol);
+              }
+            });
+          },
+          child: Center(
+            child: AutoSizeText(
+              toPlace,
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              style: CustomStyles.getFiraCode(CustomStyles.snowStorm[2], 36),
             ),
           ),
         );
@@ -458,13 +499,13 @@ class _MyHomePageState extends State<MyHomePage> {
             MediaQuery.of(context).padding.bottom,
         width: MediaQuery.of(context).size.width,
         padding: EdgeInsets.all(4),
-        child: isPortrait ? _makeBoardCol() : _makeBoardRow(),
+        child: isPortrait ? _makeBodyCol() : _makeBoardRow(),
       ),
     );
     return body;
   }
 
-  Widget _makeBoardCol() {
+  Widget _makeBodyCol() {
     var hintsLeft = _getHintsLeft();
     Column col = Column(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -500,27 +541,36 @@ class _MyHomePageState extends State<MyHomePage> {
             direction: Axis.horizontal,
             children: <Widget>[
               Flexible(
-                fit: FlexFit.loose,
+                fit: FlexFit.tight,
                   child: FlatButton(
-                    hoverColor: CustomStyles.snowStorm[0],
-                    splashColor: CustomStyles.snowStorm[0],
+                    color: CustomStyles.polarNight[3],
+                    hoverColor: CustomStyles.polarNight[0],
+                    splashColor: CustomStyles.polarNight[0],
                     onPressed: () {
-                      _resetBoard();
+                      _newGame();
                     },
                     child: Text(
                       'New Game',
                       textAlign: TextAlign.left,
                       maxLines: 1,
-                      style: CustomStyles.getFiraCode(CustomStyles.polarNight[3], 26),
+                      style: CustomStyles.getFiraCode(CustomStyles.snowStorm[2], 26),
+                    ),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12.0),
+                        side: BorderSide(color: CustomStyles.polarNight[3])
                     ),
                   ),
               ),
+              Container(
+                width: 8,
+              ),
               Flexible(
 //                flex: 2,
-                fit: FlexFit.loose,
+                fit: FlexFit.tight,
                   child: FlatButton(
-                    hoverColor: CustomStyles.snowStorm[0],
-                    splashColor: CustomStyles.snowStorm[0],
+                    color: CustomStyles.polarNight[3],
+                    hoverColor: CustomStyles.polarNight[0],
+                    splashColor: CustomStyles.polarNight[0],
                     onPressed: () {
                       _giveHint();
                     },
@@ -528,7 +578,11 @@ class _MyHomePageState extends State<MyHomePage> {
                       'hint(' + hintsLeft.toString() + ')',
                       textAlign: TextAlign.right,
                       maxLines: 1,
-                      style: CustomStyles.getFiraCode(CustomStyles.polarNight[3], 26),
+                      style: CustomStyles.getFiraCode(CustomStyles.snowStorm[2], 26),
+                    ),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12.0),
+                        side: BorderSide(color: CustomStyles.polarNight[3])
                     ),
                   ),
               ),
