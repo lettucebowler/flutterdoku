@@ -4,7 +4,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:flutter/services.dart';
 import 'CustomStyles.dart';
 import 'domains/sudoku/SudokuProblem.dart';
 import 'domains/sudoku/SudokuState.dart';
@@ -71,7 +70,6 @@ class _MyHomePageState extends State<MyHomePage> {
   Drawer _getDrawer() {
     return Drawer(
       child: Column(
-//          padding: EdgeInsets.all(0),
         children: [
           DrawerHeader(
             child: Center(
@@ -148,7 +146,9 @@ class _MyHomePageState extends State<MyHomePage> {
       TextAlign textAlign, Color buttonColor, Color splashColor,
       Function function) {
     return RaisedButton(
-      elevation: 10,
+      elevation: 0,
+      hoverElevation: 10,
+      focusElevation: 0,
       color: buttonColor,
       splashColor: splashColor,
       onPressed: function,
@@ -336,6 +336,7 @@ class _MyHomePageState extends State<MyHomePage> {
       padding: _getBoardPadding(index),
 
       child: FlatButton(
+        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0.0)),
         color: cellColor,
         hoverColor: CustomStyles.aurora[2],
@@ -353,40 +354,6 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
     );
-
-//    FlatButton(
-//      padding: _getBoardPadding(index),
-//      color: cellColor,
-//      onPressed: () => setState(() {
-//                globals.selectedRow = row;
-//                globals.selectedCol = col;
-//              }),
-////      child: Container(
-//////        child: Material(
-//////          color: _getCellColor(row, col),
-//////          child: InkWell(
-//////            splashColor: CustomStyles.frost[2],
-//////            hoverColor: CustomStyles.frost[3],
-//////            onTap: () {
-//////              setState(() {
-//////                globals.selectedRow = row;
-//////                globals.selectedCol = col;
-//////              });
-//////            },
-////            child: Center(
-////              child: AutoSizeText(
-////                toPlace,
-////                textAlign: TextAlign.center,
-////                maxLines: 1,
-////                style: CustomStyles.getFiraCode(_getTextColor(row, col), 30),
-////              ),
-////            ),
-//////          ),
-//////        ),
-////      ),
-//
-//    );
-
     return button;
   }
 
@@ -501,7 +468,7 @@ class _MyHomePageState extends State<MyHomePage> {
       child: Container(
         color: CustomStyles.polarNight[3],
         child: GridView.count(
-            padding: EdgeInsets.all(1),
+//            padding: EdgeInsets.all(1),
             crossAxisCount: _problem.board_size,
             childAspectRatio: 1,
             children:
@@ -515,7 +482,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Widget _getMoveButtons() {
     var buttons = GridView.count(
-      padding: EdgeInsets.all(1),
+//      padding: EdgeInsets.all(1),
       physics: const NeverScrollableScrollPhysics(),
       crossAxisCount: 5,
       mainAxisSpacing: 2,
@@ -568,34 +535,15 @@ class _MyHomePageState extends State<MyHomePage> {
         .of(context)
         .orientation == Orientation.portrait;
     var body = Center(
-      child: Container(
-        height: MediaQuery
-            .of(context)
-            .size
-            .height -
-            MediaQuery
-                .of(context)
-                .padding
-                .top -
-            MediaQuery
-                .of(context)
-                .padding
-                .bottom,
-        width: MediaQuery
-            .of(context)
-            .size
-            .width,
-        padding: EdgeInsets.all(4),
-        child: isPortrait ? _makeBodyCol() : _makeBoardRow(),
-      ),
-    );
+      child: _makeBodyRow(),
+      );
     return body;
   }
 
   Widget _makeBodyCol() {
-    var hintsLeft = _getHintsLeft();
-    Column col = Column(
-      mainAxisAlignment: MainAxisAlignment.start,
+    return Flex(
+      direction: Axis.vertical,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         Flexible(
           flex: 4,
@@ -613,7 +561,7 @@ class _MyHomePageState extends State<MyHomePage> {
           flex: 2,
           fit: FlexFit.tight,
           child: Container(
-            padding: EdgeInsets.all(4),
+            padding: EdgeInsets.all(8),
             child: Center(
               child: Container(
                 child: _getMoveButtons(),
@@ -623,7 +571,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         Flexible(
           child: Container(
-            padding: EdgeInsets.fromLTRB(8, 0, 8, 0),
+            padding: EdgeInsets.all(4),
             child: Flex(
               mainAxisAlignment: MainAxisAlignment.center,
               direction: Axis.horizontal,
@@ -633,7 +581,6 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: RaisedButton(
                     elevation: 10,
                     color: CustomStyles.polarNight[3],
-//                    hoverColor: CustomStyles.polarNight[0],
                     splashColor: CustomStyles.polarNight[0],
                     onPressed: () => _newGame(),
                     child: Text(
@@ -653,13 +600,12 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: RaisedButton(
                     elevation: 10,
                     color: CustomStyles.polarNight[3],
-//                    hoverColor: CustomStyles.polarNight[0],
                     splashColor: CustomStyles.polarNight[0],
                     onPressed: () {
                       _giveHint();
                     },
                     child: Text(
-                      'hint(' + hintsLeft.toString() + ')',
+                      'hint(' + _getHintsLeft().toString() + ')',
                       textAlign: TextAlign.right,
                       maxLines: 1,
                       style: CustomStyles.getFiraCode(
@@ -673,90 +619,26 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ],
     );
-    return col;
   }
 
-  Widget _makeBoardRow() {
-    var hintsLeft = _getHintsLeft();
-    Column col = Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: <Widget>[
-        Flexible(
-          flex: 4,
-          child: AspectRatio(
-            aspectRatio: 1,
-            child: Container(
-              padding: EdgeInsets.all(4),
-              child: Container(
-                child: _getBoard(),
-              ),
-            ),
-          ),
-        ),
-        Flexible(
-          flex: 2,
-          fit: FlexFit.tight,
-          child: Container(
-            padding: EdgeInsets.all(4),
-            child: Center(
-              child: Container(
-                child: _getMoveButtons(),
-              ),
-            ),
-          ),
-        ),
-        Flexible(
-          child: Container(
-            padding: EdgeInsets.fromLTRB(8, 0, 8, 0),
-            child: Flex(
-              mainAxisAlignment: MainAxisAlignment.center,
-              direction: Axis.horizontal,
-              children: <Widget>[
-                Flexible(
-                  fit: FlexFit.tight,
-                  child: RaisedButton(
-                    elevation: 10,
-                    color: CustomStyles.polarNight[3],
-//                    hoverColor: CustomStyles.polarNight[0],
-                    splashColor: CustomStyles.polarNight[0],
-                    onPressed: () => _newGame(),
-                    child: Text(
-                      'New Game',
-                      textAlign: TextAlign.left,
-                      maxLines: 1,
-                      style: CustomStyles.getFiraCode(
-                          CustomStyles.snowStorm[2], 26),
-                    ),
-                  ),
-                ),
-                Container(
-                  width: 8,
-                ),
-                Flexible(
-                  fit: FlexFit.tight,
-                  child: RaisedButton(
-                    elevation: 10,
-                    color: CustomStyles.polarNight[3],
-//                    hoverColor: CustomStyles.polarNight[0],
-                    splashColor: CustomStyles.polarNight[0],
-                    onPressed: () {
-                      _giveHint();
-                    },
-                    child: Text(
-                      'hint(' + hintsLeft.toString() + ')',
-                      textAlign: TextAlign.right,
-                      maxLines: 1,
-                      style: CustomStyles.getFiraCode(
-                          CustomStyles.snowStorm[2], 26),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
+  double _getBodyWidth() {
+    EdgeInsets padding = MediaQuery.of(context).padding;
+    double width = MediaQuery.of(context).size.width - padding.horizontal;
+    double height = MediaQuery.of(context).size.height - padding.vertical;
+    double aspect = 0.55;
+    return width / height <= aspect ? width : height * aspect;
+//    return height * aspect;
+  }
+
+  Widget _makeBodyRow() {
+    return Flex(
+      direction: Axis.horizontal,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Flexible(child: Container()),
+        Container(width: _getBodyWidth(), child: _makeBodyCol(),),
+        Flexible(child: Container()),
       ],
     );
-    return col;
   }
 }
