@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'CustomStyles.dart';
 import 'domains/sudoku/SudokuProblem.dart';
 import 'domains/sudoku/SudokuState.dart';
+import 'framework/problem/Problem.dart';
 import 'globals.dart' as globals;
 import 'dart:ui';
 import 'dart:math';
@@ -108,35 +109,12 @@ class _MyHomePageState extends State<MyHomePage> {
                 direction: Axis.horizontal,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  FlatButton(
-                    color: CustomStyles.polarNight[3],
-                    splashColor: CustomStyles.polarNight[0],
-                    child: Text('Solve Game', style: CustomStyles.getFiraCode(CustomStyles.snowStorm[2], 17)),
-                    onPressed: () => _solveGame(_problem),
-                  ),
+                  _getRaisedButton('Solve Game', CustomStyles.snowStorm[2], 17, TextAlign.center, CustomStyles.polarNight[3], CustomStyles.polarNight[0], () => _solveGame(_problem)),
                   Container(width: 6),
-                  FlatButton(
-                    color: CustomStyles.polarNight[3],
-                    splashColor: CustomStyles.polarNight[0],
-                    child: Text('Reset Game', style: CustomStyles.getFiraCode(CustomStyles.snowStorm[2], 17)),
-                    onPressed: () => _resetBoard(),
-                  ),
+                  _getRaisedButton('Reset Game', CustomStyles.snowStorm[2], 17, TextAlign.center, CustomStyles.polarNight[3], CustomStyles.polarNight[0], () => _resetBoard(_problem)),
                 ],
               ),
-              RaisedButton(
-                elevation: 10,
-                color: CustomStyles.polarNight[3],
-                splashColor: CustomStyles.polarNight[0],
-                onPressed: () {
-                  _newGame();
-                },
-                child: Text(
-                  'New Game',
-                  textAlign: TextAlign.left,
-                  maxLines: 1,
-                  style: CustomStyles.getFiraCode(CustomStyles.snowStorm[2], 17),
-                ),
-              ),
+              _getRaisedButton('New Game', CustomStyles.snowStorm[2], 17, TextAlign.center, CustomStyles.polarNight[3], CustomStyles.polarNight[0], () => _newGame()),
             ],
           ),
         ],
@@ -144,22 +122,37 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+  RaisedButton _getRaisedButton(String label, Color textColor, double textSize, TextAlign textAlign, Color buttonColor, Color splashColor, Function function) {
+    return RaisedButton(
+      elevation: 10,
+      color: buttonColor,
+      splashColor: splashColor,
+      onPressed: function,
+      child: Text(
+        label,
+        textAlign: textAlign,
+        style: CustomStyles.getFiraCode(textColor, textSize),
+      ),
+    );
+  }
+
   void _newGame() {
     setState(() {
       _problem = SudokuProblem.withMoreHints(globals.initialHints.value - 17);
-      globals.selectedRow = -1;
-      globals.selectedCol = -1;
-      globals.hintsGiven.clear();
+      _resetGlobals();
     });
-
   }
 
-  void _resetBoard() {
+  void _resetGlobals() {
+    globals.selectedRow = -1;
+    globals.selectedCol = -1;
+    globals.hintsGiven.clear();
+  }
+
+  void _resetBoard(Problem problem) {
     setState(() {
-      _problem.setCurrentState(_problem.getInitialState());
-      globals.selectedRow = -1;
-      globals.selectedCol = -1;
-      globals.hintsGiven.clear();
+      problem.setCurrentState(problem.getInitialState());
+      _resetGlobals();
     });
   }
 
@@ -468,30 +461,14 @@ class _MyHomePageState extends State<MyHomePage> {
       children: List.generate(10, (index) {
         int num = (index + 1) % (_problem.board_size + 1);
         String toPlace = num == 0 ? 'X' : (index + 1).toString();
-        RaisedButton button = RaisedButton(
-          elevation: 10,
-          color: CustomStyles.polarNight[3],
-          splashColor: CustomStyles.polarNight[1],
-          onPressed: () {
-            setState(() {
-              if(_cellSelected()) {
-                _doMove(num, globals.selectedRow, globals.selectedCol);
-              }
-            });
-          },
-          child: Center(
-            child: AutoSizeText(
-              toPlace,
-              textAlign: TextAlign.center,
-              maxLines: 1,
-              style: CustomStyles.getFiraCode(CustomStyles.snowStorm[2], 36),
-            ),
-          ),
-        );
-        return button;
+        return _getRaisedButton(toPlace, CustomStyles.snowStorm[2], 36, TextAlign.center, CustomStyles.polarNight[2], CustomStyles.polarNight[0], _getMove(_cellSelected(), num, globals.selectedRow, globals.selectedCol));
       }),
     );
     return buttons;
+  }
+
+  Function _getMove(bool selected, int num, int row, int col) {
+    return selected ? () => setState((){_doMove(num, globals.selectedRow, globals.selectedCol);}) : null;
   }
 
   Color _getTextColor(int row, int col) {
@@ -567,9 +544,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     color: CustomStyles.polarNight[3],
 //                    hoverColor: CustomStyles.polarNight[0],
                     splashColor: CustomStyles.polarNight[0],
-                    onPressed: () {
-                      _newGame();
-                    },
+                    onPressed: () => _newGame(),
                     child: Text(
                       'New Game',
                       textAlign: TextAlign.left,
