@@ -45,12 +45,67 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  SudokuProblem _problem = SudokuProblem.withMoreHints(globals.hintOffset.value);
+  SudokuProblem _problem = SudokuProblem.withMoreHints(globals.initialHints.value - 17);
   var menuHeight = 70;
   SolvingAssistant _assistant;
 
+  @override
+  Widget build(BuildContext context) {
+    if (_problem == null) {
+      _problem = SudokuProblem.withMoreHints(globals.initialHints.value - 17);
+    }
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          'LettuceSudoku',
+          textAlign: TextAlign.center,
+          style: CustomStyles.titleText,
+        ),
+      ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.all(0),
+          children: [
+            DrawerHeader(
+              child: Center(
+                child: Text('Settings',
+                  style: CustomStyles.titleText,
+                ),
+              ),
+              decoration: BoxDecoration(
+                color: CustomStyles.polarNight[3],
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.fromLTRB(8, 0, 8, 8),
+              child: Flex(
+                direction: Axis.vertical,
+                children: [
+                  _getToggle('Highlight Peer Cells', globals.doPeerCells),
+                  _getToggle('Highlight Peer Digits', globals.doPeerDigits),
+                  _getToggle('Show Mistakes', globals.doMistakes),
+                  AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 250),
+                    transitionBuilder: (Widget child, Animation<double> animation) =>
+                      SizeTransition(
+                        child: child, sizeFactor: animation,
+                      ),
+                    child: _getMistakeRadioGroup(),
+                    ),
+                  _getSliderNoDivisions('Initial Hints', globals.initialHints, 17, 50),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+      body: _getBody(),
+    );
+  }
+
   void _resetBoard() {
-    _problem = SudokuProblem.withMoreHints(globals.hintOffset.value);
+    _problem = SudokuProblem.withMoreHints(globals.initialHints.value - 17);
     globals.selectedRow = -1;
     globals.selectedCol = -1;
     setState(() {});
@@ -126,8 +181,6 @@ class _MyHomePageState extends State<MyHomePage> {
       var num = finalBoard[pos1][pos2];
       _doMove(num, pos1, pos2);
       setState(() {
-        globals.selectedRow = pos1;
-        globals.selectedCol = pos2;
         globals.hintsGiven.add([pos1, pos2]);
       });
     }
@@ -179,46 +232,26 @@ class _MyHomePageState extends State<MyHomePage> {
     Color peerCell = CustomStyles.frost[1];
     Color background = CustomStyles.snowStorm[2];
     Color peerDigit = CustomStyles.frost[2];
+    Color success = CustomStyles.aurora[3];
     Color color = background;
 
-    if(row == globals.selectedRow && col == globals.selectedCol) {
-      color = peerDigit;
-    }
+    bool rowSelected = row == globals.selectedRow;
+    bool colSelected = col == globals.selectedCol;
+    bool floorSelected = row ~/ _problem.cell_size == globals.selectedRow ~/ _problem.cell_size;
+    bool towerSelected = col ~/ _problem.cell_size == globals.selectedCol ~/ _problem.cell_size;
+    bool cells = globals.doPeerCells.value;
+    bool digits = globals.doPeerDigits.value;
+    SudokuState currentState = _problem.getCurrentState();
+    List currentBoard = currentState.getTiles();
+    bool sameDigit = _cellSelected() && currentBoard[row][col] == currentBoard[globals.selectedRow][globals.selectedCol];
+    bool nonZero = _cellSelected() && currentBoard[row][col] != 0;
 
-    if(globals.doPeerCells.value) {
-      if (_cellSelected()) {
-        if (row == globals.selectedRow || col == globals.selectedCol) {
-          color = peerCell;
-        }
-        if (row ~/ _problem.cell_size == globals.selectedRow ~/ _problem.cell_size &&
-            col ~/ _problem.cell_size == globals.selectedCol ~/ _problem.cell_size) {
-          color = peerCell;
-        }
-        if (row == globals.selectedRow && col == globals.selectedCol) {
-          color = background;
-        }
-      } else {
-        color = background;
-      }
-    }
+    color = rowSelected && colSelected ? peerDigit : color;
+    color = cells && _cellSelected() && (rowSelected || colSelected || (floorSelected && towerSelected)) ? peerCell : color;
+    color = digits && _cellSelected() && ((sameDigit && nonZero) || (sameDigit && rowSelected && colSelected)) ? peerDigit : color;
+    color = cells && rowSelected && colSelected ? background : color;
+    color = _problem.success() ? success : color;
 
-    if(globals.doPeerDigits.value) {
-      SudokuState currentState = _problem.getCurrentState();
-      List currentBoard = currentState.getTiles();
-      if(_cellSelected()) {
-        if(currentBoard[row][col] != 0 && currentBoard[row][col] == currentBoard[globals.selectedRow][globals.selectedCol]) {
-          color = peerDigit;
-        }
-      }
-    }
-
-    if(globals.doPeerCells.value && globals.doPeerDigits.value && row == globals.selectedRow && col == globals.selectedCol) {
-      color = background;
-    }
-
-    if (_problem.success()) {
-      color = peerCell;
-    }
     return color;
   }
 
@@ -257,58 +290,17 @@ class _MyHomePageState extends State<MyHomePage> {
     return button;
   }
 
-  @override
-  Widget build(BuildContext context) {
-    if (_problem == null) {
-      _problem = SudokuProblem.withMoreHints(globals.hintOffset.value);
-    }
-
-    return Scaffold(
-//      backgroundColor: CustomStyles.snowStorm[2],
-      appBar: AppBar(
-        title: Text(
-          'LettuceSudoku',
-          textAlign: TextAlign.center,
-          style: CustomStyles.titleText,
-        ),
-      ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.all(0),
-          children: [
-            DrawerHeader(
-              child: Center(
-                child: Text('Settings',
-                  style: CustomStyles.titleText,
-                ),
-              ),
-              decoration: BoxDecoration(
-                color: CustomStyles.polarNight[3],
-              ),
-            ),
-            Container(
-              padding: EdgeInsets.fromLTRB(8, 0, 8, 8),
-              child: Flex(
-                direction: Axis.vertical,
-                children: [
-                  _getToggle('Highlight Peer Cells', globals.doPeerCells),
-                  _getToggle('Highlight Peer Digits', globals.doPeerDigits),
-                  _getToggle('Color on Correctness/Legality', globals.doLegality),
-                  _getSlider('Difficulty', globals.hintOffset, 0, 33, 3),
-//                  Radio(
-//
-//                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-      body: _getBody(),
+  Widget _getMistakeRadioGroup() {
+    return globals.doMistakes.value ? Column(
+      children: [
+        _getRadio('Correctness', 0, globals.legalityRadio, globals.doLegality, false),
+        _getRadio('Legality', 1, globals.legalityRadio, globals.doLegality, true),
+      ],
+    ) : Container(
     );
   }
 
-  _getToggle(String label, globals.BoolWrapper setting) {
+  Widget _getToggle(String label, globals.BoolWrapper setting) {
     return Flex(
       direction: Axis.horizontal,
       mainAxisAlignment: MainAxisAlignment.end,
@@ -342,7 +334,29 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  _getSlider(String label, globals.IntWrapper setting, double min, double max, int divisions) {
+
+  Widget _getRadio(String label, int value, var groupValue, var setting, var setTo) {
+    return Flex(
+      direction: Axis.horizontal,
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        Text(label),
+        Radio(
+          activeColor: CustomStyles.polarNight[3],
+          value: value,
+          groupValue: groupValue.value,
+          onChanged: (val) {
+            setState(() {
+              groupValue.value = value;
+              setting.value = setTo;
+            });
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _getSliderNoDivisions(String label, globals.IntWrapper setting, double min, double max) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -367,7 +381,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 },
                 min: min,
                 max: max,
-                divisions: divisions,
               ),
             ),
           ],
@@ -375,10 +388,6 @@ class _MyHomePageState extends State<MyHomePage> {
       ],
     );
   }
-
-//  _getRadio(List<String> labels, ) {
-//
-//  }
 
   Widget _getBoard() {
     AspectRatio board = AspectRatio(
@@ -446,8 +455,8 @@ class _MyHomePageState extends State<MyHomePage> {
     var correct = _problem.isCorrect(row, col);
     Color color = CustomStyles.frost[3];
 
-    color = globals.doLegality.value && !legal ? CustomStyles.aurora[0] : color;
-    color = !globals.doLegality.value && !correct ? CustomStyles.aurora[0] : color;
+    color = globals.doMistakes.value && globals.doLegality.value && !legal ? CustomStyles.aurora[0] : color;
+    color = globals.doMistakes.value && !globals.doLegality.value && !correct ? CustomStyles.aurora[0] : color;
     color = initialHint ? CustomStyles.polarNight[3] : color;
     color = _givenAsHint(row, col) ? CustomStyles.aurora[4] : color;
     return color;

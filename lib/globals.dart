@@ -1,8 +1,12 @@
+import 'package:flutter/material.dart';
+
 BoolWrapper doLegality = BoolWrapper(false);
 BoolWrapper doPeerCells = BoolWrapper(true);
 BoolWrapper doPeerDigits = BoolWrapper(true);
+BoolWrapper doMistakes = BoolWrapper(true);
 IntWrapper maxHints = IntWrapper(5);
-IntWrapper hintOffset = IntWrapper(11);
+IntWrapper initialHints = IntWrapper(30);
+IntWrapper legalityRadio = IntWrapper(0);
 int selectedRow = -1;
 int selectedCol = -1;
 List hintsGiven = [];
@@ -21,3 +25,4 @@ class IntWrapper {
   }
 }
 
+Widget mistakesWidget;
