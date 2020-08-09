@@ -131,7 +131,6 @@ class _MyHomePageState extends State<MyHomePage> {
               _doMove(9, globals.selectedRow, globals.selectedCol);
             }
             setState(() {});
-            globals.keySelected = true;
           }
         },
         child: _getBody(),
