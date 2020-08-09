@@ -49,6 +49,7 @@ class _MyHomePageState extends State<MyHomePage> {
   var menuHeight = 70;
   SolvingAssistant _assistant;
   FocusNode focusNode = FocusNode();
+  bool _tempKeyPressedOnce = false;
 
   @override
   Widget build(BuildContext context) {
@@ -70,8 +71,7 @@ class _MyHomePageState extends State<MyHomePage> {
         autofocus: true,
         focusNode: focusNode,
         onKey: (RawKeyEvent event) {
-          if (event.runtimeType.toString() == 'RawKeyDownEvent') {
-            // Movement keys
+          if (!globals.keySelected) {
             if (event.data.logicalKey == LogicalKeyboardKey.arrowDown) {
               globals.selectedRow =
                   ((globals.selectedRow + 1) % _problem.board_size);
@@ -131,6 +131,9 @@ class _MyHomePageState extends State<MyHomePage> {
               _doMove(9, globals.selectedRow, globals.selectedCol);
             }
             setState(() {});
+            globals.keySelected = true;
+          } else {
+            globals.keySelected = false;
           }
         },
         child: _getBody(),
