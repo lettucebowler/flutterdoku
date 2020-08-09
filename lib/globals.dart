@@ -9,7 +9,6 @@ IntWrapper initialHints = IntWrapper(30);
 IntWrapper legalityRadio = IntWrapper(0);
 int selectedRow = -1;
 int selectedCol = -1;
-bool keySelected = false;
 List hintsGiven = [];
 
 class BoolWrapper {

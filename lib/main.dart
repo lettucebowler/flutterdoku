@@ -70,8 +70,8 @@ class _MyHomePageState extends State<MyHomePage> {
       body: RawKeyboardListener(
         autofocus: true,
         focusNode: focusNode,
-        onKey: (RawKeyEvent event) {
-          if (!globals.keySelected) {
+        onKey: (event) {
+          if (event.runtimeType == RawKeyDownEvent) {
             if (event.data.logicalKey == LogicalKeyboardKey.arrowDown) {
               globals.selectedRow =
                   ((globals.selectedRow + 1) % _problem.board_size);
@@ -132,13 +132,10 @@ class _MyHomePageState extends State<MyHomePage> {
             }
             setState(() {});
             globals.keySelected = true;
-          } else {
-            globals.keySelected = false;
           }
         },
         child: _getBody(),
       ),
-//      body: _getBody(),
     );
   }
 
