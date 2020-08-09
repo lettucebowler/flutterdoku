@@ -72,19 +72,23 @@ class _MyHomePageState extends State<MyHomePage> {
         focusNode: focusNode,
         onKey: (event) {
           if (event.runtimeType == RawKeyDownEvent) {
-            if (event.data.logicalKey == LogicalKeyboardKey.arrowDown) {
+            if (event.data.logicalKey == LogicalKeyboardKey.arrowDown ||
+                event.data.logicalKey == LogicalKeyboardKey.keyS) {
               globals.selectedRow =
                   ((globals.selectedRow + 1) % _problem.board_size);
             }
-            if (event.data.logicalKey == LogicalKeyboardKey.arrowLeft) {
+            if (event.data.logicalKey == LogicalKeyboardKey.arrowLeft ||
+                event.data.logicalKey == LogicalKeyboardKey.keyA) {
               globals.selectedCol =
                   ((globals.selectedCol - 1) % _problem.board_size);
             }
-            if (event.data.logicalKey == LogicalKeyboardKey.arrowRight) {
+            if (event.data.logicalKey == LogicalKeyboardKey.arrowRight ||
+                event.data.logicalKey == LogicalKeyboardKey.keyD) {
               globals.selectedCol =
                   ((globals.selectedCol + 1) % _problem.board_size);
             }
-            if (event.data.logicalKey == LogicalKeyboardKey.arrowUp) {
+            if (event.data.logicalKey == LogicalKeyboardKey.arrowUp ||
+                event.data.logicalKey == LogicalKeyboardKey.keyW) {
               globals.selectedRow =
                   ((globals.selectedRow - 1) % _problem.board_size);
             }
