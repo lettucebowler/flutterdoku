@@ -44,8 +44,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  SudokuProblem _problem = SudokuProblem.withMoreHints(
-      globals.initialHints.value - 17);
+  SudokuProblem _problem =
+      SudokuProblem.withMoreHints(globals.initialHints.value - 17);
   var menuHeight = 70;
   SolvingAssistant _assistant;
   FocusNode focusNode = FocusNode();
@@ -70,56 +70,67 @@ class _MyHomePageState extends State<MyHomePage> {
         autofocus: true,
         focusNode: focusNode,
         onKey: (RawKeyEvent event) {
-          if(event.runtimeType.toString() == 'RawKeyDownEvent') {
-
+          if (event.runtimeType.toString() == 'RawKeyDownEvent') {
             // Movement keys
             if (event.data.logicalKey == LogicalKeyboardKey.arrowDown) {
-              globals.selectedRow = ((globals.selectedRow + 1) % _problem.board_size);
+              globals.selectedRow =
+                  ((globals.selectedRow + 1) % _problem.board_size);
             }
             if (event.data.logicalKey == LogicalKeyboardKey.arrowLeft) {
-              globals.selectedCol = ((globals.selectedCol - 1) % _problem.board_size);
+              globals.selectedCol =
+                  ((globals.selectedCol - 1) % _problem.board_size);
             }
             if (event.data.logicalKey == LogicalKeyboardKey.arrowRight) {
-              globals.selectedCol = ((globals.selectedCol + 1) % _problem.board_size);
+              globals.selectedCol =
+                  ((globals.selectedCol + 1) % _problem.board_size);
             }
             if (event.data.logicalKey == LogicalKeyboardKey.arrowUp) {
-              globals.selectedRow = ((globals.selectedRow - 1) % _problem.board_size);
+              globals.selectedRow =
+                  ((globals.selectedRow - 1) % _problem.board_size);
             }
 
             // Move keys
-            if (event.data.logicalKey == LogicalKeyboardKey.numpad0 || event.data.logicalKey == LogicalKeyboardKey.digit0) {
+            if (event.data.logicalKey == LogicalKeyboardKey.numpad0 ||
+                event.data.logicalKey == LogicalKeyboardKey.digit0) {
               _doMove(0, globals.selectedRow, globals.selectedCol);
             }
-            if (event.data.logicalKey == LogicalKeyboardKey.numpad1 || event.data.logicalKey == LogicalKeyboardKey.digit1) {
+            if (event.data.logicalKey == LogicalKeyboardKey.numpad1 ||
+                event.data.logicalKey == LogicalKeyboardKey.digit1) {
               _doMove(1, globals.selectedRow, globals.selectedCol);
             }
-            if (event.data.logicalKey == LogicalKeyboardKey.numpad2 || event.data.logicalKey == LogicalKeyboardKey.digit2) {
+            if (event.data.logicalKey == LogicalKeyboardKey.numpad2 ||
+                event.data.logicalKey == LogicalKeyboardKey.digit2) {
               _doMove(2, globals.selectedRow, globals.selectedCol);
             }
-            if (event.data.logicalKey == LogicalKeyboardKey.numpad3 || event.data.logicalKey == LogicalKeyboardKey.digit3) {
+            if (event.data.logicalKey == LogicalKeyboardKey.numpad3 ||
+                event.data.logicalKey == LogicalKeyboardKey.digit3) {
               _doMove(3, globals.selectedRow, globals.selectedCol);
             }
-            if (event.data.logicalKey == LogicalKeyboardKey.numpad4 || event.data.logicalKey == LogicalKeyboardKey.digit4) {
+            if (event.data.logicalKey == LogicalKeyboardKey.numpad4 ||
+                event.data.logicalKey == LogicalKeyboardKey.digit4) {
               _doMove(4, globals.selectedRow, globals.selectedCol);
             }
-            if (event.data.logicalKey == LogicalKeyboardKey.numpad5 || event.data.logicalKey == LogicalKeyboardKey.digit5) {
+            if (event.data.logicalKey == LogicalKeyboardKey.numpad5 ||
+                event.data.logicalKey == LogicalKeyboardKey.digit5) {
               _doMove(5, globals.selectedRow, globals.selectedCol);
             }
-            if (event.data.logicalKey == LogicalKeyboardKey.numpad6 || event.data.logicalKey == LogicalKeyboardKey.digit6) {
+            if (event.data.logicalKey == LogicalKeyboardKey.numpad6 ||
+                event.data.logicalKey == LogicalKeyboardKey.digit6) {
               _doMove(6, globals.selectedRow, globals.selectedCol);
             }
-            if (event.data.logicalKey == LogicalKeyboardKey.numpad7 || event.data.logicalKey == LogicalKeyboardKey.digit7) {
+            if (event.data.logicalKey == LogicalKeyboardKey.numpad7 ||
+                event.data.logicalKey == LogicalKeyboardKey.digit7) {
               _doMove(7, globals.selectedRow, globals.selectedCol);
             }
-            if (event.data.logicalKey == LogicalKeyboardKey.numpad8 || event.data.logicalKey == LogicalKeyboardKey.digit8) {
+            if (event.data.logicalKey == LogicalKeyboardKey.numpad8 ||
+                event.data.logicalKey == LogicalKeyboardKey.digit8) {
               _doMove(8, globals.selectedRow, globals.selectedCol);
             }
-            if (event.data.logicalKey == LogicalKeyboardKey.numpad9 || event.data.logicalKey == LogicalKeyboardKey.digit9) {
+            if (event.data.logicalKey == LogicalKeyboardKey.numpad9 ||
+                event.data.logicalKey == LogicalKeyboardKey.digit9) {
               _doMove(9, globals.selectedRow, globals.selectedCol);
             }
-            setState(() {
-
-            });
+            setState(() {});
           }
         },
         child: _getBody(),
@@ -134,7 +145,8 @@ class _MyHomePageState extends State<MyHomePage> {
         children: [
           DrawerHeader(
             child: Center(
-              child: Text('Settings',
+              child: Text(
+                'Settings',
                 style: CustomStyles.titleText,
               ),
             ),
@@ -152,16 +164,19 @@ class _MyHomePageState extends State<MyHomePage> {
                 _getToggle('Show Mistakes', globals.doMistakes),
                 AnimatedSwitcher(
                   duration: const Duration(milliseconds: 250),
-                  transitionBuilder: (Widget child,
-                      Animation<double> animation) =>
-                      SizeTransition(
-                        child: child, sizeFactor: animation,
-                      ),
+                  transitionBuilder:
+                      (Widget child, Animation<double> animation) =>
+                          SizeTransition(
+                    child: child,
+                    sizeFactor: animation,
+                  ),
                   child: _getMistakeRadioGroup(),
                 ),
                 _getSliderNoDivisions(
                     'Initial Hints: ' + globals.initialHints.value.toString(),
-                    globals.initialHints, 17, 50),
+                    globals.initialHints,
+                    17,
+                    50),
               ],
             ),
           ),
@@ -178,7 +193,8 @@ class _MyHomePageState extends State<MyHomePage> {
                       17,
                       TextAlign.center,
                       CustomStyles.polarNight[3],
-                      CustomStyles.polarNight[0], () => _solveGame(_problem)),
+                      CustomStyles.polarNight[0],
+                      () => _solveGame(_problem)),
                   Container(width: 6),
                   _getRaisedButton(
                       'Reset Game',
@@ -186,7 +202,8 @@ class _MyHomePageState extends State<MyHomePage> {
                       17,
                       TextAlign.center,
                       CustomStyles.polarNight[3],
-                      CustomStyles.polarNight[0], () => _resetBoard(_problem)),
+                      CustomStyles.polarNight[0],
+                      () => _resetBoard(_problem)),
                 ],
               ),
               _getRaisedButton(
@@ -195,7 +212,8 @@ class _MyHomePageState extends State<MyHomePage> {
                   17,
                   TextAlign.center,
                   CustomStyles.polarNight[3],
-                  CustomStyles.polarNight[0], () => _newGame()),
+                  CustomStyles.polarNight[0],
+                  () => _newGame()),
             ],
           ),
         ],
@@ -203,8 +221,13 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  RaisedButton _getRaisedButton(String label, Color textColor, double textSize,
-      TextAlign textAlign, Color buttonColor, Color splashColor,
+  RaisedButton _getRaisedButton(
+      String label,
+      Color textColor,
+      double textSize,
+      TextAlign textAlign,
+      Color buttonColor,
+      Color splashColor,
       Function function) {
     return RaisedButton(
       elevation: 0,
@@ -356,25 +379,29 @@ class _MyHomePageState extends State<MyHomePage> {
 
     bool rowSelected = row == globals.selectedRow;
     bool colSelected = col == globals.selectedCol;
-    bool floorSelected = row ~/ _problem.cell_size ==
-        globals.selectedRow ~/ _problem.cell_size;
-    bool towerSelected = col ~/ _problem.cell_size ==
-        globals.selectedCol ~/ _problem.cell_size;
+    bool floorSelected =
+        row ~/ _problem.cell_size == globals.selectedRow ~/ _problem.cell_size;
+    bool towerSelected =
+        col ~/ _problem.cell_size == globals.selectedCol ~/ _problem.cell_size;
     bool cells = globals.doPeerCells.value;
     bool digits = globals.doPeerDigits.value;
     SudokuState currentState = _problem.getCurrentState();
     List currentBoard = currentState.getTiles();
-    bool sameDigit = _cellSelected() && currentBoard[row][col] ==
-        currentBoard[globals.selectedRow][globals.selectedCol];
+    bool sameDigit = _cellSelected() &&
+        currentBoard[row][col] ==
+            currentBoard[globals.selectedRow][globals.selectedCol];
     bool nonZero = _cellSelected() && currentBoard[row][col] != 0;
 
     color = rowSelected && colSelected ? peerDigit : color;
-    color = cells && _cellSelected() &&
-        (rowSelected || colSelected || (floorSelected && towerSelected))
+    color = cells &&
+            _cellSelected() &&
+            (rowSelected || colSelected || (floorSelected && towerSelected))
         ? peerCell
         : color;
-    color = digits && _cellSelected() &&
-        ((sameDigit && nonZero) || (sameDigit && rowSelected && colSelected))
+    color = digits &&
+            _cellSelected() &&
+            ((sameDigit && nonZero) ||
+                (sameDigit && rowSelected && colSelected))
         ? peerDigit
         : color;
     color = cells && rowSelected && colSelected ? background : color;
@@ -395,7 +422,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
     Container button = Container(
       padding: _getBoardPadding(index),
-
       child: FlatButton(
         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0.0)),
@@ -419,15 +445,16 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget _getMistakeRadioGroup() {
-    return globals.doMistakes.value ? Column(
-      children: [
-        _getRadio(
-            'Correctness', 0, globals.legalityRadio, globals.doLegality, false),
-        _getRadio(
-            'Legality', 1, globals.legalityRadio, globals.doLegality, true),
-      ],
-    ) : Container(
-    );
+    return globals.doMistakes.value
+        ? Column(
+            children: [
+              _getRadio('Correctness', 0, globals.legalityRadio,
+                  globals.doLegality, false),
+              _getRadio('Legality', 1, globals.legalityRadio,
+                  globals.doLegality, true),
+            ],
+          )
+        : Container();
   }
 
   Widget _getToggle(String label, globals.BoolWrapper setting) {
@@ -464,9 +491,8 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-
-  Widget _getRadio(String label, int value, var groupValue, var setting,
-      var setTo) {
+  Widget _getRadio(
+      String label, int value, var groupValue, var setting, var setTo) {
     return Flex(
       direction: Axis.horizontal,
       mainAxisAlignment: MainAxisAlignment.end,
@@ -487,8 +513,8 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Widget _getSliderNoDivisions(String label, globals.IntWrapper setting,
-      double min, double max) {
+  Widget _getSliderNoDivisions(
+      String label, globals.IntWrapper setting, double min, double max) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -532,8 +558,8 @@ class _MyHomePageState extends State<MyHomePage> {
 //            padding: EdgeInsets.all(1),
             crossAxisCount: _problem.board_size,
             childAspectRatio: 1,
-            children:
-            List.generate(_problem.board_size * _problem.board_size, (index) {
+            children: List.generate(_problem.board_size * _problem.board_size,
+                (index) {
               return _makeBoardButton(index);
             })),
       ),
@@ -566,10 +592,11 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Function _getMove(bool selected, int num, int row, int col) {
-    return selected ? () =>
-        setState(() {
-          _doMove(num, globals.selectedRow, globals.selectedCol);
-        }) : () => setState(() {});
+    return selected
+        ? () => setState(() {
+              _doMove(num, globals.selectedRow, globals.selectedCol);
+            })
+        : () => setState(() {});
   }
 
   Color _getTextColor(int row, int col) {
@@ -592,12 +619,10 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget _getBody() {
-    var isPortrait = MediaQuery
-        .of(context)
-        .orientation == Orientation.portrait;
-    var body = Center(
+    var body = Container(
+      padding: EdgeInsets.only(top: 8),
       child: _makeBodyRow(),
-      );
+    );
     return body;
   }
 
@@ -607,7 +632,7 @@ class _MyHomePageState extends State<MyHomePage> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         Flexible(
-          flex: 4,
+          flex: 5,
           child: AspectRatio(
             aspectRatio: 1,
             child: Container(
@@ -618,11 +643,12 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
         ),
+        Container(height: 40),
         Flexible(
           flex: 2,
           fit: FlexFit.tight,
           child: Container(
-            padding: EdgeInsets.all(8),
+            padding: EdgeInsets.fromLTRB(4, 0, 4, 0),
             child: Center(
               child: Container(
                 child: _getMoveButtons(),
@@ -630,54 +656,55 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
         ),
-        Flexible(
-          child: Container(
-            padding: EdgeInsets.all(4),
-            child: Flex(
-              mainAxisAlignment: MainAxisAlignment.center,
-              direction: Axis.horizontal,
-              children: <Widget>[
-                Flexible(
-                  fit: FlexFit.tight,
-                  child: RaisedButton(
-                    elevation: 10,
-                    color: CustomStyles.polarNight[3],
-                    splashColor: CustomStyles.polarNight[0],
-                    onPressed: () => _newGame(),
-                    child: Text(
-                      'New Game',
-                      textAlign: TextAlign.left,
-                      maxLines: 1,
-                      style: CustomStyles.getFiraCode(
-                          CustomStyles.snowStorm[2], 26),
-                    ),
+        // Flexible(
+        // child:
+        Container(
+          padding: EdgeInsets.fromLTRB(4, 0, 4, 0),
+          child: Flex(
+            mainAxisAlignment: MainAxisAlignment.center,
+            direction: Axis.horizontal,
+            children: <Widget>[
+              Flexible(
+                fit: FlexFit.tight,
+                child: RaisedButton(
+                  elevation: 10,
+                  color: CustomStyles.polarNight[3],
+                  splashColor: CustomStyles.polarNight[0],
+                  onPressed: () => _newGame(),
+                  child: Text(
+                    'New Game',
+                    textAlign: TextAlign.left,
+                    maxLines: 1,
+                    style:
+                        CustomStyles.getFiraCode(CustomStyles.snowStorm[2], 26),
                   ),
                 ),
-                Container(
-                  width: 8,
-                ),
-                Flexible(
-                  fit: FlexFit.tight,
-                  child: RaisedButton(
-                    elevation: 10,
-                    color: CustomStyles.polarNight[3],
-                    splashColor: CustomStyles.polarNight[0],
-                    onPressed: () {
-                      _giveHint();
-                    },
-                    child: Text(
-                      'hint(' + _getHintsLeft().toString() + ')',
-                      textAlign: TextAlign.right,
-                      maxLines: 1,
-                      style: CustomStyles.getFiraCode(
-                          CustomStyles.snowStorm[2], 26),
-                    ),
+              ),
+              Container(
+                width: 8,
+              ),
+              Flexible(
+                fit: FlexFit.tight,
+                child: RaisedButton(
+                  elevation: 10,
+                  color: CustomStyles.polarNight[3],
+                  splashColor: CustomStyles.polarNight[0],
+                  onPressed: () {
+                    _giveHint();
+                  },
+                  child: Text(
+                    'hint(' + _getHintsLeft().toString() + ')',
+                    textAlign: TextAlign.right,
+                    maxLines: 1,
+                    style:
+                        CustomStyles.getFiraCode(CustomStyles.snowStorm[2], 26),
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
+        // ),
       ],
     );
   }
@@ -697,7 +724,10 @@ class _MyHomePageState extends State<MyHomePage> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Flexible(child: Container()),
-        Container(width: _getBodyWidth(), child: _makeBodyCol(),),
+        Container(
+          width: _getBodyWidth(),
+          child: _makeBodyCol(),
+        ),
         Flexible(child: Container()),
       ],
     );
