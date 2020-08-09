@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:flutter/services.dart';
 import 'CustomStyles.dart';
 import 'domains/sudoku/SudokuProblem.dart';
 import 'domains/sudoku/SudokuState.dart';
@@ -47,6 +48,7 @@ class _MyHomePageState extends State<MyHomePage> {
       globals.initialHints.value - 17);
   var menuHeight = 70;
   SolvingAssistant _assistant;
+  FocusNode focusNode = FocusNode();
 
   @override
   Widget build(BuildContext context) {
@@ -54,6 +56,7 @@ class _MyHomePageState extends State<MyHomePage> {
       _problem = SudokuProblem.withMoreHints(globals.initialHints.value - 17);
     }
 
+    FocusScope.of(context).requestFocus(focusNode);
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -63,7 +66,65 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       drawer: _getDrawer(),
-      body: _getBody(),
+      body: RawKeyboardListener(
+        autofocus: true,
+        focusNode: focusNode,
+        onKey: (RawKeyEvent event) {
+          if(event.runtimeType.toString() == 'RawKeyDownEvent') {
+
+            // Movement keys
+            if (event.data.logicalKey == LogicalKeyboardKey.arrowDown) {
+              globals.selectedRow = ((globals.selectedRow + 1) % _problem.board_size);
+            }
+            if (event.data.logicalKey == LogicalKeyboardKey.arrowLeft) {
+              globals.selectedCol = ((globals.selectedCol - 1) % _problem.board_size);
+            }
+            if (event.data.logicalKey == LogicalKeyboardKey.arrowRight) {
+              globals.selectedCol = ((globals.selectedCol + 1) % _problem.board_size);
+            }
+            if (event.data.logicalKey == LogicalKeyboardKey.arrowUp) {
+              globals.selectedRow = ((globals.selectedRow - 1) % _problem.board_size);
+            }
+
+            // Move keys
+            if (event.data.logicalKey == LogicalKeyboardKey.numpad0 || event.data.logicalKey == LogicalKeyboardKey.digit0) {
+              _doMove(0, globals.selectedRow, globals.selectedCol);
+            }
+            if (event.data.logicalKey == LogicalKeyboardKey.numpad1 || event.data.logicalKey == LogicalKeyboardKey.digit1) {
+              _doMove(1, globals.selectedRow, globals.selectedCol);
+            }
+            if (event.data.logicalKey == LogicalKeyboardKey.numpad2 || event.data.logicalKey == LogicalKeyboardKey.digit2) {
+              _doMove(2, globals.selectedRow, globals.selectedCol);
+            }
+            if (event.data.logicalKey == LogicalKeyboardKey.numpad3 || event.data.logicalKey == LogicalKeyboardKey.digit3) {
+              _doMove(3, globals.selectedRow, globals.selectedCol);
+            }
+            if (event.data.logicalKey == LogicalKeyboardKey.numpad4 || event.data.logicalKey == LogicalKeyboardKey.digit4) {
+              _doMove(4, globals.selectedRow, globals.selectedCol);
+            }
+            if (event.data.logicalKey == LogicalKeyboardKey.numpad5 || event.data.logicalKey == LogicalKeyboardKey.digit5) {
+              _doMove(5, globals.selectedRow, globals.selectedCol);
+            }
+            if (event.data.logicalKey == LogicalKeyboardKey.numpad6 || event.data.logicalKey == LogicalKeyboardKey.digit6) {
+              _doMove(6, globals.selectedRow, globals.selectedCol);
+            }
+            if (event.data.logicalKey == LogicalKeyboardKey.numpad7 || event.data.logicalKey == LogicalKeyboardKey.digit7) {
+              _doMove(7, globals.selectedRow, globals.selectedCol);
+            }
+            if (event.data.logicalKey == LogicalKeyboardKey.numpad8 || event.data.logicalKey == LogicalKeyboardKey.digit8) {
+              _doMove(8, globals.selectedRow, globals.selectedCol);
+            }
+            if (event.data.logicalKey == LogicalKeyboardKey.numpad9 || event.data.logicalKey == LogicalKeyboardKey.digit9) {
+              _doMove(9, globals.selectedRow, globals.selectedCol);
+            }
+            setState(() {
+
+            });
+          }
+        },
+        child: _getBody(),
+      ),
+//      body: _getBody(),
     );
   }
 
