@@ -49,6 +49,7 @@ class _MyHomePageState extends State<MyHomePage> {
   var menuHeight = 70;
   SolvingAssistant _assistant;
   FocusNode focusNode = FocusNode();
+  double _bodySpacing = 8;
 
   @override
   Widget build(BuildContext context) {
@@ -250,6 +251,8 @@ class _MyHomePageState extends State<MyHomePage> {
       child: AutoSizeText(
         label,
         textAlign: textAlign,
+        minFontSize: 1,
+        stepGranularity: 1,
         style: CustomStyles.getFiraCode(textColor, textSize),
       ),
     );
@@ -579,27 +582,36 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget _getMoveButtons() {
-    var buttons = GridView.count(
-//      padding: EdgeInsets.all(1),
-      physics: const NeverScrollableScrollPhysics(),
-      crossAxisCount: 5,
-      mainAxisSpacing: 2,
-      crossAxisSpacing: 2,
-      children: List.generate(10, (index) {
-        int num = (index + 1) % (_problem.board_size + 1);
-        String toPlace = num == 0 ? 'X' : (index + 1).toString();
-        return _getRaisedButton(
-            toPlace,
-            CustomStyles.snowStorm[2],
-            36,
-            TextAlign.center,
-            CustomStyles.polarNight[2],
-            CustomStyles.polarNight[0],
-            _getMove(_cellSelected(), num, globals.selectedRow,
-                globals.selectedCol));
-      }),
-    );
-    return buttons;
+    return Flex(
+        direction: Axis.vertical,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: List.generate(2, (index) {
+          int offset = index * 5;
+          return Flexible(
+              child: Flex(
+                  direction: Axis.horizontal,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List.generate(9, (index) {
+                    int num =
+                        (index ~/ 2 + 1 + offset) % (_problem.board_size + 1);
+                    String toPlace = num == 0 ? 'X' : (num).toString();
+                    return index % 2 == 0
+                        ? Flexible(
+                            fit: FlexFit.tight,
+                            flex: 8,
+                            child: _getRaisedButton(
+                                toPlace,
+                                CustomStyles.snowStorm[2],
+                                36,
+                                TextAlign.center,
+                                CustomStyles.polarNight[3],
+                                CustomStyles.polarNight[0],
+                                _getMove(_cellSelected(), num,
+                                    globals.selectedRow, globals.selectedCol)),
+                          )
+                        : Container(width: 4);
+                  })));
+        }));
   }
 
   Function _getMove(bool selected, int num, int row, int col) {
@@ -631,91 +643,50 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Widget _getBody() {
     var body = Container(
-      padding: EdgeInsets.only(top: 8),
+      padding: EdgeInsets.all(_bodySpacing),
       child: _makeBodyRow(),
     );
     return body;
   }
 
-  Widget _makeBodyCol() {
+  Widget _getGameButtons() {
     return Flex(
-      direction: Axis.vertical,
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      direction: Axis.horizontal,
       children: <Widget>[
         Flexible(
-          flex: 5,
-          child: AspectRatio(
-            aspectRatio: 1,
-            child: Container(
-              padding: EdgeInsets.all(4),
-              child: Container(
-                child: _getBoard(),
-              ),
-            ),
-          ),
-        ),
-        Container(height: 40),
-        Flexible(
-          flex: 2,
           fit: FlexFit.tight,
-          child: Container(
-            padding: EdgeInsets.fromLTRB(4, 0, 4, 0),
-            child: Center(
-              child: Container(
-                child: _getMoveButtons(),
-              ),
+          child: RaisedButton(
+            elevation: 10,
+            color: CustomStyles.polarNight[3],
+            splashColor: CustomStyles.polarNight[0],
+            onPressed: () => _newGame(),
+            child: AutoSizeText(
+              'New Game',
+              textAlign: TextAlign.left,
+              maxLines: 1,
+              style: CustomStyles.getFiraCode(CustomStyles.snowStorm[2], 26),
             ),
           ),
         ),
-        // Flexible(
-        // child:
-        Container(
-          padding: EdgeInsets.fromLTRB(4, 0, 4, 0),
-          child: Flex(
-            mainAxisAlignment: MainAxisAlignment.center,
-            direction: Axis.horizontal,
-            children: <Widget>[
-              Flexible(
-                fit: FlexFit.tight,
-                child: RaisedButton(
-                  elevation: 10,
-                  color: CustomStyles.polarNight[3],
-                  splashColor: CustomStyles.polarNight[0],
-                  onPressed: () => _newGame(),
-                  child: Text(
-                    'New Game',
-                    textAlign: TextAlign.left,
-                    maxLines: 1,
-                    style:
-                        CustomStyles.getFiraCode(CustomStyles.snowStorm[2], 26),
-                  ),
-                ),
-              ),
-              Container(
-                width: 8,
-              ),
-              Flexible(
-                fit: FlexFit.tight,
-                child: RaisedButton(
-                  elevation: 10,
-                  color: CustomStyles.polarNight[3],
-                  splashColor: CustomStyles.polarNight[0],
-                  onPressed: () {
-                    _giveHint();
-                  },
-                  child: Text(
-                    'hint(' + _getHintsLeft().toString() + ')',
-                    textAlign: TextAlign.right,
-                    maxLines: 1,
-                    style:
-                        CustomStyles.getFiraCode(CustomStyles.snowStorm[2], 26),
-                  ),
-                ),
-              ),
-            ],
+        Container(width: 4),
+        Flexible(
+          fit: FlexFit.tight,
+          child: RaisedButton(
+            elevation: 10,
+            color: CustomStyles.polarNight[3],
+            splashColor: CustomStyles.polarNight[0],
+            onPressed: () {
+              _giveHint();
+            },
+            child: AutoSizeText(
+              'hint(' + _getHintsLeft().toString() + ')',
+              textAlign: TextAlign.right,
+              maxLines: 1,
+              style: CustomStyles.getFiraCode(CustomStyles.snowStorm[2], 26),
+            ),
           ),
         ),
-        // ),
       ],
     );
   }
@@ -725,18 +696,52 @@ class _MyHomePageState extends State<MyHomePage> {
     double width = MediaQuery.of(context).size.width - padding.horizontal;
     double height = MediaQuery.of(context).size.height - padding.vertical;
     double aspect = 0.55;
-    return width / height <= aspect ? width : height * aspect;
+    return width;
 //    return height * aspect;
   }
 
+  Widget _makeBodyCol() {
+    return Flex(
+      direction: Axis.vertical,
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: <Widget>[
+        // Flexible(
+        //   flex: 5,
+        //   child:
+        Container(
+          child: _getBoard(),
+          // color: Colors.green,
+        ),
+        Container(height: 4),
+        Container(
+          child: _getMoveButtons(),
+          height: 100,
+          // color: Colors.red,
+        ),
+        Spacer(),
+        Container(
+          child: _getGameButtons(),
+          height: 40,
+          // color: Colors.blue,
+        ),
+      ],
+    );
+  }
+
   Widget _makeBodyRow() {
+    EdgeInsets padding = MediaQuery.of(context).padding;
+    double width =
+        max(MediaQuery.of(context).size.width - padding.horizontal, 400);
+    double height = MediaQuery.of(context).size.height - padding.vertical;
     return Flex(
       direction: Axis.horizontal,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Flexible(child: Container()),
         Container(
-          width: _getBodyWidth(),
+          // width: _getBodyWidth(),
+          // height: height,
+          width: max(0, min(height - 216, width - 16)),
           child: _makeBodyCol(),
         ),
         Flexible(child: Container()),
