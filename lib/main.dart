@@ -49,7 +49,6 @@ class _MyHomePageState extends State<MyHomePage> {
   var menuHeight = 70;
   SolvingAssistant _assistant;
   FocusNode focusNode = FocusNode();
-  bool _tempKeyPressedOnce = false;
 
   @override
   Widget build(BuildContext context) {
@@ -248,7 +247,7 @@ class _MyHomePageState extends State<MyHomePage> {
       color: buttonColor,
       splashColor: splashColor,
       onPressed: function,
-      child: Text(
+      child: AutoSizeText(
         label,
         textAlign: textAlign,
         style: CustomStyles.getFiraCode(textColor, textSize),
