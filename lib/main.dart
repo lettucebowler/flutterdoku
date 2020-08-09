@@ -139,83 +139,175 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Drawer _getDrawer() {
+    // return Drawer(
+    //   child: Column(
+    //     children: [
+    //       DrawerHeader(
+    //         child: Center(
+    //           child: Text(
+    //             'Settings',
+    //             style: CustomStyles.titleText,
+    //           ),
+    //         ),
+    //         decoration: BoxDecoration(
+    //           color: CustomStyles.polarNight[3],
+    //         ),
+    //       ),
+    //       Container(
+    //         padding: EdgeInsets.fromLTRB(16, 0, 8, 0),
+    //         child: Flex(
+    //           direction: Axis.vertical,
+    //           children: [
+    //             _getToggle('Highlight Peer Cells', globals.doPeerCells),
+    //             _getToggle('Highlight Peer Digits', globals.doPeerDigits),
+    //             _getToggle('Show Mistakes', globals.doMistakes),
+    //             AnimatedSwitcher(
+    //               duration: const Duration(milliseconds: 250),
+    //               transitionBuilder:
+    //                   (Widget child, Animation<double> animation) =>
+    //                       SizeTransition(
+    //                 child: child,
+    //                 sizeFactor: animation,
+    //               ),
+    //               child: _getMistakeRadioGroup(),
+    //             ),
+    //             _getSliderNoDivisions(
+    //                 'Initial Hints: ' + globals.initialHints.value.toString(),
+    //                 globals.initialHints,
+    //                 17,
+    //                 50),
+    //           ],
+    //         ),
+    //       ),
+    //       Flex(
+    //         direction: Axis.vertical,
+    //         children: [
+    //           Flex(
+    //             direction: Axis.horizontal,
+    //             mainAxisAlignment: MainAxisAlignment.center,
+    //             children: [
+    //               _getRaisedButton(
+    //                   'Solve Game',
+    //                   CustomStyles.snowStorm[2],
+    //                   17,
+    //                   TextAlign.center,
+    //                   CustomStyles.polarNight[3],
+    //                   CustomStyles.polarNight[0],
+    //                   () => _solveGame(_problem)),
+    //               Container(width: 6),
+    //               _getRaisedButton(
+    //                   'Reset Game',
+    //                   CustomStyles.snowStorm[2],
+    //                   17,
+    //                   TextAlign.center,
+    //                   CustomStyles.polarNight[3],
+    //                   CustomStyles.polarNight[0],
+    //                   () => _resetBoard(_problem)),
+    //             ],
+    //           ),
+    //           _getRaisedButton(
+    //               'New Game',
+    //               CustomStyles.snowStorm[2],
+    //               17,
+    //               TextAlign.center,
+    //               CustomStyles.polarNight[3],
+    //               CustomStyles.polarNight[0],
+    //               () => _newGame()),
+    //         ],
+    //       ),
+    //     ],
+    //   ),
+    // );
     return Drawer(
-      child: Column(
-        children: [
-          DrawerHeader(
-            child: Center(
-              child: Text(
-                'Settings',
-                style: CustomStyles.titleText,
+      child: Container(
+        child: Flex(
+          direction: Axis.vertical,
+          children: [
+            DrawerHeader(
+              child: Center(
+                child: Text(
+                  'Settings',
+                  style: CustomStyles.titleText,
+                ),
+              ),
+              decoration: BoxDecoration(
+                color: CustomStyles.polarNight[3],
               ),
             ),
-            decoration: BoxDecoration(
-              color: CustomStyles.polarNight[3],
-            ),
-          ),
-          Container(
-            padding: EdgeInsets.fromLTRB(16, 0, 8, 0),
-            child: Flex(
-              direction: Axis.vertical,
-              children: [
-                _getToggle('Highlight Peer Cells', globals.doPeerCells),
-                _getToggle('Highlight Peer Digits', globals.doPeerDigits),
-                _getToggle('Show Mistakes', globals.doMistakes),
-                AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 250),
-                  transitionBuilder:
-                      (Widget child, Animation<double> animation) =>
-                          SizeTransition(
-                    child: child,
-                    sizeFactor: animation,
-                  ),
-                  child: _getMistakeRadioGroup(),
-                ),
-                _getSliderNoDivisions(
-                    'Initial Hints: ' + globals.initialHints.value.toString(),
-                    globals.initialHints,
-                    17,
-                    50),
-              ],
-            ),
-          ),
-          Flex(
-            direction: Axis.vertical,
-            children: [
-              Flex(
-                direction: Axis.horizontal,
-                mainAxisAlignment: MainAxisAlignment.center,
+            Container(
+              child: Flex(
+                direction: Axis.vertical,
                 children: [
-                  _getRaisedButton(
-                      'Solve Game',
-                      CustomStyles.snowStorm[2],
-                      17,
-                      TextAlign.center,
-                      CustomStyles.polarNight[3],
-                      CustomStyles.polarNight[0],
-                      () => _solveGame(_problem)),
-                  Container(width: 6),
-                  _getRaisedButton(
-                      'Reset Game',
-                      CustomStyles.snowStorm[2],
-                      17,
-                      TextAlign.center,
-                      CustomStyles.polarNight[3],
-                      CustomStyles.polarNight[0],
-                      () => _resetBoard(_problem)),
+                  Container(
+                    padding: EdgeInsets.fromLTRB(8, 0, 8, 0),
+                    child: Flex(
+                      direction: Axis.vertical,
+                      children: [
+                        _getToggle('Highlight Peer Cells', globals.doPeerCells),
+                        _getToggle(
+                            'Highlight Peer Digits', globals.doPeerDigits),
+                        _getToggle('Show Mistakes', globals.doMistakes),
+                        AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 250),
+                          transitionBuilder:
+                              (Widget child, Animation<double> animation) =>
+                                  SizeTransition(
+                            child: child,
+                            sizeFactor: animation,
+                          ),
+                          child: _getMistakeRadioGroup(),
+                        ),
+                        _getSliderNoDivisions(
+                            'Initial Hints: ' +
+                                globals.initialHints.value.toString(),
+                            globals.initialHints,
+                            17,
+                            50),
+                        Flex(
+                          direction: Axis.horizontal,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Flexible(
+                              flex: 1,
+                              child: _getRaisedButton(
+                                  'Solve Game',
+                                  CustomStyles.snowStorm[2],
+                                  17,
+                                  TextAlign.center,
+                                  CustomStyles.polarNight[3],
+                                  CustomStyles.polarNight[0],
+                                  () => _solveGame(_problem)),
+                            ),
+                            Container(width: 6),
+                            Flexible(
+                              flex: 1,
+                              child: _getRaisedButton(
+                                  'Reset Game',
+                                  CustomStyles.snowStorm[2],
+                                  17,
+                                  TextAlign.center,
+                                  CustomStyles.polarNight[3],
+                                  CustomStyles.polarNight[0],
+                                  () => _resetBoard(_problem)),
+                            ),
+                          ],
+                        ),
+                        _getRaisedButton(
+                            'New Game',
+                            CustomStyles.snowStorm[2],
+                            17,
+                            TextAlign.center,
+                            CustomStyles.polarNight[3],
+                            CustomStyles.polarNight[0],
+                            () => _newGame()),
+                      ],
+                    ),
+                  ),
                 ],
               ),
-              _getRaisedButton(
-                  'New Game',
-                  CustomStyles.snowStorm[2],
-                  17,
-                  TextAlign.center,
-                  CustomStyles.polarNight[3],
-                  CustomStyles.polarNight[0],
-                  () => _newGame()),
-            ],
-          ),
-        ],
+            ),
+          ],
+        ),
       ),
     );
   }
