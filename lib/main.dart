@@ -251,8 +251,6 @@ class _MyHomePageState extends State<MyHomePage> {
       child: AutoSizeText(
         label,
         textAlign: textAlign,
-        minFontSize: 1,
-        stepGranularity: 1,
         style: CustomStyles.getFiraCode(textColor, textSize),
       ),
     );
@@ -322,22 +320,20 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _giveHint() {
-    if (!_problem.success() && _getHintsLeft() > 0) {
-      SudokuState currentState = _problem.getCurrentState();
-      List currentBoard = currentState.getTiles();
+    if (!_problem.success() && _cellSelected()) {
+      // SudokuState currentState = _problem.getCurrentState();
+      // List currentBoard = currentState.getTiles();
       SudokuState finalState = _problem.getFinalState();
       List finalBoard = finalState.getTiles();
-      var pos1;
-      var pos2;
-      do {
-        pos1 = _getRandom(_problem.board_size);
-        pos2 = _getRandom(_problem.board_size);
-      } while (currentBoard[pos1][pos2] != 0);
-      var num = finalBoard[pos1][pos2];
-      _doMove(num, pos1, pos2);
-      setState(() {
-        globals.hintsGiven.add([pos1, pos2]);
-      });
+      var row = globals.selectedRow;
+      var col = globals.selectedCol;
+      var num = finalBoard[row][col];
+      if (!_problem.isCorrect(row, col)) {
+        _doMove(num, row, col);
+        setState(() {
+          globals.hintsGiven.add([row, col]);
+        });
+      }
     }
   }
 
@@ -358,7 +354,6 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _solveGame(SudokuProblem problem) {
-//    int cell_size = problem.cell_size;
     int board_size = problem.board_size;
     for (var i = 0; i < board_size; i++) {
       for (var j = 0; j < board_size; j++) {
@@ -585,32 +580,39 @@ class _MyHomePageState extends State<MyHomePage> {
     return Flex(
         direction: Axis.vertical,
         mainAxisAlignment: MainAxisAlignment.center,
-        children: List.generate(2, (index) {
-          int offset = index * 5;
-          return Flexible(
-              child: Flex(
-                  direction: Axis.horizontal,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: List.generate(9, (index) {
-                    int num =
-                        (index ~/ 2 + 1 + offset) % (_problem.board_size + 1);
-                    String toPlace = num == 0 ? 'X' : (num).toString();
-                    return index % 2 == 0
-                        ? Flexible(
-                            fit: FlexFit.tight,
-                            flex: 8,
-                            child: _getRaisedButton(
-                                toPlace,
-                                CustomStyles.snowStorm[2],
-                                36,
-                                TextAlign.center,
-                                CustomStyles.polarNight[3],
-                                CustomStyles.polarNight[0],
-                                _getMove(_cellSelected(), num,
-                                    globals.selectedRow, globals.selectedCol)),
-                          )
-                        : Container(width: 4);
-                  })));
+        children: List.generate(3, (index) {
+          int offset = index ~/ 2 * 5;
+          return index % 2 == 0
+              ? Flexible(
+                  child: Flex(
+                      direction: Axis.horizontal,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: List.generate(9, (index) {
+                        int num = (index ~/ 2 + 1 + offset) %
+                            (_problem.board_size + 1);
+                        String toPlace = num == 0 ? 'X' : (num).toString();
+                        return index % 2 == 0
+                            ? Flexible(
+                                fit: FlexFit.tight,
+                                flex: 8,
+                                child: AspectRatio(
+                                    aspectRatio: 2,
+                                    child: _getRaisedButton(
+                                        toPlace,
+                                        CustomStyles.snowStorm[2],
+                                        36,
+                                        TextAlign.center,
+                                        CustomStyles.polarNight[3],
+                                        CustomStyles.polarNight[0],
+                                        _getMove(
+                                            _cellSelected(),
+                                            num,
+                                            globals.selectedRow,
+                                            globals.selectedCol))),
+                              )
+                            : Container(width: 4);
+                      })))
+              : Container(height: 4);
         }));
   }
 
@@ -639,14 +641,6 @@ class _MyHomePageState extends State<MyHomePage> {
     color = initialHint ? CustomStyles.polarNight[3] : color;
     color = _givenAsHint(row, col) ? CustomStyles.aurora[4] : color;
     return color;
-  }
-
-  Widget _getBody() {
-    var body = Container(
-      padding: EdgeInsets.all(_bodySpacing),
-      child: _makeBodyRow(),
-    );
-    return body;
   }
 
   Widget _getGameButtons() {
@@ -680,7 +674,7 @@ class _MyHomePageState extends State<MyHomePage> {
               _giveHint();
             },
             child: AutoSizeText(
-              'hint(' + _getHintsLeft().toString() + ')',
+              'hint(' + globals.hintsGiven.length.toString() + ')',
               textAlign: TextAlign.right,
               maxLines: 1,
               style: CustomStyles.getFiraCode(CustomStyles.snowStorm[2], 26),
@@ -695,54 +689,56 @@ class _MyHomePageState extends State<MyHomePage> {
     EdgeInsets padding = MediaQuery.of(context).padding;
     double width = MediaQuery.of(context).size.width - padding.horizontal;
     double height = MediaQuery.of(context).size.height - padding.vertical;
-    double aspect = 0.55;
-    return width;
+    double aspect = 0.575;
+    return width / height < aspect ? width : height * aspect;
 //    return height * aspect;
   }
 
-  Widget _makeBodyCol() {
+  Widget _getBody() {
+    var body = Container(
+      padding: EdgeInsets.all(_bodySpacing),
+      child: _makeBodyVertical(),
+    );
+    return body;
+  }
+
+  Widget _makeBodyFlex(bool doVertical) {
     return Flex(
       direction: Axis.vertical,
-      mainAxisAlignment: MainAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        // Flexible(
-        //   flex: 5,
-        //   child:
-        Container(
-          child: _getBoard(),
-          // color: Colors.green,
-        ),
+        _getBoard(),
         Container(height: 4),
-        Container(
-          child: _getMoveButtons(),
-          height: 100,
-          // color: Colors.red,
-        ),
-        Spacer(),
-        Container(
-          child: _getGameButtons(),
-          height: 40,
-          // color: Colors.blue,
-        ),
+        Flexible(
+          child: Flex(
+            direction: Axis.vertical,
+            children: [
+              Container(
+                child: _getMoveButtons(),
+                height: 100,
+                // color: Colors.red,
+              ),
+              Spacer(),
+              Container(
+                child: _getGameButtons(),
+                height: 40,
+              ),
+            ],
+          ),
+        )
       ],
     );
   }
 
-  Widget _makeBodyRow() {
-    EdgeInsets padding = MediaQuery.of(context).padding;
-    double width =
-        max(MediaQuery.of(context).size.width - padding.horizontal, 400);
-    double height = MediaQuery.of(context).size.height - padding.vertical;
+  Widget _makeBodyVertical() {
     return Flex(
       direction: Axis.horizontal,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Flexible(child: Container()),
         Container(
-          // width: _getBodyWidth(),
-          // height: height,
-          width: max(0, min(height - 216, width - 16)),
-          child: _makeBodyCol(),
+          child: _makeBodyFlex(true),
+          width: _getBodyWidth() - _bodySpacing * 2,
         ),
         Flexible(child: Container()),
       ],
