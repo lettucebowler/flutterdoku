@@ -378,11 +378,6 @@ class _MyHomePageState extends State<MyHomePage> {
     return globals.selectedRow != -1 && globals.selectedCol != -1;
   }
 
-  int _getHintsLeft() {
-    var hintsLeft = globals.maxHints.value - globals.hintsGiven.length;
-    return hintsLeft;
-  }
-
   Color _getCellColor(int row, int col) {
     Color peerCell = CustomStyles.frost[1];
     Color background = CustomStyles.snowStorm[2];
@@ -600,7 +595,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 fit: FlexFit.tight,
                                 flex: 8,
                                 child: AspectRatio(
-                                    aspectRatio: 2,
+                                    aspectRatio: 1,
                                     child: _getRaisedButton(
                                         toPlace,
                                         CustomStyles.snowStorm[2],
@@ -722,7 +717,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 height: 100,
                 // color: Colors.red,
               ),
-              Spacer(),
+              // Spacer(),
               Container(
                 child: _getGameButtons(),
                 height: 40,
