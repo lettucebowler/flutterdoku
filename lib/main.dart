@@ -67,7 +67,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       drawer: _getDrawer(),
-      endDrawer: _getDrawer(),
+      // endDrawer: _getDrawer(),
       body: RawKeyboardListener(
         autofocus: true,
         focusNode: focusNode,
@@ -292,7 +292,6 @@ class _MyHomePageState extends State<MyHomePage> {
       child: AutoSizeText(
         label,
         textAlign: textAlign,
-        // style: CustomStyles.getFiraCode(textColor, textSize),
         style: TextStyle(
           color: textColor,
           fontSize: textSize,
@@ -679,35 +678,27 @@ class _MyHomePageState extends State<MyHomePage> {
       children: <Widget>[
         Flexible(
           fit: FlexFit.tight,
-          child: RaisedButton(
-            elevation: 10,
-            color: CustomStyles.polarNight[3],
-            splashColor: CustomStyles.polarNight[0],
-            onPressed: () => _newGame(),
-            child: AutoSizeText(
-              'New Game',
-              textAlign: TextAlign.left,
-              maxLines: 1,
-              style: CustomStyles.getFiraCode(CustomStyles.snowStorm[2], 26),
-            ),
+          child: _getRaisedButton(
+            'New Game',
+            CustomStyles.snowStorm[2],
+            24,
+            TextAlign.center,
+            CustomStyles.polarNight[3],
+            CustomStyles.polarNight[0],
+            () => _newGame(),
           ),
         ),
         Container(width: 4),
         Flexible(
           fit: FlexFit.tight,
-          child: RaisedButton(
-            elevation: 10,
-            color: CustomStyles.polarNight[3],
-            splashColor: CustomStyles.polarNight[0],
-            onPressed: () {
-              _giveHint(globals.selectedRow, globals.selectedCol);
-            },
-            child: AutoSizeText(
-              'hint(' + globals.hintsGiven.length.toString() + ')',
-              textAlign: TextAlign.right,
-              maxLines: 1,
-              style: CustomStyles.getFiraCode(CustomStyles.snowStorm[2], 26),
-            ),
+          child: _getRaisedButton(
+            'hint(' + globals.hintsGiven.length.toString() + ')',
+            CustomStyles.snowStorm[2],
+            24,
+            TextAlign.center,
+            CustomStyles.polarNight[3],
+            CustomStyles.polarNight[0],
+            () => _giveHint(globals.selectedRow, globals.selectedCol),
           ),
         ),
       ],
