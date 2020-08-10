@@ -3,6 +3,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:lettuce_sudoku/main.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/services.dart';
 import 'CustomStyles.dart';
@@ -49,7 +50,7 @@ class _MyHomePageState extends State<MyHomePage> {
   var menuHeight = 70;
   SolvingAssistant _assistant;
   FocusNode focusNode = FocusNode();
-  double _bodySpacing = 8;
+  double _bodySpacing = 4;
 
   @override
   Widget build(BuildContext context) {
@@ -359,10 +360,10 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _solveGame(SudokuProblem problem) {
-    int board_size = problem.board_size;
-    for (var i = 0; i < board_size; i++) {
-      for (var j = 0; j < board_size; j++) {
-        for (var k = 1; k <= board_size; k++) {
+    int boardSize = problem.board_size;
+    for (var i = 0; i < boardSize; i++) {
+      for (var j = 0; j < boardSize; j++) {
+        for (var k = 1; k <= boardSize; k++) {
           if (!problem.isCorrect(i, j)) {
             _doMove(k, i, j);
             if (problem.isCorrect(i, j)) {
@@ -688,11 +689,10 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget _getBody() {
-    var body = Container(
+    return Container(
       padding: EdgeInsets.all(_bodySpacing),
       child: _makeBodyVertical(),
     );
-    return body;
   }
 
   Widget _makeBodyFlex(bool doVertical) {
@@ -708,14 +708,8 @@ class _MyHomePageState extends State<MyHomePage> {
             children: [
               Flexible(
                 child: _getMoveButtons(),
-                // height: 100,
-                // color: Colors.red,
               ),
-              // Spacer(),
-              Container(
-                child: _getGameButtons(),
-                height: 40,
-              ),
+              _getGameButtons(),
             ],
           ),
         )
@@ -732,6 +726,7 @@ class _MyHomePageState extends State<MyHomePage> {
         Container(
           child: _makeBodyFlex(true),
           width: _getBodyWidth() - _bodySpacing * 2,
+          // width: _getBodyWidth(),
         ),
         Flexible(child: Container()),
       ],
