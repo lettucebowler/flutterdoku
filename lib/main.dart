@@ -67,6 +67,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       drawer: _getDrawer(),
+      endDrawer: _getDrawer(),
       body: RawKeyboardListener(
         autofocus: true,
         focusNode: focusNode,
