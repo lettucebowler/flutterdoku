@@ -3,7 +3,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:lettuce_sudoku/main.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/services.dart';
 import 'CustomStyles.dart';
@@ -310,11 +309,6 @@ class _MyHomePageState extends State<MyHomePage> {
         left.toDouble(), top.toDouble(), right.toDouble(), bottom.toDouble());
   }
 
-  int _getRandom(int max) {
-    var random = Random();
-    return random.nextInt(max);
-  }
-
   bool _givenAsHint(int row, int col) {
     bool hint = false;
     for (List pair in globals.hintsGiven) {
@@ -325,14 +319,15 @@ class _MyHomePageState extends State<MyHomePage> {
     return hint;
   }
 
-  void _giveHint() {
-    if (!_problem.success() && _cellSelected()) {
+  void _giveHint(int row, int col) {
+    var validRow = row > -1 && row < 10;
+    var validCol = col > -1 && col < 10;
+    var validCell = validRow && validCol;
+    if (!_problem.success() && validCell) {
       // SudokuState currentState = _problem.getCurrentState();
       // List currentBoard = currentState.getTiles();
       SudokuState finalState = _problem.getFinalState();
       List finalBoard = finalState.getTiles();
-      var row = globals.selectedRow;
-      var col = globals.selectedCol;
       var num = finalBoard[row][col];
       if (!_problem.isCorrect(row, col)) {
         _doMove(num, row, col);
@@ -363,14 +358,7 @@ class _MyHomePageState extends State<MyHomePage> {
     int boardSize = problem.board_size;
     for (var i = 0; i < boardSize; i++) {
       for (var j = 0; j < boardSize; j++) {
-        for (var k = 1; k <= boardSize; k++) {
-          if (!problem.isCorrect(i, j)) {
-            _doMove(k, i, j);
-            if (problem.isCorrect(i, j)) {
-              break;
-            }
-          }
-        }
+        _giveHint(i, j);
       }
     }
     setState(() {});
@@ -665,7 +653,7 @@ class _MyHomePageState extends State<MyHomePage> {
             color: CustomStyles.polarNight[3],
             splashColor: CustomStyles.polarNight[0],
             onPressed: () {
-              _giveHint();
+              _giveHint(globals.selectedRow, globals.selectedCol);
             },
             child: AutoSizeText(
               'hint(' + globals.hintsGiven.length.toString() + ')',
