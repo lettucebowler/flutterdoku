@@ -578,39 +578,36 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget _getMoveButtons() {
     return Flex(
         direction: Axis.vertical,
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: List.generate(3, (index) {
           int offset = index ~/ 2 * 5;
           return index % 2 == 0
-              ? Flexible(
-                  child: Flex(
-                      direction: Axis.horizontal,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: List.generate(9, (index) {
-                        int num = (index ~/ 2 + 1 + offset) %
-                            (_problem.board_size + 1);
-                        String toPlace = num == 0 ? 'X' : (num).toString();
-                        return index % 2 == 0
-                            ? Flexible(
-                                fit: FlexFit.tight,
-                                flex: 8,
-                                child: AspectRatio(
-                                    aspectRatio: 1,
-                                    child: _getRaisedButton(
-                                        toPlace,
-                                        CustomStyles.snowStorm[2],
-                                        36,
-                                        TextAlign.center,
-                                        CustomStyles.polarNight[3],
-                                        CustomStyles.polarNight[0],
-                                        _getMove(
-                                            _cellSelected(),
-                                            num,
-                                            globals.selectedRow,
-                                            globals.selectedCol))),
-                              )
-                            : Container(width: 4);
-                      })))
+              ? Flex(
+                  direction: Axis.horizontal,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List.generate(9, (index) {
+                    int num =
+                        (index ~/ 2 + 1 + offset) % (_problem.board_size + 1);
+                    String toPlace = num == 0 ? 'X' : (num).toString();
+                    return index % 2 == 0
+                        ? Flexible(
+                            fit: FlexFit.tight,
+                            flex: 8,
+                            // child: AspectRatio(
+                            // aspectRatio: 1,
+                            child: _getRaisedButton(
+                                toPlace,
+                                CustomStyles.snowStorm[2],
+                                36,
+                                TextAlign.center,
+                                CustomStyles.polarNight[3],
+                                CustomStyles.polarNight[0],
+                                _getMove(_cellSelected(), num,
+                                    globals.selectedRow, globals.selectedCol))
+                            // ),
+                            )
+                        : Container(width: 4);
+                  }))
               : Container(height: 4);
         }));
   }
@@ -712,9 +709,9 @@ class _MyHomePageState extends State<MyHomePage> {
           child: Flex(
             direction: Axis.vertical,
             children: [
-              Container(
+              Flexible(
                 child: _getMoveButtons(),
-                height: 100,
+                // height: 100,
                 // color: Colors.red,
               ),
               // Spacer(),
