@@ -73,74 +73,110 @@ class _MyHomePageState extends State<MyHomePage> {
         focusNode: focusNode,
         onKey: (event) {
           if (event.runtimeType == RawKeyDownEvent) {
-            if (event.data.logicalKey == LogicalKeyboardKey.arrowDown ||
-                event.data.logicalKey == LogicalKeyboardKey.keyS) {
-              globals.selectedRow =
-                  ((globals.selectedRow + 1) % _problem.board_size);
-            }
-            if (event.data.logicalKey == LogicalKeyboardKey.arrowLeft ||
-                event.data.logicalKey == LogicalKeyboardKey.keyA) {
-              globals.selectedCol =
-                  ((globals.selectedCol - 1) % _problem.board_size);
-            }
-            if (event.data.logicalKey == LogicalKeyboardKey.arrowRight ||
-                event.data.logicalKey == LogicalKeyboardKey.keyD) {
-              globals.selectedCol =
-                  ((globals.selectedCol + 1) % _problem.board_size);
-            }
-            if (event.data.logicalKey == LogicalKeyboardKey.arrowUp ||
-                event.data.logicalKey == LogicalKeyboardKey.keyW) {
-              globals.selectedRow =
-                  ((globals.selectedRow - 1) % _problem.board_size);
-            }
+            var actionMap = {
+              // Move Down
+              LogicalKeyboardKey.arrowDown: () => _shiftDown(),
+              LogicalKeyboardKey.keyS: () => _shiftDown(),
 
-            // Move keys
-            if (event.data.logicalKey == LogicalKeyboardKey.numpad0 ||
-                event.data.logicalKey == LogicalKeyboardKey.digit0) {
-              _doMove(0, globals.selectedRow, globals.selectedCol);
+              // Move Left
+              LogicalKeyboardKey.arrowLeft: () => _shiftLeft(),
+              LogicalKeyboardKey.keyA: () => _shiftLeft(),
+
+              // Move Right
+              LogicalKeyboardKey.arrowRight: () => _shiftRight(),
+              LogicalKeyboardKey.keyD: () => _shiftRight(),
+
+              // Move Up
+              LogicalKeyboardKey.arrowUp: () => _shiftUp(),
+              LogicalKeyboardKey.keyW: () => _shiftUp(),
+
+              // Place 0
+              LogicalKeyboardKey.digit0: () =>
+                  _doMove(0, globals.selectedRow, globals.selectedCol),
+              LogicalKeyboardKey.numpad0: () =>
+                  _doMove(0, globals.selectedRow, globals.selectedCol),
+
+              // Place 1
+              LogicalKeyboardKey.digit1: () =>
+                  _doMove(1, globals.selectedRow, globals.selectedCol),
+              LogicalKeyboardKey.numpad1: () =>
+                  _doMove(1, globals.selectedRow, globals.selectedCol),
+
+              // Place 2
+              LogicalKeyboardKey.digit2: () =>
+                  _doMove(2, globals.selectedRow, globals.selectedCol),
+              LogicalKeyboardKey.numpad2: () =>
+                  _doMove(2, globals.selectedRow, globals.selectedCol),
+
+              // Place 3
+              LogicalKeyboardKey.digit3: () =>
+                  _doMove(3, globals.selectedRow, globals.selectedCol),
+              LogicalKeyboardKey.numpad3: () =>
+                  _doMove(3, globals.selectedRow, globals.selectedCol),
+
+              // Place 4
+              LogicalKeyboardKey.digit4: () =>
+                  _doMove(4, globals.selectedRow, globals.selectedCol),
+              LogicalKeyboardKey.numpad4: () =>
+                  _doMove(4, globals.selectedRow, globals.selectedCol),
+
+              // Place 5
+              LogicalKeyboardKey.digit5: () =>
+                  _doMove(5, globals.selectedRow, globals.selectedCol),
+              LogicalKeyboardKey.numpad5: () =>
+                  _doMove(5, globals.selectedRow, globals.selectedCol),
+
+              // Place 6
+              LogicalKeyboardKey.digit6: () =>
+                  _doMove(6, globals.selectedRow, globals.selectedCol),
+              LogicalKeyboardKey.numpad6: () =>
+                  _doMove(6, globals.selectedRow, globals.selectedCol),
+
+              // Place 7
+              LogicalKeyboardKey.digit7: () =>
+                  _doMove(7, globals.selectedRow, globals.selectedCol),
+              LogicalKeyboardKey.numpad7: () =>
+                  _doMove(7, globals.selectedRow, globals.selectedCol),
+
+              // Place 8
+              LogicalKeyboardKey.digit8: () =>
+                  _doMove(8, globals.selectedRow, globals.selectedCol),
+              LogicalKeyboardKey.numpad8: () =>
+                  _doMove(8, globals.selectedRow, globals.selectedCol),
+
+              // Place 9
+              LogicalKeyboardKey.digit9: () =>
+                  _doMove(9, globals.selectedRow, globals.selectedCol),
+              LogicalKeyboardKey.numpad9: () =>
+                  _doMove(9, globals.selectedRow, globals.selectedCol),
+            };
+
+            Function action = actionMap[event.data.logicalKey];
+            if (action != null) {
+              action();
+              setState(() {});
             }
-            if (event.data.logicalKey == LogicalKeyboardKey.numpad1 ||
-                event.data.logicalKey == LogicalKeyboardKey.digit1) {
-              _doMove(1, globals.selectedRow, globals.selectedCol);
-            }
-            if (event.data.logicalKey == LogicalKeyboardKey.numpad2 ||
-                event.data.logicalKey == LogicalKeyboardKey.digit2) {
-              _doMove(2, globals.selectedRow, globals.selectedCol);
-            }
-            if (event.data.logicalKey == LogicalKeyboardKey.numpad3 ||
-                event.data.logicalKey == LogicalKeyboardKey.digit3) {
-              _doMove(3, globals.selectedRow, globals.selectedCol);
-            }
-            if (event.data.logicalKey == LogicalKeyboardKey.numpad4 ||
-                event.data.logicalKey == LogicalKeyboardKey.digit4) {
-              _doMove(4, globals.selectedRow, globals.selectedCol);
-            }
-            if (event.data.logicalKey == LogicalKeyboardKey.numpad5 ||
-                event.data.logicalKey == LogicalKeyboardKey.digit5) {
-              _doMove(5, globals.selectedRow, globals.selectedCol);
-            }
-            if (event.data.logicalKey == LogicalKeyboardKey.numpad6 ||
-                event.data.logicalKey == LogicalKeyboardKey.digit6) {
-              _doMove(6, globals.selectedRow, globals.selectedCol);
-            }
-            if (event.data.logicalKey == LogicalKeyboardKey.numpad7 ||
-                event.data.logicalKey == LogicalKeyboardKey.digit7) {
-              _doMove(7, globals.selectedRow, globals.selectedCol);
-            }
-            if (event.data.logicalKey == LogicalKeyboardKey.numpad8 ||
-                event.data.logicalKey == LogicalKeyboardKey.digit8) {
-              _doMove(8, globals.selectedRow, globals.selectedCol);
-            }
-            if (event.data.logicalKey == LogicalKeyboardKey.numpad9 ||
-                event.data.logicalKey == LogicalKeyboardKey.digit9) {
-              _doMove(9, globals.selectedRow, globals.selectedCol);
-            }
-            setState(() {});
           }
         },
         child: _getBody(),
       ),
     );
+  }
+
+  void _shiftLeft() {
+    globals.selectedCol = ((globals.selectedCol - 1) % _problem.board_size);
+  }
+
+  void _shiftRight() {
+    globals.selectedCol = ((globals.selectedCol + 1) % _problem.board_size);
+  }
+
+  void _shiftUp() {
+    globals.selectedRow = ((globals.selectedRow - 1) % _problem.board_size);
+  }
+
+  void _shiftDown() {
+    globals.selectedRow = ((globals.selectedRow + 1) % _problem.board_size);
   }
 
   Drawer _getDrawer() {
