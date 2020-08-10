@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: CustomStyles.themeColor,
         visualDensity: VisualDensity.adaptivePlatformDensity,
         canvasColor: CustomStyles.snowStorm[2],
-        fontFamily: 'FiraCode',
+        // fontFamily: 'FiraCode',
       ),
       home: MyHomePage(title: 'LettuceSudoku'),
     );
@@ -292,7 +292,11 @@ class _MyHomePageState extends State<MyHomePage> {
       child: AutoSizeText(
         label,
         textAlign: textAlign,
-        style: CustomStyles.getFiraCode(textColor, textSize),
+        // style: CustomStyles.getFiraCode(textColor, textSize),
+        style: TextStyle(
+          color: textColor,
+          fontSize: textSize,
+        ),
       ),
     );
   }
