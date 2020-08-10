@@ -476,7 +476,6 @@ class _MyHomePageState extends State<MyHomePage> {
             stepGranularity: 1,
             minFontSize: 1,
             maxFontSize: 40,
-            // style: TextStyle(color: _getTextColor(row, col),
             style: TextStyle(
               color: _getTextColor(row, col),
               fontSize: 40,
@@ -692,7 +691,7 @@ class _MyHomePageState extends State<MyHomePage> {
         Flexible(
           fit: FlexFit.tight,
           child: _getRaisedButton(
-            'hint(' + globals.hintsGiven.length.toString() + ')',
+            'hint: ' + globals.hintsGiven.length.toString(),
             CustomStyles.snowStorm[2],
             24,
             TextAlign.center,
