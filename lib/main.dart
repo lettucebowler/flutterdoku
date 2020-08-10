@@ -593,8 +593,6 @@ class _MyHomePageState extends State<MyHomePage> {
                         ? Flexible(
                             fit: FlexFit.tight,
                             flex: 8,
-                            // child: AspectRatio(
-                            // aspectRatio: 1,
                             child: _getRaisedButton(
                                 toPlace,
                                 CustomStyles.snowStorm[2],
@@ -603,9 +601,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 CustomStyles.polarNight[3],
                                 CustomStyles.polarNight[0],
                                 _getMove(_cellSelected(), num,
-                                    globals.selectedRow, globals.selectedCol))
-                            // ),
-                            )
+                                    globals.selectedRow, globals.selectedCol)))
                         : Container(width: 4);
                   }))
               : Container(height: 4);
