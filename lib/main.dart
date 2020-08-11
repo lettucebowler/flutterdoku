@@ -17,7 +17,7 @@ import 'framework/problem/SolvingAssistant.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   bool good = await _readFromPrefs();
-  bool problemGood = await _getGame();
+  // bool problemGood = await _getGame();
   runApp(MyApp());
 }
 
@@ -37,57 +37,57 @@ Future<bool> _readFromPrefs() async {
   return true;
 }
 
-_getGame() async {
-  final prefs = await SharedPreferences.getInstance();
-  final initialString = prefs.getString('initialBoard');
-  final currentString = prefs.getString('currentBoard');
-  final finalString = prefs.getString('finalBoard');
-  List initialBoard = List.generate(9, (i) => List(9), growable: false);
-  List currentBoard = List.generate(9, (i) => List(9), growable: false);
-  List finalBoard = List.generate(9, (i) => List(9), growable: false);
-  if (initialString != null && currentString != null && finalString != null) {
-    for (int i = 0; i < initialString.length; i++) {
-      initialBoard[i ~/ 9][i % 9] = int.parse(initialString[i]);
-      currentBoard[i ~/ 9][i % 9] = int.parse(currentString[i]);
-      finalBoard[i ~/ 9][i % 9] = int.parse(finalString[i]);
-    }
-    globals.problem =
-        SudokuProblem.resume(initialBoard, currentBoard, finalBoard);
-  } else {
-    globals.problem =
-        SudokuProblem.withMoreHints(globals.initialHints.value - 17);
-  }
-}
+// _getGame() async {
+//   final prefs = await SharedPreferences.getInstance();
+//   final initialString = prefs.getString('initialBoard');
+//   final currentString = prefs.getString('currentBoard');
+//   final finalString = prefs.getString('finalBoard');
+//   List initialBoard = List.generate(9, (i) => List(9), growable: false);
+//   List currentBoard = List.generate(9, (i) => List(9), growable: false);
+//   List finalBoard = List.generate(9, (i) => List(9), growable: false);
+//   if (initialString != null && currentString != null && finalString != null) {
+//     for (int i = 0; i < initialString.length; i++) {
+//       initialBoard[i ~/ 9][i % 9] = int.parse(initialString[i]);
+//       currentBoard[i ~/ 9][i % 9] = int.parse(currentString[i]);
+//       finalBoard[i ~/ 9][i % 9] = int.parse(finalString[i]);
+//     }
+//     globals.problem =
+//         SudokuProblem.resume(initialBoard, currentBoard, finalBoard);
+//   } else {
+//     globals.problem =
+//         SudokuProblem.withMoreHints(globals.initialHints.value - 17);
+//   }
+// }
 
-_saveGame() async {
-  final prefs = await SharedPreferences.getInstance();
-  String initialString = "";
-  String currentString = "";
-  String finalString = "";
-  SudokuState initialState = globals.problem.getInitialState();
-  List initialBoard = initialState.getTiles();
-  SudokuState currentState = globals.problem.getCurrentState();
-  List currentBoard = currentState.getTiles();
-  SudokuState finalState = globals.problem.getFinalState();
-  List finalBoard = finalState.getTiles();
-  for (int i = 0; i < globals.problem.board_size; i++) {
-    for (int j = 0; j < globals.problem.board_size; j++) {
-      initialString += initialBoard[i][j].toString();
-      currentString += currentBoard[i][j].toString();
-      finalString += finalBoard[i][j].toString();
-    }
-  }
-  prefs.setString('initialBoard', initialString);
-  prefs.setString('currentBoard', currentString);
-  prefs.setString('finalBoard', finalString);
-}
+// _saveGame() async {
+//   final prefs = await SharedPreferences.getInstance();
+//   String initialString = "";
+//   String currentString = "";
+//   String finalString = "";
+//   SudokuState initialState = globals.problem.getInitialState();
+//   List initialBoard = initialState.getTiles();
+//   SudokuState currentState = globals.problem.getCurrentState();
+//   List currentBoard = currentState.getTiles();
+//   SudokuState finalState = globals.problem.getFinalState();
+//   List finalBoard = finalState.getTiles();
+//   for (int i = 0; i < globals.problem.board_size; i++) {
+//     for (int j = 0; j < globals.problem.board_size; j++) {
+//       initialString += initialBoard[i][j].toString();
+//       currentString += currentBoard[i][j].toString();
+//       finalString += finalBoard[i][j].toString();
+//     }
+//   }
+//   prefs.setString('initialBoard', initialString);
+//   prefs.setString('currentBoard', currentString);
+//   prefs.setString('finalBoard', finalString);
+// }
 
-_deleteGame() async {
-  final prefs = await SharedPreferences.getInstance();
-  prefs.remove('initialBoard');
-  prefs.remove('currentBoard');
-  prefs.remove('finalBoard');
-}
+// _deleteGame() async {
+//   final prefs = await SharedPreferences.getInstance();
+//   prefs.remove('initialBoard');
+//   prefs.remove('currentBoard');
+//   prefs.remove('finalBoard');
+// }
 
 class MyApp extends StatelessWidget {
   @override
@@ -124,14 +124,8 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     if (globals.problem == null) {
-      globals.problem = _getGame();
+      _newGame();
     }
-
-    if (globals.problem.success()) {
-      _deleteGame();
-    }
-
-    _saveGame();
 
     FocusScope.of(context).requestFocus(focusNode);
     return Scaffold(
