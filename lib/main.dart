@@ -484,7 +484,37 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
     );
-    return button;
+    Container cell = Container(
+      padding: _getBoardPadding(index),
+      child: Material(
+        color: cellColor,
+        child: InkWell(
+          hoverColor: CustomStyles.aurora[2],
+          splashColor: CustomStyles.aurora[1],
+          onTap: () => setState(() {
+            globals.selectedRow = row;
+            globals.selectedCol = col;
+          }),
+          child: Center(
+            child: AutoSizeText(
+              toPlace,
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              stepGranularity: 1,
+              minFontSize: 1,
+              maxFontSize: 40,
+              style: TextStyle(
+                color: _getTextColor(row, col),
+                fontSize: 40,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    // Material cell =
+    // return button;
+    return cell;
   }
 
   Widget _getMistakeRadioGroup() {
