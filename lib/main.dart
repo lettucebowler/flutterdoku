@@ -14,13 +14,14 @@ import 'dart:ui';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'framework/problem/SolvingAssistant.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  _read();
+  bool good = await _readFromPrefs();
+  bool problemGood = await _getGame();
   runApp(MyApp());
 }
 
-_read() async {
+Future<bool> _readFromPrefs() async {
   final prefs = await SharedPreferences.getInstance();
   final legality = prefs.getBool('doLegality');
   final peerCells = prefs.getBool('doPeerCells');
@@ -33,6 +34,59 @@ _read() async {
   globals.doMistakes.value = mistakes != null ? mistakes : true;
   globals.initialHints.value = hints != null ? hints : 30;
   globals.legalityRadio.value = legality != null && legality == false ? 0 : 1;
+  return true;
+}
+
+_getGame() async {
+  final prefs = await SharedPreferences.getInstance();
+  final initialString = prefs.getString('initialBoard');
+  final currentString = prefs.getString('currentBoard');
+  final finalString = prefs.getString('finalBoard');
+  List initialBoard = List.generate(9, (i) => List(9), growable: false);
+  List currentBoard = List.generate(9, (i) => List(9), growable: false);
+  List finalBoard = List.generate(9, (i) => List(9), growable: false);
+  if (initialString != null && currentString != null && finalString != null) {
+    for (int i = 0; i < initialString.length; i++) {
+      initialBoard[i ~/ 9][i % 9] = int.parse(initialString[i]);
+      currentBoard[i ~/ 9][i % 9] = int.parse(currentString[i]);
+      finalBoard[i ~/ 9][i % 9] = int.parse(finalString[i]);
+    }
+    globals.problem =
+        SudokuProblem.resume(initialBoard, currentBoard, finalBoard);
+  } else {
+    globals.problem =
+        SudokuProblem.withMoreHints(globals.initialHints.value - 17);
+  }
+}
+
+_saveGame() async {
+  final prefs = await SharedPreferences.getInstance();
+  String initialString = "";
+  String currentString = "";
+  String finalString = "";
+  SudokuState initialState = globals.problem.getInitialState();
+  List initialBoard = initialState.getTiles();
+  SudokuState currentState = globals.problem.getCurrentState();
+  List currentBoard = currentState.getTiles();
+  SudokuState finalState = globals.problem.getFinalState();
+  List finalBoard = finalState.getTiles();
+  for (int i = 0; i < globals.problem.board_size; i++) {
+    for (int j = 0; j < globals.problem.board_size; j++) {
+      initialString += initialBoard[i][j].toString();
+      currentString += currentBoard[i][j].toString();
+      finalString += finalBoard[i][j].toString();
+    }
+  }
+  prefs.setString('initialBoard', initialString);
+  prefs.setString('currentBoard', currentString);
+  prefs.setString('finalBoard', finalString);
+}
+
+_deleteGame() async {
+  final prefs = await SharedPreferences.getInstance();
+  prefs.remove('initialBoard');
+  prefs.remove('currentBoard');
+  prefs.remove('finalBoard');
 }
 
 class MyApp extends StatelessWidget {
@@ -60,8 +114,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  SudokuProblem _problem =
-      SudokuProblem.withMoreHints(globals.initialHints.value - 17);
+  // SudokuProblem _problem =
+  //     SudokuProblem.withMoreHints(globals.initialHints.value - 17);
   var menuHeight = 70;
   SolvingAssistant _assistant;
   FocusNode focusNode = FocusNode();
@@ -69,9 +123,15 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    if (_problem == null) {
-      _problem = SudokuProblem.withMoreHints(globals.initialHints.value - 17);
+    if (globals.problem == null) {
+      globals.problem = _getGame();
     }
+
+    if (globals.problem.success()) {
+      _deleteGame();
+    }
+
+    _saveGame();
 
     FocusScope.of(context).requestFocus(focusNode);
     return Scaffold(
@@ -179,19 +239,23 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _shiftLeft() {
-    globals.selectedCol = ((globals.selectedCol - 1) % _problem.board_size);
+    globals.selectedCol =
+        ((globals.selectedCol - 1) % globals.problem.board_size);
   }
 
   void _shiftRight() {
-    globals.selectedCol = ((globals.selectedCol + 1) % _problem.board_size);
+    globals.selectedCol =
+        ((globals.selectedCol + 1) % globals.problem.board_size);
   }
 
   void _shiftUp() {
-    globals.selectedRow = ((globals.selectedRow - 1) % _problem.board_size);
+    globals.selectedRow =
+        ((globals.selectedRow - 1) % globals.problem.board_size);
   }
 
   void _shiftDown() {
-    globals.selectedRow = ((globals.selectedRow + 1) % _problem.board_size);
+    globals.selectedRow =
+        ((globals.selectedRow + 1) % globals.problem.board_size);
   }
 
   _save() async {
@@ -209,6 +273,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Drawer _getDrawer() {
+    _readFromPrefs();
     return Drawer(
       child: Container(
         child: Flex(
@@ -254,12 +319,12 @@ class _MyHomePageState extends State<MyHomePage> {
                             globals.initialHints,
                             17,
                             50),
-                        Flex(
-                          direction: Axis.horizontal,
-                          mainAxisAlignment: MainAxisAlignment.center,
+                        Row(
+                          // direction: Axis.horizontal,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-                            Flexible(
-                              flex: 1,
+                            Expanded(
+                              // flex: 1,
                               child: _getRaisedButton(
                                   'Solve Game',
                                   CustomStyles.snowStorm[2],
@@ -267,11 +332,11 @@ class _MyHomePageState extends State<MyHomePage> {
                                   TextAlign.center,
                                   CustomStyles.polarNight[3],
                                   CustomStyles.polarNight[0],
-                                  () => _solveGame(_problem)),
+                                  () => _solveGame(globals.problem)),
                             ),
                             Container(width: 6),
-                            Flexible(
-                              flex: 1,
+                            Expanded(
+                              // flex: 1,
                               child: _getRaisedButton(
                                   'Reset Game',
                                   CustomStyles.snowStorm[2],
@@ -279,18 +344,24 @@ class _MyHomePageState extends State<MyHomePage> {
                                   TextAlign.center,
                                   CustomStyles.polarNight[3],
                                   CustomStyles.polarNight[0],
-                                  () => _resetBoard(_problem)),
+                                  () => _resetBoard(globals.problem)),
                             ),
                           ],
                         ),
-                        _getRaisedButton(
-                            'New Game',
-                            CustomStyles.snowStorm[2],
-                            17,
-                            TextAlign.center,
-                            CustomStyles.polarNight[3],
-                            CustomStyles.polarNight[0],
-                            () => _newGame()),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                                child: _getRaisedButton(
+                                    'New Game',
+                                    CustomStyles.snowStorm[2],
+                                    17,
+                                    TextAlign.center,
+                                    CustomStyles.polarNight[3],
+                                    CustomStyles.polarNight[0],
+                                    () => _newGame())),
+                          ],
+                        ),
                       ],
                     ),
                   ),
@@ -331,7 +402,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _newGame() {
     setState(() {
-      _problem = SudokuProblem.withMoreHints(globals.initialHints.value - 17);
+      globals.problem =
+          SudokuProblem.withMoreHints(globals.initialHints.value - 17);
       _resetGlobals();
     });
   }
@@ -350,8 +422,8 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   EdgeInsets _getBoardPadding(int index) {
-    int row = index ~/ _problem.board_size;
-    int col = index % _problem.board_size;
+    int row = index ~/ globals.problem.board_size;
+    int col = index % globals.problem.board_size;
 
     double thickness = 2;
     double defaultThickness = 0.5;
@@ -366,10 +438,10 @@ class _MyHomePageState extends State<MyHomePage> {
     if (col == 0) {
       left = thickness;
     }
-    if (row % _problem.cell_size == _problem.cell_size - 1) {
+    if (row % globals.problem.cell_size == globals.problem.cell_size - 1) {
       bottom = thickness;
     }
-    if (col % _problem.cell_size == _problem.cell_size - 1) {
+    if (col % globals.problem.cell_size == globals.problem.cell_size - 1) {
       right = thickness;
     }
 
@@ -391,13 +463,13 @@ class _MyHomePageState extends State<MyHomePage> {
     var validRow = row > -1 && row < 10;
     var validCol = col > -1 && col < 10;
     var validCell = validRow && validCol;
-    if (!_problem.success() && validCell) {
+    if (!globals.problem.success() && validCell) {
       // SudokuState currentState = _problem.getCurrentState();
       // List currentBoard = currentState.getTiles();
-      SudokuState finalState = _problem.getFinalState();
+      SudokuState finalState = globals.problem.getFinalState();
       List finalBoard = finalState.getTiles();
       var num = finalBoard[row][col];
-      if (!_problem.isCorrect(row, col)) {
+      if (!globals.problem.isCorrect(row, col)) {
         _doMove(num, row, col);
         setState(() {
           globals.hintsGiven.add([row, col]);
@@ -407,11 +479,11 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _doMove(int num, int row, int col) {
-    _assistant = SolvingAssistant(_problem);
-    SudokuState initialState = _problem.getInitialState();
+    _assistant = SolvingAssistant(globals.problem);
+    SudokuState initialState = globals.problem.getInitialState();
     var initialBoard = initialState.getTiles();
     var notInitialHint = initialBoard[row][col] == 0;
-    if (!_problem.success() && notInitialHint) {
+    if (!globals.problem.success() && notInitialHint) {
       var move = 'Place ' +
           num.toString() +
           ' at ' +
@@ -445,13 +517,13 @@ class _MyHomePageState extends State<MyHomePage> {
 
     bool rowSelected = row == globals.selectedRow;
     bool colSelected = col == globals.selectedCol;
-    bool floorSelected =
-        row ~/ _problem.cell_size == globals.selectedRow ~/ _problem.cell_size;
-    bool towerSelected =
-        col ~/ _problem.cell_size == globals.selectedCol ~/ _problem.cell_size;
+    bool floorSelected = row ~/ globals.problem.cell_size ==
+        globals.selectedRow ~/ globals.problem.cell_size;
+    bool towerSelected = col ~/ globals.problem.cell_size ==
+        globals.selectedCol ~/ globals.problem.cell_size;
     bool cells = globals.doPeerCells.value;
     bool digits = globals.doPeerDigits.value;
-    SudokuState currentState = _problem.getCurrentState();
+    SudokuState currentState = globals.problem.getCurrentState();
     List currentBoard = currentState.getTiles();
     bool sameDigit = _cellSelected() &&
         currentBoard[row][col] ==
@@ -471,15 +543,15 @@ class _MyHomePageState extends State<MyHomePage> {
         ? peerDigit
         : color;
     color = cells && rowSelected && colSelected ? background : color;
-    color = _problem.success() ? success : color;
+    color = globals.problem.success() ? success : color;
 
     return color;
   }
 
   Widget _makeBoardButton(int index) {
-    var row = index ~/ _problem.board_size;
-    var col = index % _problem.board_size;
-    SudokuState currentState = _problem.getCurrentState();
+    var row = index ~/ globals.problem.board_size;
+    var col = index % globals.problem.board_size;
+    SudokuState currentState = globals.problem.getCurrentState();
     List currentBoard = currentState.getTiles();
     var cellNum = currentBoard[row][col];
     String toPlace = cellNum == 0 ? '' : cellNum.toString();
@@ -633,9 +705,10 @@ class _MyHomePageState extends State<MyHomePage> {
         color: CustomStyles.polarNight[3],
         child: GridView.count(
 //            padding: EdgeInsets.all(1),
-            crossAxisCount: _problem.board_size,
+            crossAxisCount: globals.problem.board_size,
             childAspectRatio: 1,
-            children: List.generate(_problem.board_size * _problem.board_size,
+            children: List.generate(
+                globals.problem.board_size * globals.problem.board_size,
                 (index) {
               return _makeBoardButton(index);
             })),
@@ -655,8 +728,8 @@ class _MyHomePageState extends State<MyHomePage> {
                   direction: Axis.horizontal,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: List.generate(9, (index) {
-                    int num =
-                        (index ~/ 2 + 1 + offset) % (_problem.board_size + 1);
+                    int num = (index ~/ 2 + 1 + offset) %
+                        (globals.problem.board_size + 1);
                     String toPlace = num == 0 ? 'X' : (num).toString();
                     return index % 2 == 0
                         ? Flexible(
@@ -686,11 +759,11 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Color _getTextColor(int row, int col) {
-    SudokuState initialState = _problem.getInitialState();
+    SudokuState initialState = globals.problem.getInitialState();
     var initialBoard = initialState.getTiles();
     var initialHint = initialBoard[row][col] != 0;
-    var legal = _problem.isLegal(row, col);
-    var correct = _problem.isCorrect(row, col);
+    var legal = globals.problem.isLegal(row, col);
+    var correct = globals.problem.isCorrect(row, col);
     Color color = CustomStyles.frost[3];
 
     color = globals.doMistakes.value && globals.doLegality.value && !legal

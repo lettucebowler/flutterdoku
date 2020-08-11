@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'domains/sudoku/SudokuProblem.dart';
 
 BoolWrapper doLegality = BoolWrapper(false);
 BoolWrapper doPeerCells = BoolWrapper(true);
@@ -10,6 +11,7 @@ IntWrapper legalityRadio = IntWrapper(0);
 int selectedRow = -1;
 int selectedCol = -1;
 List hintsGiven = [];
+SudokuProblem problem;
 
 class BoolWrapper {
   bool value;

@@ -44,8 +44,7 @@ class SudokuProblem extends Problem {
     super.setFinalState(SudokuState(sudoku.final_board));
   }
 
-  SudokuProblem.resume(
-      int hint_offset, List initial_board, List current_board, List final_board)
+  SudokuProblem.resume(List initialBoard, List currentBoard, List finalBoard)
       : super() {
     super.setName('Sudoku');
     super.setIntroduction(
@@ -59,9 +58,9 @@ class SudokuProblem extends Problem {
     board_size = cell_size * cell_size;
     // sudoku = Sudoku.(cell_size, hint_offset, initial_board, final_board);
     super.setMover(SudokuMover(cell_size * cell_size));
-    super.setInitialState(SudokuState(initial_board));
-    super.setCurrentState(SudokuState(current_board));
-    super.setFinalState(SudokuState(final_board));
+    super.setInitialState(SudokuState(initialBoard));
+    super.setCurrentState(SudokuState(currentBoard));
+    super.setFinalState(SudokuState(finalBoard));
   }
 
   Sudoku getSudoku() {
