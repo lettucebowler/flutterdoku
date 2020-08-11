@@ -456,34 +456,6 @@ class _MyHomePageState extends State<MyHomePage> {
     String toPlace = cellNum == 0 ? '' : cellNum.toString();
 
     Color cellColor = _getCellColor(row, col);
-
-    Container button = Container(
-      padding: _getBoardPadding(index),
-      child: FlatButton(
-        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0.0)),
-        color: cellColor,
-        hoverColor: CustomStyles.aurora[2],
-        onPressed: () => setState(() {
-          globals.selectedRow = row;
-          globals.selectedCol = col;
-        }),
-        child: Center(
-          child: AutoSizeText(
-            toPlace,
-            textAlign: TextAlign.center,
-            maxLines: 1,
-            stepGranularity: 1,
-            minFontSize: 1,
-            maxFontSize: 40,
-            style: TextStyle(
-              color: _getTextColor(row, col),
-              fontSize: 40,
-            ),
-          ),
-        ),
-      ),
-    );
     Container cell = Container(
       padding: _getBoardPadding(index),
       child: Material(
