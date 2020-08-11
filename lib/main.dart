@@ -32,6 +32,7 @@ _read() async {
   globals.doPeerDigits.value = peerDigits != null ? peerDigits : true;
   globals.doMistakes.value = mistakes != null ? mistakes : true;
   globals.initialHints.value = hints != null ? hints : 30;
+  globals.legalityRadio.value = legality != null && legality == false ? 0 : 1;
   print('Peer Cells: ' + peerCells.toString());
   print('globals.peerCells: ' + globals.doPeerCells.value.toString());
 }
