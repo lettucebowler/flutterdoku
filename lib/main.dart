@@ -11,11 +11,29 @@ import 'domains/sudoku/SudokuState.dart';
 import 'framework/problem/Problem.dart';
 import 'globals.dart' as globals;
 import 'dart:ui';
-import 'dart:math';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'framework/problem/SolvingAssistant.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  _read();
   runApp(MyApp());
+}
+
+_read() async {
+  final prefs = await SharedPreferences.getInstance();
+  final legality = prefs.getBool('doLegality');
+  final peerCells = prefs.getBool('doPeerCells');
+  final peerDigits = prefs.getBool('doPeerDigits');
+  final mistakes = prefs.getBool('doMistakes');
+  final hints = prefs.getInt('initialHints');
+  globals.doLegality.value = legality != null ? legality : false;
+  globals.doPeerCells.value = peerCells != null ? peerCells : true;
+  globals.doPeerDigits.value = peerDigits != null ? peerDigits : true;
+  globals.doMistakes.value = mistakes != null ? mistakes : true;
+  globals.initialHints.value = hints != null ? hints : 30;
+  print('Peer Cells: ' + peerCells.toString());
+  print('globals.peerCells: ' + globals.doPeerCells.value.toString());
 }
 
 class MyApp extends StatelessWidget {
@@ -27,7 +45,6 @@ class MyApp extends StatelessWidget {
         primarySwatch: CustomStyles.themeColor,
         visualDensity: VisualDensity.adaptivePlatformDensity,
         canvasColor: CustomStyles.snowStorm[2],
-        // fontFamily: 'FiraCode',
       ),
       home: MyHomePage(title: 'LettuceSudoku'),
     );
@@ -67,7 +84,6 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       drawer: _getDrawer(),
-      // endDrawer: _getDrawer(),
       body: RawKeyboardListener(
         autofocus: true,
         focusNode: focusNode,
@@ -177,6 +193,20 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _shiftDown() {
     globals.selectedRow = ((globals.selectedRow + 1) % _problem.board_size);
+  }
+
+  _save() async {
+    final prefs = await SharedPreferences.getInstance();
+    final doLegality = globals.doLegality.value;
+    final doPeerCells = globals.doPeerCells.value;
+    final doPeerDigits = globals.doPeerDigits.value;
+    final doMistakes = globals.doMistakes.value;
+    final hints = globals.initialHints.value;
+    prefs.setBool('doLegality', doLegality);
+    prefs.setBool('doPeerCells', doPeerCells);
+    prefs.setBool('doPeerDigits', doPeerDigits);
+    prefs.setBool('doMistakes', doMistakes);
+    prefs.setInt('initialHints', hints);
   }
 
   Drawer _getDrawer() {
@@ -522,6 +552,7 @@ class _MyHomePageState extends State<MyHomePage> {
           child: Switch(
             value: setting.value,
             onChanged: (bool val) {
+              _save();
               setState(() {
                 setting.value = val;
               });
@@ -548,6 +579,7 @@ class _MyHomePageState extends State<MyHomePage> {
           value: value,
           groupValue: groupValue.value,
           onChanged: (val) {
+            _save();
             setState(() {
               groupValue.value = value;
               setting.value = setTo;
@@ -579,6 +611,7 @@ class _MyHomePageState extends State<MyHomePage> {
               child: Slider(
                 value: setting.value.toDouble(),
                 onChanged: (val) {
+                  _save();
                   setState(() {
                     setting.value = val.toInt();
                   });
