@@ -1,4 +1,4 @@
-flutter build web
+flutter build web --dart-define=FLUTTER_WEB_USE_SKIA=true
 cp icon/icon.png icon/favicon.png
 mv icon/favicon.png build/web
 cp icon/Icon-192.png build/web/icons
