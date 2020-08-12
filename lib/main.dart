@@ -597,6 +597,29 @@ class _MyHomePageState extends State<MyHomePage> {
         : Container();
   }
 
+  Widget _getRadio(
+      String label, int value, var groupValue, var setting, var setTo) {
+    return Flex(
+      direction: Axis.horizontal,
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        Text(label),
+        Radio(
+          activeColor: CustomStyles.polarNight[3],
+          value: value,
+          groupValue: groupValue.value,
+          onChanged: (val) {
+            _save();
+            setState(() {
+              groupValue.value = value;
+              setting.value = setTo;
+            });
+          },
+        ),
+      ],
+    );
+  }
+
   Widget _getToggle(String label, globals.BoolWrapper setting) {
     return Flex(
       direction: Axis.horizontal,
@@ -627,29 +650,6 @@ class _MyHomePageState extends State<MyHomePage> {
             activeTrackColor: CustomStyles.aurora[3],
             inactiveTrackColor: CustomStyles.aurora[0],
           ),
-        ),
-      ],
-    );
-  }
-
-  Widget _getRadio(
-      String label, int value, var groupValue, var setting, var setTo) {
-    return Flex(
-      direction: Axis.horizontal,
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        Text(label),
-        Radio(
-          activeColor: CustomStyles.polarNight[3],
-          value: value,
-          groupValue: groupValue.value,
-          onChanged: (val) {
-            _save();
-            setState(() {
-              groupValue.value = value;
-              setting.value = setTo;
-            });
-          },
         ),
       ],
     );
