@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/services.dart';
+import 'package:lettuce_sudoku/widgets.dart';
 import 'CustomStyles.dart';
 import 'domains/sudoku/SudokuProblem.dart';
 import 'domains/sudoku/SudokuState.dart';
@@ -13,6 +14,7 @@ import 'globals.dart' as globals;
 import 'dart:ui';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'framework/problem/SolvingAssistant.dart';
+import 'widgets.dart' as widgets;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -270,127 +272,90 @@ class _MyHomePageState extends State<MyHomePage> {
     prefs.setInt('initialHints', hints);
   }
 
-  Drawer _getDrawer(BuildContext context) {
+  Widget _getDrawer(BuildContext context) {
     _readFromPrefs();
     return Drawer(
-      child: Container(
-        child: Flex(
-          direction: Axis.vertical,
-          children: [
-            DrawerHeader(
-              child: Center(
-                child: Text(
-                  'Settings',
-                  style: CustomStyles.titleText,
-                ),
-              ),
-              decoration: BoxDecoration(
-                color: CustomStyles.polarNight[3],
+      child: ListView(
+        children: [
+          DrawerHeader(
+            child: Center(
+              child: Text(
+                'Settings',
+                style: CustomStyles.titleText,
               ),
             ),
-            Container(
-              child: Flex(
-                direction: Axis.vertical,
-                children: [
-                  Container(
-                    padding: EdgeInsets.fromLTRB(8, 0, 8, 0),
-                    child: Flex(
-                      direction: Axis.vertical,
-                      children: [
-                        _getToggle('Highlight Peer Cells', globals.doPeerCells),
-                        _getToggle(
-                            'Highlight Peer Digits', globals.doPeerDigits),
-                        _getToggle('Show Mistakes', globals.doMistakes),
-                        AnimatedSwitcher(
-                          duration: const Duration(milliseconds: 250),
-                          transitionBuilder:
-                              (Widget child, Animation<double> animation) =>
-                                  SizeTransition(
-                            child: child,
-                            sizeFactor: animation,
-                          ),
-                          child: _getMistakeRadioGroup(),
-                        ),
-                        _getSliderNoDivisions(
-                            'Initial Hints: ' +
-                                globals.initialHints.value.toString(),
-                            globals.initialHints,
-                            17,
-                            50),
-                        Row(
-                          // direction: Axis.horizontal,
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Expanded(
-                              // flex: 1,
-                              child: _getFlatButton(
-                                  'Solve Game',
-                                  CustomStyles.snowStorm[2],
-                                  17,
-                                  TextAlign.center,
-                                  CustomStyles.polarNight[3],
-                                  CustomStyles.polarNight[0],
-                                  () => _solveGame(globals.problem)),
-                            ),
-                            Container(width: 6),
-                            Expanded(
-                              // flex: 1,
-                              child: _getFlatButton(
-                                  'Reset Game',
-                                  CustomStyles.snowStorm[2],
-                                  17,
-                                  TextAlign.center,
-                                  CustomStyles.polarNight[3],
-                                  CustomStyles.polarNight[0],
-                                  () => _resetBoard(globals.problem)),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                                child: _getFlatButton(
-                                    'New Game',
-                                    CustomStyles.snowStorm[2],
-                                    17,
-                                    TextAlign.center,
-                                    CustomStyles.polarNight[3],
-                                    CustomStyles.polarNight[0],
-                                    () => _newGame())),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+            decoration: BoxDecoration(
+              color: CustomStyles.polarNight[3],
             ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _getFlatButton(
-      String label,
-      Color textColor,
-      double textSize,
-      TextAlign textAlign,
-      Color buttonColor,
-      Color splashColor,
-      Function function) {
-    return FlatButton(
-      color: buttonColor,
-      splashColor: splashColor,
-      onPressed: function,
-      child: AutoSizeText(
-        label,
-        textAlign: textAlign,
-        style: TextStyle(
-          color: textColor,
-          fontSize: textSize,
-        ),
+          ),
+          _getToggle('Highlight Peer Cells', globals.doPeerCells),
+          _getToggle('Highlight Peer Digits', globals.doPeerDigits),
+          _getToggle('Show Mistakes', globals.doMistakes),
+          AnimatedSwitcher(
+            duration: const Duration(milliseconds: 250),
+            transitionBuilder: (Widget child, Animation<double> animation) =>
+                SizeTransition(
+              child: child,
+              sizeFactor: animation,
+            ),
+            child: _getMistakeRadioGroup(),
+          ),
+          _getSliderNoDivisions('Givens', globals.initialHints, 17, 50),
+          Row(
+            // direction: Axis.horizontal,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Spacer(flex: 2),
+              Expanded(
+                flex: 16,
+                child: getFlatButton(
+                    'Solve Game',
+                    CustomStyles.snowStorm[2],
+                    17,
+                    TextAlign.center,
+                    CustomStyles.polarNight[3],
+                    CustomStyles.polarNight[0],
+                    () => _solveGame(globals.problem)),
+              ),
+              Spacer(
+                flex: 1,
+              ),
+              Expanded(
+                flex: 16,
+                child: getFlatButton(
+                    'Reset Game',
+                    CustomStyles.snowStorm[2],
+                    17,
+                    TextAlign.center,
+                    CustomStyles.polarNight[3],
+                    CustomStyles.polarNight[0],
+                    () => _resetBoard(globals.problem)),
+              ),
+              Spacer(flex: 2),
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Spacer(
+                flex: 2,
+              ),
+              Expanded(
+                  flex: 33,
+                  child: getFlatButton(
+                      'New Game',
+                      CustomStyles.snowStorm[2],
+                      17,
+                      TextAlign.center,
+                      CustomStyles.polarNight[3],
+                      CustomStyles.polarNight[0],
+                      () => _newGame())),
+              Spacer(
+                flex: 2,
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -620,73 +585,125 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget _getToggle(String label, globals.BoolWrapper setting) {
-    return Flex(
-      direction: Axis.horizontal,
-      mainAxisAlignment: MainAxisAlignment.end,
+    return Row(
       children: [
-        Flexible(
-          fit: FlexFit.tight,
-          child: Text(
-            label,
-            style: TextStyle(
-              color: CustomStyles.polarNight[3],
-              fontSize: 17,
-            ),
-            textAlign: TextAlign.left,
+        Spacer(
+          flex: 2,
+        ),
+        Expanded(
+          flex: 35,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                // color: Colors.red,
+                child: Text(
+                  label,
+                  style: TextStyle(
+                    color: CustomStyles.polarNight[3],
+                    fontSize: 17,
+                  ),
+                  textAlign: TextAlign.left,
+                ),
+              ),
+              Align(
+                alignment: Alignment.centerRight,
+                // color: Colors.blue,
+                child: Switch(
+                  value: setting.value,
+                  onChanged: (bool val) {
+                    _save();
+                    setState(() {
+                      setting.value = val;
+                    });
+                  },
+                  activeColor: CustomStyles.polarNight[3],
+                  inactiveThumbColor: CustomStyles.polarNight[3],
+                  activeTrackColor: CustomStyles.aurora[3],
+                  inactiveTrackColor: CustomStyles.aurora[0],
+                ),
+              ),
+            ],
           ),
         ),
-        Container(
-          child: Switch(
-            value: setting.value,
-            onChanged: (bool val) {
-              _save();
-              setState(() {
-                setting.value = val;
-              });
-            },
-            activeColor: CustomStyles.polarNight[3],
-            inactiveThumbColor: CustomStyles.polarNight[3],
-            activeTrackColor: CustomStyles.aurora[3],
-            inactiveTrackColor: CustomStyles.aurora[0],
-          ),
-        ),
+        // Spacer(
+        //   flex: 1,
+        // ),
       ],
     );
   }
 
   Widget _getSliderNoDivisions(
       String label, globals.IntWrapper setting, double min, double max) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
+    // return Column(
+    //   mainAxisAlignment: MainAxisAlignment.center,
+    //   crossAxisAlignment: CrossAxisAlignment.center,
+    //   children: [
+    //     Text(
+    //       label,
+    //       style: TextStyle(
+    //         color: CustomStyles.polarNight[3],
+    //         fontSize: 17,
+    //       ),
+    //       textAlign: TextAlign.center,
+    //     ),
+    //     Row(
+    //       mainAxisAlignment: MainAxisAlignment.center,
+    //       children: [
+    //         Text('17'),
+    //         Expanded(
+    //           child: Slider(
+    //             value: setting.value.toDouble(),
+    //             onChanged: (val) {
+    //               _save();
+    //               setState(() {
+    //                 setting.value = val.toInt();
+    //               });
+    //             },
+    //             min: min,
+    //             max: max,
+    //           ),
+    //         ),
+    //         Text('50'),
+    //       ],
+    //     ),
+    //   ],
+    // );
+    return Row(
       children: [
-        Text(
-          label,
-          style: TextStyle(
-            color: CustomStyles.polarNight[3],
-            fontSize: 17,
-          ),
-          textAlign: TextAlign.center,
-        ),
-        Row(
-          children: [
-            Text('17'),
-            Expanded(
-              child: Slider(
-                value: setting.value.toDouble(),
-                onChanged: (val) {
-                  _save();
-                  setState(() {
-                    setting.value = val.toInt();
-                  });
-                },
-                min: min,
-                max: max,
+        Spacer(flex: 2),
+        Expanded(
+          flex: 33,
+          child: Row(
+            children: [
+              Text(
+                label,
+                style: TextStyle(
+                  color: CustomStyles.polarNight[3],
+                  fontSize: 17,
+                ),
+                textAlign: TextAlign.center,
               ),
-            ),
-            Text('50'),
-          ],
+              // Spacer(),
+              Expanded(
+                child: Slider(
+                  value: setting.value.toDouble(),
+                  onChanged: (val) {
+                    _save();
+                    setState(() {
+                      setting.value = val.toInt();
+                    });
+                  },
+                  min: min,
+                  max: max,
+                ),
+              ),
+              // Spacer(),
+              Text(setting.value.toString()),
+            ],
+          ),
         ),
+        Spacer(flex: 2),
       ],
     );
   }
@@ -728,7 +745,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         ? Flexible(
                             fit: FlexFit.tight,
                             flex: 8,
-                            child: _getFlatButton(
+                            child: getFlatButton(
                                 toPlace,
                                 CustomStyles.snowStorm[2],
                                 36,
@@ -778,7 +795,7 @@ class _MyHomePageState extends State<MyHomePage> {
       children: <Widget>[
         Flexible(
           fit: FlexFit.tight,
-          child: _getFlatButton(
+          child: getFlatButton(
             'New Game',
             CustomStyles.snowStorm[2],
             24,
@@ -791,7 +808,7 @@ class _MyHomePageState extends State<MyHomePage> {
         Container(width: 4),
         Flexible(
           fit: FlexFit.tight,
-          child: _getFlatButton(
+          child: getFlatButton(
             'Get Hint',
             CustomStyles.snowStorm[2],
             24,
