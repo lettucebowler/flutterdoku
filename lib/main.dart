@@ -300,7 +300,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             child: _getMistakeRadioGroup(),
           ),
-          _getSliderNoDivisions('Givens', globals.initialHints, 17, 50),
+          _getSliderNoDivisions('Initial Hints', globals.initialHints, 17, 50),
           Row(
             // direction: Axis.horizontal,
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -618,41 +618,60 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Widget _getSliderNoDivisions(
       String label, globals.IntWrapper setting, double min, double max) {
-    return Row(
+    return Column(
       children: [
-        Spacer(flex: 2),
-        Expanded(
-          flex: 33,
-          child: Row(
-            children: [
-              Text(
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Spacer(flex: 2),
+            Expanded(
+              flex: 35,
+              child: Text(
                 label,
                 style: TextStyle(
                   color: CustomStyles.polarNight[3],
                   fontSize: 17,
                 ),
-                textAlign: TextAlign.center,
               ),
-              // Spacer(),
-              Expanded(
-                child: Slider(
-                  value: setting.value.toDouble(),
-                  onChanged: (val) {
-                    _save();
-                    setState(() {
-                      setting.value = val.toInt();
-                    });
-                  },
-                  min: min,
-                  max: max,
-                ),
-              ),
-              // Spacer(),
-              Text(setting.value.toString()),
-            ],
-          ),
+            ),
+          ],
         ),
-        Spacer(flex: 2),
+        Row(
+          children: [
+            Expanded(
+              child: Slider(
+                value: setting.value.toDouble(),
+                onChanged: (val) {
+                  _save();
+                  setState(() {
+                    setting.value = val.toInt();
+                  });
+                },
+                min: min,
+                max: max,
+              ),
+            ),
+            IconButton(
+                icon: Icon(Icons.remove, color: CustomStyles.polarNight[3]),
+                onPressed: () {
+                  if (setting.value > min) {
+                    setting.value--;
+                    _save();
+                    setState(() {});
+                  }
+                }),
+            Text(setting.value.toString()),
+            IconButton(
+                icon: Icon(Icons.add, color: CustomStyles.polarNight[3]),
+                onPressed: () {
+                  if (setting.value < max) {
+                    setting.value++;
+                    _save();
+                    setState(() {});
+                  }
+                }),
+          ],
+        ),
       ],
     );
   }
