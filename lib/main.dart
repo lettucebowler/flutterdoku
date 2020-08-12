@@ -374,7 +374,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  RaisedButton _getRaisedButton(
+  Widget _getRaisedButton(
       String label,
       Color textColor,
       double textSize,
@@ -382,10 +382,7 @@ class _MyHomePageState extends State<MyHomePage> {
       Color buttonColor,
       Color splashColor,
       Function function) {
-    return RaisedButton(
-      elevation: 0,
-      hoverElevation: 10,
-      focusElevation: 0,
+    return FlatButton(
       color: buttonColor,
       splashColor: splashColor,
       onPressed: function,
