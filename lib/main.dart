@@ -23,17 +23,18 @@ void main() async {
 
 Future<bool> _readFromPrefs() async {
   final prefs = await SharedPreferences.getInstance();
-  final legality = prefs.getBool('doLegality');
+  // final legality = prefs.getBool('doLegality');
   final peerCells = prefs.getBool('doPeerCells');
   final peerDigits = prefs.getBool('doPeerDigits');
   final mistakes = prefs.getBool('doMistakes');
   final hints = prefs.getInt('initialHints');
-  globals.doLegality.value = legality != null ? legality : false;
+  final legality = prefs.getInt('legalityRadio');
+  // globals.doLegality.value = legality != null ? legality : false;
   globals.doPeerCells.value = peerCells != null ? peerCells : true;
   globals.doPeerDigits.value = peerDigits != null ? peerDigits : true;
   globals.doMistakes.value = mistakes != null ? mistakes : true;
   globals.initialHints.value = hints != null ? hints : 30;
-  globals.legalityRadio.value = legality != null && legality == false ? 0 : 1;
+  globals.legalityRadio.value = legality == 1 || legality == 0 ? legality : 0;
   return true;
 }
 
@@ -257,15 +258,15 @@ class _MyHomePageState extends State<MyHomePage> {
 
   _save() async {
     final prefs = await SharedPreferences.getInstance();
-    final doLegality = globals.doLegality.value;
+    final legalityRadio = globals.legalityRadio.value;
     final doPeerCells = globals.doPeerCells.value;
     final doPeerDigits = globals.doPeerDigits.value;
     final doMistakes = globals.doMistakes.value;
     final hints = globals.initialHints.value;
-    prefs.setBool('doLegality', doLegality);
     prefs.setBool('doPeerCells', doPeerCells);
     prefs.setBool('doPeerDigits', doPeerDigits);
     prefs.setBool('doMistakes', doMistakes);
+    prefs.setInt('legalityRadio', legalityRadio);
     prefs.setInt('initialHints', hints);
   }
 
@@ -589,16 +590,15 @@ class _MyHomePageState extends State<MyHomePage> {
         ? Column(
             children: [
               _getRadio('Correctness', 0, globals.legalityRadio,
-                  globals.doLegality, false),
-              _getRadio('Legality', 1, globals.legalityRadio,
-                  globals.doLegality, true),
+                  globals.legalityRadio),
+              _getRadio(
+                  'Legality', 1, globals.legalityRadio, globals.legalityRadio),
             ],
           )
         : Container();
   }
 
-  Widget _getRadio(
-      String label, int value, var groupValue, var setting, var setTo) {
+  Widget _getRadio(String label, int value, var groupValue, var setting) {
     return Flex(
       direction: Axis.horizontal,
       mainAxisAlignment: MainAxisAlignment.end,
@@ -612,7 +612,6 @@ class _MyHomePageState extends State<MyHomePage> {
             _save();
             setState(() {
               groupValue.value = value;
-              setting.value = setTo;
             });
           },
         ),
@@ -758,12 +757,13 @@ class _MyHomePageState extends State<MyHomePage> {
     var initialHint = initialBoard[row][col] != 0;
     var legal = globals.problem.isLegal(row, col);
     var correct = globals.problem.isCorrect(row, col);
+    var doLegality = globals.legalityRadio.value == 1;
     Color color = CustomStyles.frost[3];
 
-    color = globals.doMistakes.value && globals.doLegality.value && !legal
+    color = globals.doMistakes.value && doLegality && !legal
         ? CustomStyles.aurora[0]
         : color;
-    color = globals.doMistakes.value && !globals.doLegality.value && !correct
+    color = globals.doMistakes.value && !doLegality && !correct
         ? CustomStyles.aurora[0]
         : color;
     color = initialHint ? CustomStyles.polarNight[3] : color;
