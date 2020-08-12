@@ -635,40 +635,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Widget _getSliderNoDivisions(
       String label, globals.IntWrapper setting, double min, double max) {
-    // return Column(
-    //   mainAxisAlignment: MainAxisAlignment.center,
-    //   crossAxisAlignment: CrossAxisAlignment.center,
-    //   children: [
-    //     Text(
-    //       label,
-    //       style: TextStyle(
-    //         color: CustomStyles.polarNight[3],
-    //         fontSize: 17,
-    //       ),
-    //       textAlign: TextAlign.center,
-    //     ),
-    //     Row(
-    //       mainAxisAlignment: MainAxisAlignment.center,
-    //       children: [
-    //         Text('17'),
-    //         Expanded(
-    //           child: Slider(
-    //             value: setting.value.toDouble(),
-    //             onChanged: (val) {
-    //               _save();
-    //               setState(() {
-    //                 setting.value = val.toInt();
-    //               });
-    //             },
-    //             min: min,
-    //             max: max,
-    //           ),
-    //         ),
-    //         Text('50'),
-    //       ],
-    //     ),
-    //   ],
-    // );
     return Row(
       children: [
         Spacer(flex: 2),
