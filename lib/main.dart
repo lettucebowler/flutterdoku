@@ -127,11 +127,11 @@ class _MyHomePageState extends State<MyHomePage> {
       _newGame();
     }
 
-    final GlobalKey _scaffoldKey = new GlobalKey();
+    // final GlobalKey _scaffoldKey = new GlobalKey();
 
     FocusScope.of(context).requestFocus(focusNode);
     return Scaffold(
-      key: _scaffoldKey,
+      // key: _scaffoldKey,
       appBar: AppBar(
         title: Text(
           'LettuceSudoku',
@@ -139,7 +139,7 @@ class _MyHomePageState extends State<MyHomePage> {
           style: CustomStyles.titleText,
         ),
       ),
-      drawer: _getDrawer(),
+      drawer: _getDrawer(context),
       body: RawKeyboardListener(
         autofocus: true,
         focusNode: focusNode,
@@ -269,112 +269,109 @@ class _MyHomePageState extends State<MyHomePage> {
     prefs.setInt('initialHints', hints);
   }
 
-  Widget _getDrawer() {
+  Drawer _getDrawer(BuildContext context) {
     _readFromPrefs();
-    return Container(
-      width: 300,
-      height: MediaQuery.of(context).size.height,
-      color: CustomStyles.snowStorm[2],
-      // color: CustomStyles.snowStorm[2],
-      child: Flex(
-        direction: Axis.vertical,
-        children: [
-          Container(
-            height: 80,
-            width: 300,
-            color: CustomStyles.polarNight[3],
-            child: Center(
-              child: Text(
-                'Settings',
-                style: CustomStyles.titleText,
+    return Drawer(
+      child: Container(
+        child: Flex(
+          direction: Axis.vertical,
+          children: [
+            DrawerHeader(
+              child: Center(
+                child: Text(
+                  'Settings',
+                  style: CustomStyles.titleText,
+                ),
+              ),
+              decoration: BoxDecoration(
+                color: CustomStyles.polarNight[3],
               ),
             ),
-          ),
-          Container(
-            child: Flex(
-              direction: Axis.vertical,
-              children: [
-                Container(
-                  padding: EdgeInsets.fromLTRB(8, 0, 8, 0),
-                  child: Flex(
-                    direction: Axis.vertical,
-                    children: [
-                      _getToggle('Highlight Peer Cells', globals.doPeerCells),
-                      _getToggle('Highlight Peer Digits', globals.doPeerDigits),
-                      _getToggle('Show Mistakes', globals.doMistakes),
-                      AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 250),
-                        transitionBuilder:
-                            (Widget child, Animation<double> animation) =>
-                                SizeTransition(
-                          child: child,
-                          sizeFactor: animation,
+            Container(
+              child: Flex(
+                direction: Axis.vertical,
+                children: [
+                  Container(
+                    padding: EdgeInsets.fromLTRB(8, 0, 8, 0),
+                    child: Flex(
+                      direction: Axis.vertical,
+                      children: [
+                        _getToggle('Highlight Peer Cells', globals.doPeerCells),
+                        _getToggle(
+                            'Highlight Peer Digits', globals.doPeerDigits),
+                        _getToggle('Show Mistakes', globals.doMistakes),
+                        AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 250),
+                          transitionBuilder:
+                              (Widget child, Animation<double> animation) =>
+                                  SizeTransition(
+                            child: child,
+                            sizeFactor: animation,
+                          ),
+                          child: _getMistakeRadioGroup(),
                         ),
-                        child: _getMistakeRadioGroup(),
-                      ),
-                      _getSliderNoDivisions(
-                          'Initial Hints: ' +
-                              globals.initialHints.value.toString(),
-                          globals.initialHints,
-                          17,
-                          50),
-                      // Spacer(),
-                      Row(
-                        // direction: Axis.horizontal,
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Expanded(
-                            // flex: 1,
-                            child: _getRaisedButton(
-                                'Solve Game',
-                                CustomStyles.snowStorm[2],
-                                17,
-                                TextAlign.center,
-                                CustomStyles.polarNight[3],
-                                CustomStyles.polarNight[0],
-                                () => _solveGame(globals.problem)),
-                          ),
-                          Container(width: 6),
-                          Expanded(
-                            // flex: 1,
-                            child: _getRaisedButton(
-                                'Reset Game',
-                                CustomStyles.snowStorm[2],
-                                17,
-                                TextAlign.center,
-                                CustomStyles.polarNight[3],
-                                CustomStyles.polarNight[0],
-                                () => _resetBoard(globals.problem)),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                              child: _getRaisedButton(
-                                  'New Game',
+                        _getSliderNoDivisions(
+                            'Initial Hints: ' +
+                                globals.initialHints.value.toString(),
+                            globals.initialHints,
+                            17,
+                            50),
+                        Row(
+                          // direction: Axis.horizontal,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Expanded(
+                              // flex: 1,
+                              child: _getFlatButton(
+                                  'Solve Game',
                                   CustomStyles.snowStorm[2],
                                   17,
                                   TextAlign.center,
                                   CustomStyles.polarNight[3],
                                   CustomStyles.polarNight[0],
-                                  () => _newGame())),
-                        ],
-                      ),
-                    ],
+                                  () => _solveGame(globals.problem)),
+                            ),
+                            Container(width: 6),
+                            Expanded(
+                              // flex: 1,
+                              child: _getFlatButton(
+                                  'Reset Game',
+                                  CustomStyles.snowStorm[2],
+                                  17,
+                                  TextAlign.center,
+                                  CustomStyles.polarNight[3],
+                                  CustomStyles.polarNight[0],
+                                  () => _resetBoard(globals.problem)),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                                child: _getFlatButton(
+                                    'New Game',
+                                    CustomStyles.snowStorm[2],
+                                    17,
+                                    TextAlign.center,
+                                    CustomStyles.polarNight[3],
+                                    CustomStyles.polarNight[0],
+                                    () => _newGame())),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
-      // ),
     );
   }
 
-  Widget _getRaisedButton(
+  Widget _getFlatButton(
       String label,
       Color textColor,
       double textSize,
@@ -732,7 +729,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         ? Flexible(
                             fit: FlexFit.tight,
                             flex: 8,
-                            child: _getRaisedButton(
+                            child: _getFlatButton(
                                 toPlace,
                                 CustomStyles.snowStorm[2],
                                 36,
@@ -781,7 +778,7 @@ class _MyHomePageState extends State<MyHomePage> {
       children: <Widget>[
         Flexible(
           fit: FlexFit.tight,
-          child: _getRaisedButton(
+          child: _getFlatButton(
             'New Game',
             CustomStyles.snowStorm[2],
             24,
@@ -794,7 +791,7 @@ class _MyHomePageState extends State<MyHomePage> {
         Container(width: 4),
         Flexible(
           fit: FlexFit.tight,
-          child: _getRaisedButton(
+          child: _getFlatButton(
             'Get Hint',
             CustomStyles.snowStorm[2],
             24,
