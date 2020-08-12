@@ -798,7 +798,7 @@ class _MyHomePageState extends State<MyHomePage> {
         Flexible(
           fit: FlexFit.tight,
           child: _getRaisedButton(
-            'hint: ' + globals.hintsGiven.length.toString(),
+            'Get Hint',
             CustomStyles.snowStorm[2],
             24,
             TextAlign.center,
