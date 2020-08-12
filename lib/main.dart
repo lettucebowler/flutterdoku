@@ -13,17 +13,10 @@ import 'globals.dart' as globals;
 import 'dart:ui';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'framework/problem/SolvingAssistant.dart';
-import 'package:flutter_launcher_icons/android.dart';
-import 'package:flutter_launcher_icons/constants.dart';
-import 'package:flutter_launcher_icons/custom_exceptions.dart';
-import 'package:flutter_launcher_icons/ios.dart';
-import 'package:flutter_launcher_icons/main.dart';
-import 'package:flutter_launcher_icons/utils.dart';
-import 'package:flutter_launcher_icons/xml_templates.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  bool good = await _readFromPrefs();
+  await _readFromPrefs();
   // bool problemGood = await _getGame();
   runApp(MyApp());
 }
