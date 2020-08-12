@@ -382,28 +382,20 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   EdgeInsets _getBoardPadding(int index) {
-    int row = index ~/ globals.problem.board_size;
-    int col = index % globals.problem.board_size;
-
-    double thickness = 2;
-    double defaultThickness = 0.5;
-    double right = defaultThickness;
-    double top = defaultThickness;
-    double left = defaultThickness;
-    double bottom = defaultThickness;
-
-    if (row == 0) {
-      top = thickness;
-    }
-    if (col == 0) {
-      left = thickness;
-    }
-    if (row % globals.problem.cell_size == globals.problem.cell_size - 1) {
-      bottom = thickness;
-    }
-    if (col % globals.problem.cell_size == globals.problem.cell_size - 1) {
-      right = thickness;
-    }
+    var row = index ~/ globals.problem.board_size;
+    var col = index % globals.problem.board_size;
+    var thickness = 2;
+    var defaultThickness = 0.5;
+    var isTop = row == 0;
+    var isLeft = col == 0;
+    var isBottom =
+        row % globals.problem.cell_size == globals.problem.cell_size - 1;
+    var isRight =
+        col % globals.problem.cell_size == globals.problem.cell_size - 1;
+    var top = isTop ? thickness : defaultThickness;
+    var left = isLeft ? thickness : defaultThickness;
+    var bottom = isBottom ? thickness : defaultThickness;
+    var right = isRight ? thickness : defaultThickness;
 
     return EdgeInsets.fromLTRB(
         left.toDouble(), top.toDouble(), right.toDouble(), bottom.toDouble());
@@ -414,6 +406,7 @@ class _MyHomePageState extends State<MyHomePage> {
     for (List pair in globals.hintsGiven) {
       if (pair[0] == row && pair[1] == col) {
         hint = true;
+        break;
       }
     }
     return hint;
@@ -424,8 +417,6 @@ class _MyHomePageState extends State<MyHomePage> {
     var validCol = col > -1 && col < 10;
     var validCell = validRow && validCol;
     if (!globals.problem.success() && validCell) {
-      // SudokuState currentState = _problem.getCurrentState();
-      // List currentBoard = currentState.getTiles();
       SudokuState finalState = globals.problem.getFinalState();
       List finalBoard = finalState.getTiles();
       var num = finalBoard[row][col];
@@ -517,7 +508,7 @@ class _MyHomePageState extends State<MyHomePage> {
     String toPlace = cellNum == 0 ? '' : cellNum.toString();
 
     Color cellColor = _getCellColor(row, col);
-    Container cell = Container(
+    return Container(
       padding: _getBoardPadding(index),
       child: Material(
         color: cellColor,
@@ -545,9 +536,6 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
     );
-    // Material cell =
-    // return button;
-    return cell;
   }
 
   Widget _getMistakeRadioGroup() {
@@ -596,7 +584,6 @@ class _MyHomePageState extends State<MyHomePage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
-                // color: Colors.red,
                 child: Text(
                   label,
                   style: TextStyle(
@@ -608,7 +595,6 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               Align(
                 alignment: Alignment.centerRight,
-                // color: Colors.blue,
                 child: Switch(
                   value: setting.value,
                   onChanged: (bool val) {
@@ -626,9 +612,6 @@ class _MyHomePageState extends State<MyHomePage> {
             ],
           ),
         ),
-        // Spacer(
-        //   flex: 1,
-        // ),
       ],
     );
   }
