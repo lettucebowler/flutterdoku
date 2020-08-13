@@ -11,22 +11,33 @@ import 'package:lettuce_sudoku/util/widgets.dart';
 import 'package:lettuce_sudoku/util/globals.dart' as globals;
 import 'package:shared_preferences/shared_preferences.dart';
 
-class SudokuPage extends StatefulWidget {
-  SudokuPage({Key key, this.title}) : super(key: key);
+class SudokuScreen extends StatefulWidget {
+  SudokuScreen({Key key, this.title}) : super(key: key);
 
   final String title;
 
   @override
-  _SudokuPageState createState() => _SudokuPageState();
+  _SudokuScreenState createState() => _SudokuScreenState();
 }
 
-class _SudokuPageState extends State<SudokuPage> {
+class _SudokuScreenState extends State<SudokuScreen> {
   // SudokuProblem _problem =
   //     SudokuProblem.withMoreHints(globals.initialHints.value - 17);
   var menuHeight = 70;
   SolvingAssistant _assistant;
   FocusNode focusNode = FocusNode();
   double _bodySpacing = 4;
+
+  @override
+  void initState() {
+    super.initState();
+
+    readFromPrefs().then((data) {
+      setState(() {
+        // this.data = data;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -177,7 +188,6 @@ class _SudokuPageState extends State<SudokuPage> {
   }
 
   Widget _getDrawer(BuildContext context) {
-    readFromPrefs();
     return Drawer(
       child: ListView(
         children: [
