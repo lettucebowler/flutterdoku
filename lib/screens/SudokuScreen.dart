@@ -33,8 +33,8 @@ class _SudokuScreenState extends State<SudokuScreen> {
     super.initState();
 
     readFromPrefs().then((data) {
-      setState(() {
-        // this.data = data;
+      applyGameState().then((data2) {
+        setState(() {});
       });
     });
   }
@@ -356,6 +356,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
           ' ' +
           col.toString();
       _assistant.tryMove(move);
+      saveGame();
     }
   }
 
@@ -591,12 +592,11 @@ class _SudokuScreenState extends State<SudokuScreen> {
   }
 
   Widget _getBoard() {
-    AspectRatio board = AspectRatio(
+    return AspectRatio(
       aspectRatio: 1,
       child: Container(
         color: CustomStyles.polarNight[3],
         child: GridView.count(
-//            padding: EdgeInsets.all(1),
             crossAxisCount: globals.problem.board_size,
             childAspectRatio: 1,
             children: List.generate(
@@ -606,7 +606,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
             })),
       ),
     );
-    return board;
+    // return board;
   }
 
   Widget _getMoveButtons() {
@@ -716,13 +716,13 @@ class _SudokuScreenState extends State<SudokuScreen> {
   Widget _getBody() {
     return Container(
       padding: EdgeInsets.all(_bodySpacing),
-      child: _makeBodyVertical(),
+      child: _makeBodyRow(),
     );
   }
 
-  Widget _makeBodyFlex(bool doVertical) {
-    return Flex(
-      direction: Axis.vertical,
+  Widget _makeGameCol(bool doVertical) {
+    return Column(
+      // direction: Axis.vertical,
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         _getBoard(),
@@ -742,15 +742,15 @@ class _SudokuScreenState extends State<SudokuScreen> {
     );
   }
 
-  Widget _makeBodyVertical() {
-    return Flex(
-      direction: Axis.horizontal,
+  Widget _makeBodyRow() {
+    return Row(
+      // direction: Axis.horizontal,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Flexible(child: Container()),
         Container(
-          child: _makeBodyFlex(true),
           width: _getBodyWidth() - _bodySpacing * 2,
+          child: _makeGameCol(true),
           // width: _getBodyWidth(),
         ),
         Flexible(child: Container()),
