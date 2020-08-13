@@ -3,8 +3,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:lettuce_sudoku/screens/SudokuPage.dart';
+import 'package:lettuce_sudoku/util/CustomStyles.dart';
 import 'package:lettuce_sudoku/util/helpers.dart';
-import 'util/CustomStyles.dart';
+// import 'util/CustomStyles.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
