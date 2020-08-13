@@ -1,5 +1,3 @@
-import 'State.dart';
-
 /*
  * This abstract class represents the moves in a problem solving domain.
  * It collects the available move names and associated functions
@@ -8,6 +6,8 @@ import 'State.dart';
  * names and functions by calling the <b>addMove</b> method.
  * @author tcolburn
  */
+import 'package:lettuce_sudoku/framework/problem/State.dart';
+
 abstract class Mover {
   /*
      * Constructs a new Mover object for a problem solving domain.

@@ -1,13 +1,14 @@
 import 'dart:core';
-import '../../framework/problem/Mover.dart';
-import '../../framework/problem/State.dart';
-import 'SudokuState.dart';
+
+import 'package:lettuce_sudoku/domains/sudoku/SudokuState.dart';
+import 'package:lettuce_sudoku/framework/problem/Mover.dart';
+import 'package:lettuce_sudoku/framework/problem/State.dart';
 
 class SudokuMover extends Mover {
-  SudokuMover(int board_size) {
-    for (var i = 0; i <= board_size; i++) {
-      for (var j = 0; j < board_size; j++) {
-        for (var k = 0; k < board_size; k++) {
+  SudokuMover(int boardSize) {
+    for (var i = 0; i <= boardSize; i++) {
+      for (var j = 0; j < boardSize; j++) {
+        for (var k = 0; k < boardSize; k++) {
           super.addMove(
               'Place ' +
                   i.toString() +

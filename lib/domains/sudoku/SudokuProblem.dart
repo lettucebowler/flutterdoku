@@ -1,7 +1,8 @@
+import 'package:lettuce_sudoku/domains/sudoku/Sudoku.dart';
+import 'package:lettuce_sudoku/domains/sudoku/SudokuMover.dart';
+import 'package:lettuce_sudoku/domains/sudoku/SudokuState.dart';
+
 import '../../framework/problem/Problem.dart';
-import 'Sudoku.dart';
-import 'SudokuState.dart';
-import 'SudokuMover.dart';
 
 class SudokuProblem extends Problem {
   Sudoku sudoku;
