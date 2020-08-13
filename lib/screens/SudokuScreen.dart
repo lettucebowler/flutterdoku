@@ -263,7 +263,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
                       TextAlign.center,
                       CustomStyles.polarNight[3],
                       CustomStyles.polarNight[0],
-                      () => _newGame())),
+                      () => _newGameAndSave())),
               Spacer(
                 flex: 2,
               ),
@@ -280,6 +280,11 @@ class _SudokuScreenState extends State<SudokuScreen> {
           SudokuProblem.withMoreHints(globals.initialHints.value - 17);
       _resetGlobals();
     });
+  }
+
+  void _newGameAndSave() {
+    _newGame();
+    saveGame();
   }
 
   void _resetGlobals() {
@@ -627,15 +632,20 @@ class _SudokuScreenState extends State<SudokuScreen> {
                         ? Flexible(
                             fit: FlexFit.tight,
                             flex: 8,
-                            child: getFlatButton(
-                                toPlace,
-                                CustomStyles.snowStorm[2],
-                                36,
-                                TextAlign.center,
-                                CustomStyles.polarNight[3],
-                                CustomStyles.polarNight[0],
-                                _getMove(_cellSelected(), num,
-                                    globals.selectedRow, globals.selectedCol)))
+                            child: AspectRatio(
+                                aspectRatio: 1,
+                                child: getFlatButton(
+                                    toPlace,
+                                    CustomStyles.snowStorm[2],
+                                    36,
+                                    TextAlign.center,
+                                    CustomStyles.polarNight[3],
+                                    CustomStyles.polarNight[0],
+                                    _getMove(
+                                        _cellSelected(),
+                                        num,
+                                        globals.selectedRow,
+                                        globals.selectedCol))))
                         : Container(width: 4);
                   }))
               : Container(height: 4);
@@ -684,7 +694,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
             TextAlign.center,
             CustomStyles.polarNight[3],
             CustomStyles.polarNight[0],
-            () => _newGame(),
+            () => _newGameAndSave(),
           ),
         ),
         Container(width: 4),

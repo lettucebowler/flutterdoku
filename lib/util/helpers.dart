@@ -54,15 +54,16 @@ saveGame() async {
 
 Future<bool> applyGameState() async {
   final prefs = await SharedPreferences.getInstance();
-  final initialString = prefs.getString('initialBoard');
-  final currentString = prefs.getString('currentBoard');
-  final finalString = prefs.getString('finalBoard');
-  final hintString = prefs.getString('hintsGiven');
+  final initialString = prefs.getString('initialBoard') ?? '';
+  final currentString = prefs.getString('currentBoard') ?? '';
+  final finalString = prefs.getString('finalBoard') ?? '';
+  final hintString = prefs.getString('hintsGiven') ?? '';
   // SudokuProblem problem;
   List initialBoard = List.generate(9, (i) => List(9), growable: false);
   List currentBoard = List.generate(9, (i) => List(9), growable: false);
   List finalBoard = List.generate(9, (i) => List(9), growable: false);
-  if (initialString != null && currentString != null && finalString != null) {
+
+  if (initialString != '' && currentString != '' && finalString != '') {
     for (int i = 0; i < initialString.length; i++) {
       initialBoard[i ~/ 9][i % 9] = int.parse(initialString[i]);
       currentBoard[i ~/ 9][i % 9] = int.parse(currentString[i]);
@@ -70,12 +71,9 @@ Future<bool> applyGameState() async {
     }
     globals.problem =
         SudokuProblem.resume(initialBoard, currentBoard, finalBoard);
-  } else {
-    globals.problem =
-        SudokuProblem.withMoreHints(globals.initialHints.value - 17);
   }
 
-  globals.hintsGiven.clear();
+  globals.hintsGiven = [];
   for (var i = 0; i < hintString.length ~/ 2; i++) {
     int row = int.parse(hintString[i * 2]);
     int col = int.parse(hintString[i * 2 + 1]);
