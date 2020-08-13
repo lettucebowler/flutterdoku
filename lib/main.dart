@@ -10,7 +10,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await readFromPrefs();
   // bool problemGood = await _getGame();
-  runApp(MyApp());
+  runApp(LettuceSudoku());
 }
 
 // _getGame() async {
@@ -65,15 +65,15 @@ void main() async {
 //   prefs.remove('finalBoard');
 // }
 
-class MyApp extends StatelessWidget {
+class LettuceSudoku extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'LettuceSudoku',
       theme: ThemeData(
-        primarySwatch: CustomStyles.themeColor,
+        primarySwatch: getMaterialColor(CustomStyles.polarNight[3]),
         visualDensity: VisualDensity.adaptivePlatformDensity,
-        canvasColor: CustomStyles.snowStorm[2],
+        canvasColor: getMaterialColor(CustomStyles.snowStorm[2]),
       ),
       home: SudokuPage(title: 'LettuceSudoku'),
     );
