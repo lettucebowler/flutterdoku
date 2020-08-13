@@ -2,21 +2,9 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:auto_size_text/auto_size_text.dart';
-import 'package:flutter/services.dart';
 import 'package:lettuce_sudoku/screens/SudokuPage.dart';
 import 'package:lettuce_sudoku/util/helpers.dart';
-import 'package:lettuce_sudoku/util/widgets.dart';
 import 'util/CustomStyles.dart';
-import 'domains/sudoku/SudokuProblem.dart';
-import 'domains/sudoku/SudokuState.dart';
-import 'framework/problem/Problem.dart';
-import 'util/globals.dart' as globals;
-import 'dart:ui';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'framework/problem/SolvingAssistant.dart';
-import 'util/widgets.dart' as widgets;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
