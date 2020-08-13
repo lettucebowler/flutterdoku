@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 class CustomStyles {
-
   static const Color black = Color(0xFF000000);
 
   static const int theme = 0xFF4c566a;
@@ -21,7 +20,6 @@ class CustomStyles {
       900: const Color(0xFFFFFFFF),
     },
   );
-
 
   static List polarNight = [
     const Color(0xFF2e3440),
