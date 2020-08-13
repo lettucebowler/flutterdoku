@@ -718,7 +718,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
     EdgeInsets padding = MediaQuery.of(context).padding;
     double width = MediaQuery.of(context).size.width - padding.horizontal;
     double height = MediaQuery.of(context).size.height - padding.vertical;
-    double aspect = 0.575;
+    double aspect = 0.60;
     return width / height < aspect ? width : height * aspect;
 //    return height * aspect;
   }
