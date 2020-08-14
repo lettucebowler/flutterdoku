@@ -21,7 +21,6 @@ class LettuceSudoku extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
         canvasColor: getMaterialColor(CustomStyles.snowStorm[2]),
       ),
-      // home: SudokuScreen(title: 'LettuceSudoku'),
       home: LoadingScreen(title: 'LettuceSudoku'),
     );
   }
