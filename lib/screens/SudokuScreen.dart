@@ -31,6 +31,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
   @override
   void initState() {
     super.initState();
+    _assistant = SolvingAssistant(globals.problem);
   }
 
   @override
@@ -74,10 +75,14 @@ class _SudokuScreenState extends State<SudokuScreen> {
               LogicalKeyboardKey.arrowUp: () => _shiftUp(),
               LogicalKeyboardKey.keyW: () => _shiftUp(),
 
-              // Place 0
+              // Place 0 / Delete number from cell
               LogicalKeyboardKey.digit0: () =>
                   _doMove(0, globals.selectedRow, globals.selectedCol),
               LogicalKeyboardKey.numpad0: () =>
+                  _doMove(0, globals.selectedRow, globals.selectedCol),
+              LogicalKeyboardKey.keyX: () =>
+                  _doMove(0, globals.selectedRow, globals.selectedCol),
+              LogicalKeyboardKey.delete: () =>
                   _doMove(0, globals.selectedRow, globals.selectedCol),
 
               // Place 1
