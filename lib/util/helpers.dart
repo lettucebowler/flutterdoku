@@ -83,6 +83,14 @@ Future<bool> applyGameState() async {
   return true;
 }
 
+double getBodyWidth(BuildContext context) {
+  EdgeInsets padding = MediaQuery.of(context).padding;
+  double width = MediaQuery.of(context).size.width - padding.horizontal;
+  double height = MediaQuery.of(context).size.height - padding.vertical;
+  double aspect = 0.60;
+  return width / height < aspect ? width : height * aspect;
+}
+
 MaterialColor getMaterialColor(Color color) {
   int colorInt = color.value;
   return MaterialColor(colorInt, <int, Color>{
