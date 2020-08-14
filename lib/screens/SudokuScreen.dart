@@ -709,15 +709,6 @@ class _SudokuScreenState extends State<SudokuScreen> {
     );
   }
 
-  double _getBodyWidth() {
-    EdgeInsets padding = MediaQuery.of(context).padding;
-    double width = MediaQuery.of(context).size.width - padding.horizontal;
-    double height = MediaQuery.of(context).size.height - padding.vertical;
-    double aspect = 0.60;
-    return width / height < aspect ? width : height * aspect;
-//    return height * aspect;
-  }
-
   Widget _getBody() {
     return Container(
       padding: EdgeInsets.all(_bodySpacing),
@@ -754,7 +745,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
       children: [
         Flexible(child: Container()),
         Container(
-          width: _getBodyWidth() - _bodySpacing * 2,
+          width: getBodyWidth(context) - _bodySpacing * 2,
           child: _makeGameCol(true),
           // width: _getBodyWidth(),
         ),
