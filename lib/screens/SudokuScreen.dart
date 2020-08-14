@@ -273,6 +273,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
     setState(() {
       globals.problem =
           SudokuProblem.withMoreHints(globals.initialHints.value - 17);
+      _assistant = SolvingAssistant(globals.problem);
       _resetGlobals();
     });
   }
@@ -344,7 +345,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
   }
 
   void _doMove(int num, int row, int col) {
-    _assistant = SolvingAssistant(globals.problem);
+    // _assistant = SolvingAssistant(globals.problem);
     SudokuState initialState = globals.problem.getInitialState();
     var initialBoard = initialState.getTiles();
     var notInitialHint = initialBoard[row][col] == 0;
