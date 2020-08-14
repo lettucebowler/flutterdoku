@@ -1,12 +1,8 @@
-//import 'dart:html';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:lettuce_sudoku/screens/LoadingScreen.dart';
-import 'package:lettuce_sudoku/screens/SudokuScreen.dart';
 import 'package:lettuce_sudoku/util/CustomStyles.dart';
 import 'package:lettuce_sudoku/util/helpers.dart';
-// import 'util/CustomStyles.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,13 +10,6 @@ void main() async {
   // bool problemGood = await _getGame();
   runApp(LettuceSudoku());
 }
-
-// _deleteGame() async {
-//   final prefs = await SharedPreferences.getInstance();
-//   prefs.remove('initialBoard');
-//   prefs.remove('currentBoard');
-//   prefs.remove('finalBoard');
-// }
 
 class LettuceSudoku extends StatelessWidget {
   @override
