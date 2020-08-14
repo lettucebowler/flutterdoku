@@ -2,6 +2,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:lettuce_sudoku/screens/LoadingScreen.dart';
 import 'package:lettuce_sudoku/screens/SudokuScreen.dart';
 import 'package:lettuce_sudoku/util/CustomStyles.dart';
 import 'package:lettuce_sudoku/util/helpers.dart';
@@ -31,7 +32,8 @@ class LettuceSudoku extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
         canvasColor: getMaterialColor(CustomStyles.snowStorm[2]),
       ),
-      home: SudokuScreen(title: 'LettuceSudoku'),
+      // home: SudokuScreen(title: 'LettuceSudoku'),
+      home: LoadingScreen(title: 'LettuceSudoku'),
     );
   }
 }
