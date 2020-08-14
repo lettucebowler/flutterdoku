@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:lettuce_sudoku/util/CustomStyles.dart';
+import 'package:lettuce_sudoku/util/helpers.dart';
 
 import 'SudokuScreen.dart';
 
@@ -20,6 +21,11 @@ class _LoadingScreenState extends State<LoadingScreen> {
   @override
   void initState() {
     super.initState();
+    readFromPrefs().then((data) {
+      applyGameState().then((data2) {
+        setState(() {});
+      });
+    });
     Timer(
         Duration(seconds: 2),
         () => Navigator.push(

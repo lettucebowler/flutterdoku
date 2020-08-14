@@ -31,12 +31,6 @@ class _SudokuScreenState extends State<SudokuScreen> {
   @override
   void initState() {
     super.initState();
-
-    readFromPrefs().then((data) {
-      applyGameState().then((data2) {
-        setState(() {});
-      });
-    });
   }
 
   @override
