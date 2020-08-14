@@ -22,11 +22,13 @@ class _LoadingScreenState extends State<LoadingScreen> {
   void initState() {
     super.initState();
     readFromPrefs().then((data) {
-      applyGameState().then((data2) {
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => SudokuScreen()));
-      });
+      applyGameState();
     });
+
+    Timer(
+        Duration(seconds: 1),
+        () => Navigator.push(
+            context, MaterialPageRoute(builder: (context) => SudokuScreen())));
   }
 
   @override
@@ -38,9 +40,9 @@ class _LoadingScreenState extends State<LoadingScreen> {
             // width: MediaQuery.of(context).size.width,
             color: CustomStyles.polarNight[3],
           ),
-          Container(
-            width: getBodyWidth(context),
-            child: Center(
+          Center(
+            child: Container(
+              width: getBodyWidth(context),
               child: Column(
                 children: [
                   Expanded(
@@ -48,15 +50,6 @@ class _LoadingScreenState extends State<LoadingScreen> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        // CircleAvatar(
-                        //   child: Icon(
-                        //     Icons.games_rounded,
-                        //     color: CustomStyles.polarNight[3],
-                        //     size: 100,
-                        //   ),
-                        //   backgroundColor: CustomStyles.snowStorm[0],
-                        //   radius: 50,
-                        // ),
                         Row(children: [
                           Spacer(),
                           Expanded(
