@@ -57,7 +57,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
           style: CustomStyles.titleText,
         ),
       ),
-      drawer: _getDrawer(context),
+      drawer: _getDrawer(),
       body: RawKeyboardListener(
         autofocus: true,
         focusNode: focusNode,
@@ -187,9 +187,10 @@ class _SudokuScreenState extends State<SudokuScreen> {
     prefs.setInt('initialHints', hints);
   }
 
-  Widget _getDrawer(BuildContext context) {
+  Widget _getDrawer() {
     return Drawer(
       child: ListView(
+        padding: const EdgeInsets.all(0.0),
         children: [
           DrawerHeader(
             child: Center(
