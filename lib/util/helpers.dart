@@ -83,7 +83,7 @@ Future<bool> applyGameState() async {
   return true;
 }
 
-double getBodyWidth(BuildContext context) {
+double getBodyWidth(context) {
   EdgeInsets padding = MediaQuery.of(context).padding;
   double width = MediaQuery.of(context).size.width - padding.horizontal;
   double height = MediaQuery.of(context).size.height - padding.vertical;
