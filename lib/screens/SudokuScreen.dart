@@ -73,45 +73,55 @@ class _SudokuScreenState extends State<SudokuScreen> {
 
               // Place 0 / Delete number from cell
               LogicalKeyboardKey.digit0: _getMove(_cellSelected(), 0, row, col),
-              LogicalKeyboardKey.numpad0: _getMove(_cellSelected(), 0, row, col),
+              LogicalKeyboardKey.numpad0:
+                  _getMove(_cellSelected(), 0, row, col),
               LogicalKeyboardKey.keyX: _getMove(_cellSelected(), 0, row, col),
               LogicalKeyboardKey.delete: _getMove(_cellSelected(), 0, row, col),
 
               // Place 1
               LogicalKeyboardKey.digit1: _getMove(_cellSelected(), 1, row, col),
-              LogicalKeyboardKey.numpad1: _getMove(_cellSelected(), 1, row, col),
+              LogicalKeyboardKey.numpad1:
+                  _getMove(_cellSelected(), 1, row, col),
 
               // Place 2
               LogicalKeyboardKey.digit2: _getMove(_cellSelected(), 2, row, col),
-              LogicalKeyboardKey.numpad2: _getMove(_cellSelected(), 2, row, col),
+              LogicalKeyboardKey.numpad2:
+                  _getMove(_cellSelected(), 2, row, col),
 
               // Place 3
               LogicalKeyboardKey.digit3: _getMove(_cellSelected(), 3, row, col),
-              LogicalKeyboardKey.numpad3: _getMove(_cellSelected(), 3, row, col),
+              LogicalKeyboardKey.numpad3:
+                  _getMove(_cellSelected(), 3, row, col),
 
               // Place 4
               LogicalKeyboardKey.digit4: _getMove(_cellSelected(), 4, row, col),
-              LogicalKeyboardKey.numpad4: _getMove(_cellSelected(), 4, row, col),
+              LogicalKeyboardKey.numpad4:
+                  _getMove(_cellSelected(), 4, row, col),
 
               // Place 5
               LogicalKeyboardKey.digit5: _getMove(_cellSelected(), 5, row, col),
-              LogicalKeyboardKey.numpad5: _getMove(_cellSelected(), 5, row, col),
+              LogicalKeyboardKey.numpad5:
+                  _getMove(_cellSelected(), 5, row, col),
 
               // Place 6
               LogicalKeyboardKey.digit6: _getMove(_cellSelected(), 6, row, col),
-              LogicalKeyboardKey.numpad6: _getMove(_cellSelected(), 6, row, col),
+              LogicalKeyboardKey.numpad6:
+                  _getMove(_cellSelected(), 6, row, col),
 
               // Place 7
               LogicalKeyboardKey.digit7: _getMove(_cellSelected(), 7, row, col),
-              LogicalKeyboardKey.numpad7: _getMove(_cellSelected(), 7, row, col),
+              LogicalKeyboardKey.numpad7:
+                  _getMove(_cellSelected(), 7, row, col),
 
               // Place 8
               LogicalKeyboardKey.digit8: _getMove(_cellSelected(), 8, row, col),
-              LogicalKeyboardKey.numpad8: _getMove(_cellSelected(), 8, row, col),
+              LogicalKeyboardKey.numpad8:
+                  _getMove(_cellSelected(), 8, row, col),
 
               // Place 9
-              LogicalKeyboardKey.digit9:  _getMove(_cellSelected(), 9, row, col),
-              LogicalKeyboardKey.numpad9: _getMove(_cellSelected(), 9, row, col),
+              LogicalKeyboardKey.digit9: _getMove(_cellSelected(), 9, row, col),
+              LogicalKeyboardKey.numpad9:
+                  _getMove(_cellSelected(), 9, row, col),
 
               // Get hint
               LogicalKeyboardKey.keyH: () => _giveHint(row, col),
