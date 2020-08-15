@@ -198,6 +198,12 @@ class _SudokuScreenState extends State<SudokuScreen> {
   }
 
   Widget _getDrawer() {
+    var radioList = [
+      getStyledRadio('Correctness', 0, globals.legalityRadio,
+          (var val) => _setIntWrapper(0, globals.legalityRadio)),
+      getStyledRadio('Legality', 1, globals.legalityRadio,
+          (var val) => _setIntWrapper(1, globals.legalityRadio)),
+    ];
     return Drawer(
       child: ListView(
         padding: const EdgeInsets.all(0.0),
@@ -223,13 +229,15 @@ class _SudokuScreenState extends State<SudokuScreen> {
                     getStyledToggleRow(
                         'Highlight Peer Cells',
                         globals.doPeerCells,
-                        (bool value) => _toggleBool(globals.doPeerCells)),
+                        (bool value) =>
+                            _toggleBoolWrapper(globals.doPeerCells)),
                     getStyledToggleRow(
                         'Highlight Peer Digits',
                         globals.doPeerDigits,
-                        (bool value) => _toggleBool(globals.doPeerDigits)),
+                        (bool value) =>
+                            _toggleBoolWrapper(globals.doPeerDigits)),
                     getStyledToggleRow('Show Mistakes', globals.doMistakes,
-                        (bool value) => _toggleBool(globals.doMistakes)),
+                        (bool value) => _toggleBoolWrapper(globals.doMistakes)),
                   ],
                 ),
               ),
@@ -242,9 +250,20 @@ class _SudokuScreenState extends State<SudokuScreen> {
               child: child,
               sizeFactor: animation,
             ),
-            child: _getMistakeRadioGroup(),
+            child: globals.doMistakes.value
+                ? getWidgetGroup(radioList)
+                : Container(),
           ),
-          _getSliderNoDivisions('Initial Hints', globals.initialHints, 17, 50),
+          // _getSliderNoDivisions('Initial Hints', globals.initialHints, 17, 50),
+          getStyledSliderRow(
+              globals.initialHints,
+              17,
+              50,
+              (double val) => _setIntWrapper(val.toInt(), globals.initialHints),
+              () => _setIntWrapper(
+                  globals.initialHints.value - 1, globals.initialHints),
+              () => _setIntWrapper(
+                  globals.initialHints.value + 1, globals.initialHints)),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
@@ -379,7 +398,6 @@ class _SudokuScreenState extends State<SudokuScreen> {
   }
 
   void _doMove(int num, int row, int col) {
-    // _assistant = SolvingAssistant(globals.problem);
     SudokuState initialState = globals.problem.getInitialState();
     var initialBoard = initialState.getTiles();
     var notInitialHint = initialBoard[row][col] == 0;
@@ -522,53 +540,16 @@ class _SudokuScreenState extends State<SudokuScreen> {
     );
   }
 
-  Widget _getToggle(String label, globals.BoolWrapper setting) {
-    return Row(
-      children: [
-        Spacer(
-          flex: 2,
-        ),
-        Expanded(
-          flex: 35,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Container(
-                child: Text(
-                  label,
-                  style: TextStyle(
-                    color: CustomStyles.polarNight[3],
-                    fontSize: 17,
-                  ),
-                  textAlign: TextAlign.left,
-                ),
-              ),
-              Align(
-                alignment: Alignment.centerRight,
-                child: Switch(
-                  value: setting.value,
-                  onChanged: (bool val) {
-                    _save();
-                    setState(() {
-                      setting.value = val;
-                    });
-                  },
-                  activeColor: CustomStyles.polarNight[3],
-                  inactiveThumbColor: CustomStyles.polarNight[3],
-                  activeTrackColor: CustomStyles.aurora[3],
-                  inactiveTrackColor: CustomStyles.aurora[0],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  void _toggleBool(BoolWrapper setting) {
+  void _toggleBoolWrapper(BoolWrapper setting) {
     setState(() {
       setting.value = !setting.value;
+      _save();
+    });
+  }
+
+  void _setIntWrapper(int value, IntWrapper setting) {
+    setState(() {
+      setting.value = value;
       _save();
     });
   }

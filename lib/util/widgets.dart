@@ -57,3 +57,53 @@ Widget getStyledToggleRow(
     ],
   );
 }
+
+Widget getStyledSliderRow(IntWrapper setting, double min, double max,
+    Function onChange, Function decrease, Function increase) {
+  return Row(
+    children: [
+      Expanded(
+        child: Slider(
+          value: setting.value.toDouble(),
+          onChanged: onChange,
+          min: min,
+          max: max,
+        ),
+      ),
+      IconButton(
+        icon: Icon(Icons.remove, color: CustomStyles.polarNight[3]),
+        onPressed: decrease,
+      ),
+      Text(setting.value.toString()),
+      IconButton(
+        icon: Icon(Icons.add, color: CustomStyles.polarNight[3]),
+        onPressed: increase,
+      ),
+    ],
+  );
+}
+
+Widget getStyledRadio(
+    String label, int value, var groupValue, Function onChanged) {
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.end,
+    children: [
+      Text(label),
+      Radio(
+        activeColor: CustomStyles.polarNight[3],
+        value: value,
+        groupValue: groupValue.value,
+        onChanged: onChanged,
+      ),
+    ],
+  );
+}
+
+Widget getWidgetGroup(List radioList) {
+  return Align(
+    alignment: Alignment.centerRight,
+    child: Column(
+      children: radioList,
+    ),
+  );
+}
