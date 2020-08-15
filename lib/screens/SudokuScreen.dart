@@ -37,13 +37,8 @@ class _SudokuScreenState extends State<SudokuScreen> {
 
   @override
   Widget build(BuildContext context) {
-
-
-    // final GlobalKey _scaffoldKey = new GlobalKey();
-
     FocusScope.of(context).requestFocus(focusNode);
     return Scaffold(
-      // key: _scaffoldKey,
       appBar: AppBar(
         title: Text(
           'LettuceSudoku',
@@ -57,6 +52,8 @@ class _SudokuScreenState extends State<SudokuScreen> {
         focusNode: focusNode,
         onKey: (event) {
           if (event.runtimeType == RawKeyDownEvent) {
+            var row = globals.selectedRow;
+            var col = globals.selectedCol;
             var actionMap = {
               // Move Down
               LogicalKeyboardKey.arrowDown: () => _shiftDown(),
@@ -75,68 +72,49 @@ class _SudokuScreenState extends State<SudokuScreen> {
               LogicalKeyboardKey.keyW: () => _shiftUp(),
 
               // Place 0 / Delete number from cell
-              LogicalKeyboardKey.digit0: () =>
-                  _doMove(0, globals.selectedRow, globals.selectedCol),
-              LogicalKeyboardKey.numpad0: () =>
-                  _doMove(0, globals.selectedRow, globals.selectedCol),
-              LogicalKeyboardKey.keyX: () =>
-                  _doMove(0, globals.selectedRow, globals.selectedCol),
-              LogicalKeyboardKey.delete: () =>
-                  _doMove(0, globals.selectedRow, globals.selectedCol),
+              LogicalKeyboardKey.digit0: _getMove(_cellSelected(), 0, row, col),
+              LogicalKeyboardKey.numpad0: _getMove(_cellSelected(), 0, row, col),
+              LogicalKeyboardKey.keyX: _getMove(_cellSelected(), 0, row, col),
+              LogicalKeyboardKey.delete: _getMove(_cellSelected(), 0, row, col),
 
               // Place 1
-              LogicalKeyboardKey.digit1: () =>
-                  _doMove(1, globals.selectedRow, globals.selectedCol),
-              LogicalKeyboardKey.numpad1: () =>
-                  _doMove(1, globals.selectedRow, globals.selectedCol),
+              LogicalKeyboardKey.digit1: _getMove(_cellSelected(), 1, row, col),
+              LogicalKeyboardKey.numpad1: _getMove(_cellSelected(), 1, row, col),
 
               // Place 2
-              LogicalKeyboardKey.digit2: () =>
-                  _doMove(2, globals.selectedRow, globals.selectedCol),
-              LogicalKeyboardKey.numpad2: () =>
-                  _doMove(2, globals.selectedRow, globals.selectedCol),
+              LogicalKeyboardKey.digit2: _getMove(_cellSelected(), 2, row, col),
+              LogicalKeyboardKey.numpad2: _getMove(_cellSelected(), 2, row, col),
 
               // Place 3
-              LogicalKeyboardKey.digit3: () =>
-                  _doMove(3, globals.selectedRow, globals.selectedCol),
-              LogicalKeyboardKey.numpad3: () =>
-                  _doMove(3, globals.selectedRow, globals.selectedCol),
+              LogicalKeyboardKey.digit3: _getMove(_cellSelected(), 3, row, col),
+              LogicalKeyboardKey.numpad3: _getMove(_cellSelected(), 3, row, col),
 
               // Place 4
-              LogicalKeyboardKey.digit4: () =>
-                  _doMove(4, globals.selectedRow, globals.selectedCol),
-              LogicalKeyboardKey.numpad4: () =>
-                  _doMove(4, globals.selectedRow, globals.selectedCol),
+              LogicalKeyboardKey.digit4: _getMove(_cellSelected(), 4, row, col),
+              LogicalKeyboardKey.numpad4: _getMove(_cellSelected(), 4, row, col),
 
               // Place 5
-              LogicalKeyboardKey.digit5: () =>
-                  _doMove(5, globals.selectedRow, globals.selectedCol),
-              LogicalKeyboardKey.numpad5: () =>
-                  _doMove(5, globals.selectedRow, globals.selectedCol),
+              LogicalKeyboardKey.digit5: _getMove(_cellSelected(), 5, row, col),
+              LogicalKeyboardKey.numpad5: _getMove(_cellSelected(), 5, row, col),
 
               // Place 6
-              LogicalKeyboardKey.digit6: () =>
-                  _doMove(6, globals.selectedRow, globals.selectedCol),
-              LogicalKeyboardKey.numpad6: () =>
-                  _doMove(6, globals.selectedRow, globals.selectedCol),
+              LogicalKeyboardKey.digit6: _getMove(_cellSelected(), 6, row, col),
+              LogicalKeyboardKey.numpad6: _getMove(_cellSelected(), 6, row, col),
 
               // Place 7
-              LogicalKeyboardKey.digit7: () =>
-                  _doMove(7, globals.selectedRow, globals.selectedCol),
-              LogicalKeyboardKey.numpad7: () =>
-                  _doMove(7, globals.selectedRow, globals.selectedCol),
+              LogicalKeyboardKey.digit7: _getMove(_cellSelected(), 7, row, col),
+              LogicalKeyboardKey.numpad7: _getMove(_cellSelected(), 7, row, col),
 
               // Place 8
-              LogicalKeyboardKey.digit8: () =>
-                  _doMove(8, globals.selectedRow, globals.selectedCol),
-              LogicalKeyboardKey.numpad8: () =>
-                  _doMove(8, globals.selectedRow, globals.selectedCol),
+              LogicalKeyboardKey.digit8: _getMove(_cellSelected(), 8, row, col),
+              LogicalKeyboardKey.numpad8: _getMove(_cellSelected(), 8, row, col),
 
               // Place 9
-              LogicalKeyboardKey.digit9: () =>
-                  _doMove(9, globals.selectedRow, globals.selectedCol),
-              LogicalKeyboardKey.numpad9: () =>
-                  _doMove(9, globals.selectedRow, globals.selectedCol),
+              LogicalKeyboardKey.digit9:  _getMove(_cellSelected(), 9, row, col),
+              LogicalKeyboardKey.numpad9: _getMove(_cellSelected(), 9, row, col),
+
+              // Get hint
+              LogicalKeyboardKey.keyH: () => _giveHint(row, col),
             };
 
             Function action = actionMap[event.data.logicalKey];
