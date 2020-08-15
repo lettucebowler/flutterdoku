@@ -10,7 +10,6 @@ import 'package:lettuce_sudoku/util/globals.dart';
 import 'package:lettuce_sudoku/util/helpers.dart';
 import 'package:lettuce_sudoku/util/widgets.dart';
 import 'package:lettuce_sudoku/util/globals.dart' as globals;
-import 'package:shared_preferences/shared_preferences.dart';
 
 class SudokuScreen extends StatefulWidget {
   SudokuScreen({Key key, this.title}) : super(key: key);
@@ -250,7 +249,6 @@ class _SudokuScreenState extends State<SudokuScreen> {
               ),
             ],
           ),
-          // _getSliderNoDivisions('Initial Hints', globals.initialHints, 17, 50),
           getStyledSliderRow(
               globals.initialHints,
               17,
@@ -288,14 +286,6 @@ class _SudokuScreenState extends State<SudokuScreen> {
                                         CustomStyles.polarNight[0],
                                         () => _solveGame(globals.problem)),
                                   ),
-                                  // child: getFlatButton(
-                                  //     'Solve Game',
-                                  //     CustomStyles.snowStorm[2],
-                                  //     17,
-                                  //     TextAlign.center,
-                                  //     CustomStyles.polarNight[3],
-                                  //     CustomStyles.polarNight[0],
-                                  //     () => _solveGame(globals.problem)),
                                 ),
                               ),
                               Expanded(
@@ -664,13 +654,11 @@ class _SudokuScreenState extends State<SudokuScreen> {
             ),
           ),
         ),
-        // Container(width: 4),
         Flexible(
           fit: FlexFit.tight,
           child: AspectRatio(
             aspectRatio: 1,
             child: Container(
-              // color: Colors.green,
               padding: EdgeInsets.all(2),
               child: getFlatButton(
                 'Get Hint',
@@ -720,14 +708,12 @@ class _SudokuScreenState extends State<SudokuScreen> {
 
   Widget _makeBodyRow() {
     return Row(
-      // direction: Axis.horizontal,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Flexible(child: Container()),
         Container(
           width: getBodyWidth(context),
           child: _makeGameCol(true),
-          // width: _getBodyWidth(),
         ),
         Flexible(child: Container()),
       ],

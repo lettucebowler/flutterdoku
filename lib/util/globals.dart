@@ -1,7 +1,5 @@
-// import 'package:flutter/material.dart';
 import 'package:lettuce_sudoku/domains/sudoku/SudokuProblem.dart';
 
-// BoolWrapper doLegality = BoolWrapper(false);
 VariableWrapper doPeerCells = VariableWrapper(true);
 VariableWrapper doPeerDigits = VariableWrapper(true);
 VariableWrapper doMistakes = VariableWrapper(true);
