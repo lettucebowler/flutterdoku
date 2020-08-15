@@ -4,20 +4,52 @@ import 'package:lettuce_sudoku/domains/sudoku/SudokuState.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:lettuce_sudoku/util/globals.dart' as globals;
 
+var settingsMap = {
+  'doPeerCells': globals.doPeerCells,
+  'doPeerDigits': globals.doPeerDigits,
+  'doMistakes': globals.doMistakes,
+  'initialHints': globals.initialHints,
+  'legalityRadio': globals.legalityRadio
+};
+
 Future<bool> readFromPrefs() async {
   final prefs = await SharedPreferences.getInstance();
-  // final legality = prefs.getBool('doLegality');
-  final peerCells = prefs.getBool('doPeerCells');
-  final peerDigits = prefs.getBool('doPeerDigits');
-  final mistakes = prefs.getBool('doMistakes');
-  final hints = prefs.getInt('initialHints');
-  final legality = prefs.getInt('legalityRadio');
-  globals.doPeerCells.value = peerCells != null ? peerCells : true;
-  globals.doPeerDigits.value = peerDigits != null ? peerDigits : true;
-  globals.doMistakes.value = mistakes != null ? mistakes : true;
-  globals.initialHints.value = hints != null ? hints : 30;
-  globals.legalityRadio.value = legality == 1 || legality == 0 ? legality : 0;
+  // // final legality = prefs.getBool('doLegality');
+  // final peerCells = prefs.getBool('doPeerCells');
+  // final peerDigits = prefs.getBool('doPeerDigits');
+  // final mistakes = prefs.getBool('doMistakes');
+  // final hints = prefs.getInt('initialHints');
+  // final legality = prefs.getInt('legalityRadio');
+  // globals.doPeerCells.value = peerCells != null ? peerCells : true;
+  // globals.doPeerDigits.value = peerDigits != null ? peerDigits : true;
+  // globals.doMistakes.value = mistakes != null ? mistakes : true;
+  // globals.initialHints.value = hints != null ? hints : 30;
+  // globals.legalityRadio.value = legality == 1 || legality == 0 ? legality : 0;
+  // return true;
+  globals.settingsMap.forEach((k, v) => applySetting(prefs, k, v));
   return true;
+}
+
+saveToPrefs() async {
+  final prefs = await SharedPreferences.getInstance();
+  final legalityRadio = globals.legalityRadio.value;
+  final doPeerCells = globals.doPeerCells.value;
+  final doPeerDigits = globals.doPeerDigits.value;
+  final doMistakes = globals.doMistakes.value;
+  final hints = globals.initialHints.value;
+  prefs.setBool('doPeerCells', doPeerCells);
+  prefs.setBool('doPeerDigits', doPeerDigits);
+  prefs.setBool('doMistakes', doMistakes);
+  prefs.setInt('legalityRadio', legalityRadio);
+  prefs.setInt('initialHints', hints);
+}
+
+void applySetting(SharedPreferences prefs, String k, Object v) {
+  globals.settingsMap[k].value = prefs.get(k);
+}
+
+void saveSetting(SharedPreferences prefs, String k, Object v) {
+  // prefs.set
 }
 
 saveGame() async {

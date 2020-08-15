@@ -2,28 +2,43 @@ import 'package:flutter/material.dart';
 import 'package:lettuce_sudoku/domains/sudoku/SudokuProblem.dart';
 
 // BoolWrapper doLegality = BoolWrapper(false);
-BoolWrapper doPeerCells = BoolWrapper(true);
-BoolWrapper doPeerDigits = BoolWrapper(true);
-BoolWrapper doMistakes = BoolWrapper(true);
-IntWrapper maxHints = IntWrapper(5);
-IntWrapper initialHints = IntWrapper(30);
-IntWrapper legalityRadio = IntWrapper(0);
+VariableWrapper doPeerCells = VariableWrapper(true);
+VariableWrapper doPeerDigits = VariableWrapper(true);
+VariableWrapper doMistakes = VariableWrapper(true);
+VariableWrapper maxHints = VariableWrapper(5);
+VariableWrapper initialHints = VariableWrapper(30);
+VariableWrapper legalityRadio = VariableWrapper(0);
 int selectedRow = -1;
 int selectedCol = -1;
 double bodySpacing = 4;
 List hintsGiven = [];
 SudokuProblem problem;
 
-class BoolWrapper {
-  bool value;
-  BoolWrapper(bool value) {
-    this.value = value;
-  }
-}
+var settingsMap = {
+  'doPeerCells': doPeerCells,
+  'doPeerDigits': doPeerDigits,
+  'doMistakes': doMistakes,
+  'initialHints': initialHints,
+  'legalityRadio': legalityRadio
+};
 
-class IntWrapper {
-  int value;
-  IntWrapper(int value) {
+// class BoolWrapper {
+//   bool value;
+//   BoolWrapper(bool value) {
+//     this.value = value;
+//   }
+// }
+
+// class IntWrapper extends VariableWrapper{
+//   // int value;
+//   IntWrapper(int value) {
+//     this.value = value;
+//   }
+// }
+
+class VariableWrapper {
+  var value;
+  VariableWrapper(var value) {
     this.value = value;
   }
 }

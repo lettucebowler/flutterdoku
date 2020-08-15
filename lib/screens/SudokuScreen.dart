@@ -183,20 +183,6 @@ class _SudokuScreenState extends State<SudokuScreen> {
     }
   }
 
-  _save() async {
-    final prefs = await SharedPreferences.getInstance();
-    final legalityRadio = globals.legalityRadio.value;
-    final doPeerCells = globals.doPeerCells.value;
-    final doPeerDigits = globals.doPeerDigits.value;
-    final doMistakes = globals.doMistakes.value;
-    final hints = globals.initialHints.value;
-    prefs.setBool('doPeerCells', doPeerCells);
-    prefs.setBool('doPeerDigits', doPeerDigits);
-    prefs.setBool('doMistakes', doMistakes);
-    prefs.setInt('legalityRadio', legalityRadio);
-    prefs.setInt('initialHints', hints);
-  }
-
   Widget _getDrawer() {
     var radioList = [
       getStyledRadio('Correctness', 0, globals.legalityRadio,
@@ -506,112 +492,18 @@ class _SudokuScreenState extends State<SudokuScreen> {
     );
   }
 
-  Widget _getMistakeRadioGroup() {
-    return globals.doMistakes.value
-        ? Column(
-            children: [
-              _getRadio('Correctness', 0, globals.legalityRadio,
-                  globals.legalityRadio),
-              _getRadio(
-                  'Legality', 1, globals.legalityRadio, globals.legalityRadio),
-            ],
-          )
-        : Container();
-  }
-
-  Widget _getRadio(String label, int value, var groupValue, var setting) {
-    return Flex(
-      direction: Axis.horizontal,
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        Text(label),
-        Radio(
-          activeColor: CustomStyles.polarNight[3],
-          value: value,
-          groupValue: groupValue.value,
-          onChanged: (val) {
-            _save();
-            setState(() {
-              groupValue.value = value;
-            });
-          },
-        ),
-      ],
-    );
-  }
-
-  void _toggleBoolWrapper(BoolWrapper setting) {
+  void _toggleBoolWrapper(VariableWrapper setting) {
     setState(() {
       setting.value = !setting.value;
-      _save();
+      saveToPrefs();
     });
   }
 
-  void _setIntWrapper(int value, IntWrapper setting) {
+  void _setIntWrapper(int value, VariableWrapper setting) {
     setState(() {
       setting.value = value;
-      _save();
+      saveToPrefs();
     });
-  }
-
-  Widget _getSliderNoDivisions(
-      String label, globals.IntWrapper setting, double min, double max) {
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Spacer(flex: 2),
-            Expanded(
-              flex: 35,
-              child: Text(
-                label,
-                style: TextStyle(
-                  color: CustomStyles.polarNight[3],
-                  fontSize: 17,
-                ),
-              ),
-            ),
-          ],
-        ),
-        Row(
-          children: [
-            Expanded(
-              child: Slider(
-                value: setting.value.toDouble(),
-                onChanged: (val) {
-                  _save();
-                  setState(() {
-                    setting.value = val.toInt();
-                  });
-                },
-                min: min,
-                max: max,
-              ),
-            ),
-            IconButton(
-                icon: Icon(Icons.remove, color: CustomStyles.polarNight[3]),
-                onPressed: () {
-                  if (setting.value > min) {
-                    setting.value--;
-                    _save();
-                    setState(() {});
-                  }
-                }),
-            Text(setting.value.toString()),
-            IconButton(
-                icon: Icon(Icons.add, color: CustomStyles.polarNight[3]),
-                onPressed: () {
-                  if (setting.value < max) {
-                    setting.value++;
-                    _save();
-                    setState(() {});
-                  }
-                }),
-          ],
-        ),
-      ],
-    );
   }
 
   Widget _getBoard() {
@@ -620,13 +512,13 @@ class _SudokuScreenState extends State<SudokuScreen> {
       child: Container(
         color: CustomStyles.polarNight[3],
         child: GridView.count(
-            crossAxisCount: globals.problem.board_size,
-            childAspectRatio: 1,
-            children: List.generate(
-                globals.problem.board_size * globals.problem.board_size,
-                (index) {
-              return _makeBoardButton(index);
-            })),
+          crossAxisCount: globals.problem.board_size,
+          childAspectRatio: 1,
+          children: List.generate(
+              globals.problem.board_size * globals.problem.board_size, (index) {
+            return _makeBoardButton(index);
+          }),
+        ),
       ),
     );
   }

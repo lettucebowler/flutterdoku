@@ -29,7 +29,7 @@ Widget getFlatButton(
 }
 
 Widget getStyledToggleRow(
-    String label, BoolWrapper setting, Function onChanged) {
+    String label, VariableWrapper setting, Function onChanged) {
   return Row(
     mainAxisAlignment: MainAxisAlignment.spaceBetween,
     children: [
@@ -58,7 +58,7 @@ Widget getStyledToggleRow(
   );
 }
 
-Widget getStyledSliderRow(IntWrapper setting, double min, double max,
+Widget getStyledSliderRow(VariableWrapper setting, double min, double max,
     Function onChange, Function decrease, Function increase) {
   return Row(
     children: [
