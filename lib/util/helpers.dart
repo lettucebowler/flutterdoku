@@ -79,7 +79,6 @@ Future<bool> applyGameState() async {
   final currentString = prefs.getString('currentBoard') ?? '';
   final finalString = prefs.getString('finalBoard') ?? '';
   final hintString = prefs.getString('hintsGiven') ?? '';
-  // SudokuProblem problem;
   List initialBoard = List.generate(9, (i) => List(9), growable: false);
   List currentBoard = List.generate(9, (i) => List(9), growable: false);
   List finalBoard = List.generate(9, (i) => List(9), growable: false);
