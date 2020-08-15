@@ -85,9 +85,13 @@ Future<bool> applyGameState() async {
 
 double getBodyWidth(context) {
   EdgeInsets padding = MediaQuery.of(context).padding;
-  double width = MediaQuery.of(context).size.width - padding.horizontal;
-  double height = MediaQuery.of(context).size.height - padding.vertical;
-  double aspect = 0.60;
+  double width = MediaQuery.of(context).size.width -
+      padding.horizontal -
+      2 * globals.bodySpacing;
+  double height = MediaQuery.of(context).size.height -
+      padding.vertical -
+      2 * globals.bodySpacing;
+  double aspect = 15 / 23;
   return width / height < aspect ? width : height * aspect;
 }
 

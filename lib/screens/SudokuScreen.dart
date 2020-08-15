@@ -24,7 +24,6 @@ class _SudokuScreenState extends State<SudokuScreen> {
   var menuHeight = 70;
   SolvingAssistant _assistant;
   FocusNode focusNode = FocusNode();
-  double _bodySpacing = 4;
 
   @override
   void initState() {
@@ -227,7 +226,6 @@ class _SudokuScreenState extends State<SudokuScreen> {
           ),
           _getSliderNoDivisions('Initial Hints', globals.initialHints, 17, 50),
           Row(
-            // direction: Axis.horizontal,
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               Spacer(flex: 2),
@@ -623,45 +621,57 @@ class _SudokuScreenState extends State<SudokuScreen> {
             })),
       ),
     );
-    // return board;
   }
 
   Widget _getMoveButtons() {
-    return Flex(
-        direction: Axis.vertical,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: List.generate(3, (index) {
-          int offset = index ~/ 2 * 5;
-          return index % 2 == 0
-              ? Flex(
-                  direction: Axis.horizontal,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: List.generate(9, (index) {
-                    int num = (index ~/ 2 + 1 + offset) %
-                        (globals.problem.board_size + 1);
-                    String toPlace = num == 0 ? 'X' : (num).toString();
-                    return index % 2 == 0
-                        ? Flexible(
-                            fit: FlexFit.tight,
-                            flex: 8,
-                            child: AspectRatio(
-                                aspectRatio: 1,
-                                child: getFlatButton(
-                                    toPlace,
-                                    CustomStyles.snowStorm[2],
-                                    36,
-                                    TextAlign.center,
-                                    CustomStyles.polarNight[3],
-                                    CustomStyles.polarNight[0],
-                                    _getMove(
-                                        _cellSelected(),
-                                        num,
-                                        globals.selectedRow,
-                                        globals.selectedCol))))
-                        : Container(width: 4);
-                  }))
-              : Container(height: 4);
-        }));
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        Flexible(
+          child: Column(
+            children: List.generate(2, (rowIndex) {
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: List.generate(5, (colIndex) {
+                  int offset = rowIndex * 5;
+                  int num = (colIndex + 1 + offset) %
+                      (globals.problem.board_size + 1);
+                  String toPlace = num == 0 ? 'X' : (num).toString();
+                  return Flexible(
+                    child: AspectRatio(
+                      aspectRatio: 1,
+                      child: Container(
+                        padding: _getMovePadding(rowIndex, colIndex),
+                        child: getFlatButton(
+                          toPlace,
+                          CustomStyles.snowStorm[2],
+                          36,
+                          TextAlign.center,
+                          CustomStyles.polarNight[3],
+                          CustomStyles.polarNight[0],
+                          _getMove(_cellSelected(), num, globals.selectedRow,
+                              globals.selectedCol),
+                        ),
+                      ),
+                    ),
+                  );
+                }),
+              );
+            }),
+          ),
+        ),
+      ],
+    );
+  }
+
+  EdgeInsets _getMovePadding(int row, int col) {
+    double left = 0;
+    double top = 4;
+    double right = 0;
+    double bottom = 0;
+
+    left = col % 5 != 0 ? 4 : 0;
+    return EdgeInsets.fromLTRB(left, top, right, bottom);
   }
 
   Function _getMove(bool selected, int num, int row, int col) {
@@ -693,33 +703,46 @@ class _SudokuScreenState extends State<SudokuScreen> {
   }
 
   Widget _getGameButtons() {
-    return Flex(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      direction: Axis.horizontal,
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
         Flexible(
           fit: FlexFit.tight,
-          child: getFlatButton(
-            'New Game',
-            CustomStyles.snowStorm[2],
-            24,
-            TextAlign.center,
-            CustomStyles.polarNight[3],
-            CustomStyles.polarNight[0],
-            () => _newGameAndSave(),
+          child: AspectRatio(
+            aspectRatio: 1,
+            child: Container(
+              // color: Colors.blue,
+              padding: EdgeInsets.fromLTRB(0, 4, 2, 0),
+              child: getFlatButton(
+                'New Game',
+                CustomStyles.snowStorm[2],
+                24,
+                TextAlign.center,
+                CustomStyles.polarNight[3],
+                CustomStyles.polarNight[0],
+                () => _newGameAndSave(),
+              ),
+            ),
           ),
         ),
-        Container(width: 4),
+        // Container(width: 4),
         Flexible(
           fit: FlexFit.tight,
-          child: getFlatButton(
-            'Get Hint',
-            CustomStyles.snowStorm[2],
-            24,
-            TextAlign.center,
-            CustomStyles.polarNight[3],
-            CustomStyles.polarNight[0],
-            () => _giveHint(globals.selectedRow, globals.selectedCol),
+          child: AspectRatio(
+            aspectRatio: 1,
+            child: Container(
+              // color: Colors.green,
+              padding: EdgeInsets.fromLTRB(2, 4, 0, 0),
+              child: getFlatButton(
+                'Get Hint',
+                CustomStyles.snowStorm[2],
+                24,
+                TextAlign.center,
+                CustomStyles.polarNight[3],
+                CustomStyles.polarNight[0],
+                () => _giveHint(globals.selectedRow, globals.selectedCol),
+              ),
+            ),
           ),
         ),
       ],
@@ -728,29 +751,30 @@ class _SudokuScreenState extends State<SudokuScreen> {
 
   Widget _getBody() {
     return Container(
-      padding: EdgeInsets.all(_bodySpacing),
+      padding: EdgeInsets.all(globals.bodySpacing),
       child: _makeBodyRow(),
     );
   }
 
   Widget _makeGameCol(bool doVertical) {
     return Column(
-      // direction: Axis.vertical,
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
-        _getBoard(),
-        Container(height: 4),
+        Flexible(flex: 15, child: Container(child: _getBoard())),
         Flexible(
-          child: Flex(
-            direction: Axis.vertical,
-            children: [
-              Flexible(
-                child: _getMoveButtons(),
-              ),
-              _getGameButtons(),
-            ],
+          flex: 6,
+          child: AspectRatio(
+              aspectRatio: 5 / 2, child: Container(child: _getMoveButtons())),
+        ),
+        Flexible(
+          flex: 2,
+          child: AspectRatio(
+            aspectRatio: 15 / 2,
+            child: Container(
+              child: _getGameButtons(),
+            ),
           ),
-        )
+        ),
       ],
     );
   }
@@ -762,7 +786,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
       children: [
         Flexible(child: Container()),
         Container(
-          width: getBodyWidth(context) - _bodySpacing * 2,
+          width: getBodyWidth(context),
           child: _makeGameCol(true),
           // width: _getBodyWidth(),
         ),
