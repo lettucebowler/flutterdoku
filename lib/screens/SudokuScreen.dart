@@ -6,6 +6,7 @@ import 'package:lettuce_sudoku/domains/sudoku/SudokuState.dart';
 import 'package:lettuce_sudoku/framework/problem/Problem.dart';
 import 'package:lettuce_sudoku/framework/problem/SolvingAssistant.dart';
 import 'package:lettuce_sudoku/util/CustomStyles.dart';
+import 'package:lettuce_sudoku/util/globals.dart';
 import 'package:lettuce_sudoku/util/helpers.dart';
 import 'package:lettuce_sudoku/util/widgets.dart';
 import 'package:lettuce_sudoku/util/globals.dart' as globals;
@@ -212,9 +213,28 @@ class _SudokuScreenState extends State<SudokuScreen> {
               color: CustomStyles.polarNight[3],
             ),
           ),
-          _getToggle('Highlight Peer Cells', globals.doPeerCells),
-          _getToggle('Highlight Peer Digits', globals.doPeerDigits),
-          _getToggle('Show Mistakes', globals.doMistakes),
+          Row(
+            children: [
+              Spacer(flex: 2),
+              Expanded(
+                flex: 35,
+                child: Column(
+                  children: [
+                    getStyledToggleRow(
+                        'Highlight Peer Cells',
+                        globals.doPeerCells,
+                        (bool value) => _toggleBool(globals.doPeerCells)),
+                    getStyledToggleRow(
+                        'Highlight Peer Digits',
+                        globals.doPeerDigits,
+                        (bool value) => _toggleBool(globals.doPeerDigits)),
+                    getStyledToggleRow('Show Mistakes', globals.doMistakes,
+                        (bool value) => _toggleBool(globals.doMistakes)),
+                  ],
+                ),
+              ),
+            ],
+          ),
           AnimatedSwitcher(
             duration: const Duration(milliseconds: 250),
             transitionBuilder: (Widget child, Animation<double> animation) =>
@@ -544,6 +564,13 @@ class _SudokuScreenState extends State<SudokuScreen> {
         ),
       ],
     );
+  }
+
+  void _toggleBool(BoolWrapper setting) {
+    setState(() {
+      setting.value = !setting.value;
+      _save();
+    });
   }
 
   Widget _getSliderNoDivisions(

@@ -1,6 +1,8 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:lettuce_sudoku/util/CustomStyles.dart';
+import 'package:lettuce_sudoku/util/globals.dart';
 
 Widget getFlatButton(
     String label,
@@ -23,5 +25,35 @@ Widget getFlatButton(
         fontSize: textSize,
       ),
     ),
+  );
+}
+
+Widget getStyledToggleRow(
+    String label, BoolWrapper setting, Function onChanged) {
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+      Container(
+        child: Text(
+          label,
+          style: TextStyle(
+            color: CustomStyles.polarNight[3],
+            fontSize: 17,
+          ),
+          textAlign: TextAlign.left,
+        ),
+      ),
+      Align(
+        alignment: Alignment.centerRight,
+        child: Switch(
+          value: setting.value,
+          onChanged: onChanged,
+          activeColor: CustomStyles.polarNight[3],
+          inactiveThumbColor: CustomStyles.polarNight[3],
+          activeTrackColor: CustomStyles.aurora[3],
+          inactiveTrackColor: CustomStyles.aurora[0],
+        ),
+      ),
+    ],
   );
 }
