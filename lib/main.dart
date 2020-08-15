@@ -6,8 +6,8 @@ import 'package:lettuce_sudoku/util/helpers.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await readFromPrefs();
-  // bool problemGood = await _getGame();
+//  await readFromPrefs();
+//  await applyGameState();
   runApp(LettuceSudoku());
 }
 

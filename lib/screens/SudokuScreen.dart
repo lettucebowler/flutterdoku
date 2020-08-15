@@ -21,8 +21,6 @@ class SudokuScreen extends StatefulWidget {
 }
 
 class _SudokuScreenState extends State<SudokuScreen> {
-  // SudokuProblem _problem =
-  //     SudokuProblem.withMoreHints(globals.initialHints.value - 17);
   var menuHeight = 70;
   SolvingAssistant _assistant;
   FocusNode focusNode = FocusNode();
@@ -31,14 +29,15 @@ class _SudokuScreenState extends State<SudokuScreen> {
   @override
   void initState() {
     super.initState();
+    if (globals.problem == null) {
+      _newGameAndSave();
+    }
     _assistant = SolvingAssistant(globals.problem);
   }
 
   @override
   Widget build(BuildContext context) {
-    if (globals.problem == null) {
-      _newGame();
-    }
+
 
     // final GlobalKey _scaffoldKey = new GlobalKey();
 
