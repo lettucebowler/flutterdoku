@@ -211,6 +211,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
               Expanded(
                 flex: 35,
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     getStyledToggleRow(
                         'Highlight Peer Cells',
@@ -224,21 +225,30 @@ class _SudokuScreenState extends State<SudokuScreen> {
                             _toggleBoolWrapper(globals.doPeerDigits)),
                     getStyledToggleRow('Show Mistakes', globals.doMistakes,
                         (bool value) => _toggleBoolWrapper(globals.doMistakes)),
+                    AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 250),
+                      transitionBuilder:
+                          (Widget child, Animation<double> animation) =>
+                              SizeTransition(
+                        child: child,
+                        sizeFactor: animation,
+                      ),
+                      child: globals.doMistakes.value
+                          ? getWidgetGroup(radioList)
+                          : Container(),
+                    ),
+                    Text(
+                      'Initial Hints',
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                        color: CustomStyles.polarNight[3],
+                        fontSize: 17,
+                      ),
+                    ),
                   ],
                 ),
               ),
             ],
-          ),
-          AnimatedSwitcher(
-            duration: const Duration(milliseconds: 250),
-            transitionBuilder: (Widget child, Animation<double> animation) =>
-                SizeTransition(
-              child: child,
-              sizeFactor: animation,
-            ),
-            child: globals.doMistakes.value
-                ? getWidgetGroup(radioList)
-                : Container(),
           ),
           // _getSliderNoDivisions('Initial Hints', globals.initialHints, 17, 50),
           getStyledSliderRow(
@@ -251,56 +261,89 @@ class _SudokuScreenState extends State<SudokuScreen> {
               () => _setIntWrapper(
                   globals.initialHints.value + 1, globals.initialHints)),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               Spacer(flex: 2),
               Expanded(
-                flex: 16,
-                child: getFlatButton(
-                    'Solve Game',
-                    CustomStyles.snowStorm[2],
-                    17,
-                    TextAlign.center,
-                    CustomStyles.polarNight[3],
-                    CustomStyles.polarNight[0],
-                    () => _solveGame(globals.problem)),
-              ),
-              Spacer(
-                flex: 1,
-              ),
-              Expanded(
-                flex: 16,
-                child: getFlatButton(
-                    'Reset Game',
-                    CustomStyles.snowStorm[2],
-                    17,
-                    TextAlign.center,
-                    CustomStyles.polarNight[3],
-                    CustomStyles.polarNight[0],
-                    () => _resetBoard(globals.problem)),
+                flex: 33,
+                child: AspectRatio(
+                  aspectRatio: 3,
+                  child: Container(
+                    height: 120,
+                    child: Column(
+                      children: [
+                        Expanded(
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: AspectRatio(
+                                  aspectRatio: 1,
+                                  child: Container(
+                                    padding: EdgeInsets.fromLTRB(0, 0, 2, 2),
+                                    child: getFlatButton(
+                                        'Solve Game',
+                                        CustomStyles.snowStorm[2],
+                                        17,
+                                        TextAlign.center,
+                                        CustomStyles.polarNight[3],
+                                        CustomStyles.polarNight[0],
+                                        () => _solveGame(globals.problem)),
+                                  ),
+                                  // child: getFlatButton(
+                                  //     'Solve Game',
+                                  //     CustomStyles.snowStorm[2],
+                                  //     17,
+                                  //     TextAlign.center,
+                                  //     CustomStyles.polarNight[3],
+                                  //     CustomStyles.polarNight[0],
+                                  //     () => _solveGame(globals.problem)),
+                                ),
+                              ),
+                              Expanded(
+                                child: AspectRatio(
+                                  aspectRatio: 1,
+                                  child: Container(
+                                    padding: EdgeInsets.fromLTRB(2, 0, 0, 2),
+                                    child: getFlatButton(
+                                        'Reset Game',
+                                        CustomStyles.snowStorm[2],
+                                        17,
+                                        TextAlign.center,
+                                        CustomStyles.polarNight[3],
+                                        CustomStyles.polarNight[0],
+                                        () => _resetBoard(globals.problem)),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Expanded(
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: AspectRatio(
+                                  aspectRatio: 1,
+                                  child: Container(
+                                      padding: EdgeInsets.only(top: 2),
+                                      child: getFlatButton(
+                                          'New Game',
+                                          CustomStyles.snowStorm[2],
+                                          17,
+                                          TextAlign.center,
+                                          CustomStyles.polarNight[3],
+                                          CustomStyles.polarNight[0],
+                                          () => _newGameAndSave())),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ),
               Spacer(flex: 2),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Spacer(
-                flex: 2,
-              ),
-              Expanded(
-                  flex: 33,
-                  child: getFlatButton(
-                      'New Game',
-                      CustomStyles.snowStorm[2],
-                      17,
-                      TextAlign.center,
-                      CustomStyles.polarNight[3],
-                      CustomStyles.polarNight[0],
-                      () => _newGameAndSave())),
-              Spacer(
-                flex: 2,
-              ),
             ],
           ),
         ],
@@ -507,17 +550,22 @@ class _SudokuScreenState extends State<SudokuScreen> {
   }
 
   Widget _getBoard() {
-    return AspectRatio(
-      aspectRatio: 1,
-      child: Container(
-        color: CustomStyles.polarNight[3],
-        child: GridView.count(
-          crossAxisCount: globals.problem.board_size,
-          childAspectRatio: 1,
-          children: List.generate(
-              globals.problem.board_size * globals.problem.board_size, (index) {
-            return _makeBoardButton(index);
-          }),
+    return Container(
+      padding: EdgeInsets.all(2),
+      child: AspectRatio(
+        aspectRatio: 1,
+        child: Container(
+          // padding: EdgeInsets.all(2),
+          color: CustomStyles.polarNight[3],
+          child: GridView.count(
+            crossAxisCount: globals.problem.board_size,
+            childAspectRatio: 1,
+            children: List.generate(
+                globals.problem.board_size * globals.problem.board_size,
+                (index) {
+              return _makeBoardButton(index);
+            }),
+          ),
         ),
       ),
     );
@@ -527,7 +575,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        Flexible(
+        Expanded(
           child: Column(
             children: List.generate(2, (rowIndex) {
               return Row(
@@ -537,11 +585,12 @@ class _SudokuScreenState extends State<SudokuScreen> {
                   int num = (colIndex + 1 + offset) %
                       (globals.problem.board_size + 1);
                   String toPlace = num == 0 ? 'X' : (num).toString();
-                  return Flexible(
-                    child: AspectRatio(
-                      aspectRatio: 1,
-                      child: Container(
-                        padding: _getMovePadding(rowIndex, colIndex),
+                  return Expanded(
+                    child: Container(
+                      // padding: _getMovePadding(rowIndex, colIndex),
+                      padding: EdgeInsets.all(2),
+                      child: AspectRatio(
+                        aspectRatio: 1,
                         child: getFlatButton(
                           toPlace,
                           CustomStyles.snowStorm[2],
@@ -562,16 +611,6 @@ class _SudokuScreenState extends State<SudokuScreen> {
         ),
       ],
     );
-  }
-
-  EdgeInsets _getMovePadding(int row, int col) {
-    double left = 0;
-    double top = 4;
-    double right = 0;
-    double bottom = 0;
-
-    left = col % 5 != 0 ? 4 : 0;
-    return EdgeInsets.fromLTRB(left, top, right, bottom);
   }
 
   Function _getMove(bool selected, int num, int row, int col) {
@@ -612,7 +651,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
             aspectRatio: 1,
             child: Container(
               // color: Colors.blue,
-              padding: EdgeInsets.fromLTRB(0, 4, 2, 0),
+              padding: EdgeInsets.all(2),
               child: getFlatButton(
                 'New Game',
                 CustomStyles.snowStorm[2],
@@ -632,7 +671,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
             aspectRatio: 1,
             child: Container(
               // color: Colors.green,
-              padding: EdgeInsets.fromLTRB(2, 4, 0, 0),
+              padding: EdgeInsets.all(2),
               child: getFlatButton(
                 'Get Hint',
                 CustomStyles.snowStorm[2],
