@@ -24,6 +24,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
   var menuHeight = 70;
   SolvingAssistant _assistant;
   FocusNode focusNode = FocusNode();
+  var _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
@@ -38,6 +39,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
   Widget build(BuildContext context) {
     FocusScope.of(context).requestFocus(focusNode);
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text(
           'LettuceSudoku',
@@ -45,9 +47,9 @@ class _SudokuScreenState extends State<SudokuScreen> {
           style: CustomStyles.titleText,
         ),
       ),
-      drawer: _getDrawer(),
+      drawer: _getDrawer(_scaffoldKey),
       body: Builder(
-        builder: (context) => RawKeyboardListener(
+        builder: (_scaffoldKey) => RawKeyboardListener(
           autofocus: true,
           focusNode: focusNode,
           onKey: (event) {
@@ -148,7 +150,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
               }
             }
           },
-          child: _getBody(),
+          child: _getBody(_scaffoldKey),
         ),
       ),
     );
@@ -175,14 +177,14 @@ class _SudokuScreenState extends State<SudokuScreen> {
   }
 
   void _toggleDrawer(BuildContext context) {
-    if (Scaffold.of(context).isDrawerOpen) {
+    if (_scaffoldKey.currentState.isDrawerOpen) {
       Navigator.pop(context);
     } else {
-      Scaffold.of(context).openDrawer();
+      _scaffoldKey.currentState.openDrawer();
     }
   }
 
-  Widget _getDrawer() {
+  Widget _getDrawer(context) {
     var radioList = [
       getStyledRadio('Correctness', 0, globals.legalityRadio,
           (var val) => _setIntWrapper(0, globals.legalityRadio)),
@@ -545,7 +547,6 @@ class _SudokuScreenState extends State<SudokuScreen> {
       child: AspectRatio(
         aspectRatio: 1,
         child: Container(
-          // padding: EdgeInsets.all(2),
           color: CustomStyles.polarNight[3],
           child: GridView.count(
             crossAxisCount: globals.problem.board_size,
@@ -676,10 +677,10 @@ class _SudokuScreenState extends State<SudokuScreen> {
     );
   }
 
-  Widget _getBody() {
+  Widget _getBody(BuildContext context) {
     return Container(
       padding: EdgeInsets.all(globals.bodySpacing),
-      child: _makeBodyRow(),
+      child: _makeBodyRow(context),
     );
   }
 
@@ -706,7 +707,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
     );
   }
 
-  Widget _makeBodyRow() {
+  Widget _makeBodyRow(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [

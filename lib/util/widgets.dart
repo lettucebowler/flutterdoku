@@ -16,6 +16,7 @@ Widget getFlatButton(
     color: buttonColor,
     splashColor: splashColor,
     onPressed: function,
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
     child: AutoSizeText(
       label,
       textAlign: textAlign,
