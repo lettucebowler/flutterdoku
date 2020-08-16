@@ -692,7 +692,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
             child: _getBoard()
 //          color: Colors.red,
               ),
-        
+
         Flexible(
           flex: 6,
           child: AspectRatio(
