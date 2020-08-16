@@ -11,20 +11,23 @@ class CustomStyles {
   static const nord2 = Color(0xFF434c5e);
   static const nord3 = Color(theme);
 
+  // Snow Storm
   static const nord4 = Color(0xFFd8dee9);
   static const nord5 = Color(0xFFe5e9f0);
   static const nord6 = Color(0xFFeceff4);
 
-  static const nord7 = Color(0xFFd8dee9);
-  static const nord8 = Color(0xFFd8dee9);
-  static const nord9 = Color(0xFFd8dee9);
-  static const nord10 = Color(0xFFd8dee9);
+  // Frost
+  static const nord7 = Color(0xFF8fbcbb);
+  static const nord8 = Color(0xFF88c0d0);
+  static const nord9 = Color(0xFF81a1c1);
+  static const nord10 = Color(0xFF5e81ac);
 
-  static const nord11 = Color(0xFFd8dee9);
-  static const nord12 = Color(0xFFd8dee9);
-  static const nord13 = Color(0xFFd8dee9);
-  static const nord14 = Color(0xFFd8dee9);
-  static const nord15 = Color(0xFFd8dee9);
+  // Aurora
+  static const nord11 = Color(0xFFbf616a);
+  static const nord12 = Color(0xFFd08770);
+  static const nord13 = Color(0xFFebcb8b);
+  static const nord14 = Color(0xFFa3be8c);
+  static const nord15 = Color(0xFFb48ead);
 
 
   static const MaterialColor themeColor = MaterialColor(
@@ -43,21 +46,6 @@ class CustomStyles {
     },
   );
 
-  static const List frost = [
-    const Color(0xFF8fbcbb),
-    const Color(0xFF88c0d0),
-    const Color(0xFF81a1c1),
-    const Color(0xFF5e81ac)
-  ];
-
-  static const List aurora = [
-    const Color(0xFFbf616a),
-    const Color(0xFFd08770),
-    const Color(0xFFebcb8b),
-    const Color(0xFFa3be8c),
-    const Color(0xFFb48ead)
-  ];
-
   static const TextStyle boardText = TextStyle(
     fontFamily: 'FiraCode',
     fontSize: 26,
@@ -67,6 +55,6 @@ class CustomStyles {
   static const TextStyle titleText = TextStyle(
 //    fontFamily: 'FiraCode',
     fontSize: 30,
-    color: nord2,
+    color: nord6,
   );
 }

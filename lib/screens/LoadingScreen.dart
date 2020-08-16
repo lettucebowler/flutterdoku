@@ -73,7 +73,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
                       children: [
                         CircularProgressIndicator(
                           valueColor: AlwaysStoppedAnimation<Color>(
-                              CustomStyles.aurora[2]),
+                              CustomStyles.nord13),
                         ),
                         Padding(padding: EdgeInsets.only(top: 20)),
                         Text(

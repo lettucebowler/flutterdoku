@@ -119,9 +119,6 @@ class _SudokuScreenState extends State<SudokuScreen> {
       // Get Hint
       LogicalKeyboardKey.keyH: () =>
           _giveHint(globals.selectedRow, globals.selectedCol),
-
-      //Open Drawer
-//      LogicalKeyboardKey.keyG: () => _toggleDrawer(context)
     };
   }
 
@@ -144,14 +141,6 @@ class _SudokuScreenState extends State<SudokuScreen> {
     globals.selectedRow =
         ((globals.selectedRow + 1) % globals.problem.board_size);
   }
-
-//  void _toggleDrawer(BuildContext context) {
-//    if (_scaffoldKey.currentState.isDrawerOpen) {
-//      Navigator.pop(context);
-//    } else {
-//      _scaffoldKey.currentState.openDrawer();
-//    }
-//  }
 
   @override
   Widget build(BuildContext context) {
@@ -447,10 +436,10 @@ class _SudokuScreenState extends State<SudokuScreen> {
   }
 
   Color _getCellColor(int row, int col) {
-    Color peerCell = CustomStyles.frost[1];
+    Color peerCell = CustomStyles.nord8;
     Color background = CustomStyles.nord6;
-    Color peerDigit = CustomStyles.frost[2];
-    Color success = CustomStyles.aurora[3];
+    Color peerDigit = CustomStyles.nord9;
+    Color success = CustomStyles.nord14;
     Color color = background;
 
     bool rowSelected = row == globals.selectedRow;
@@ -500,8 +489,8 @@ class _SudokuScreenState extends State<SudokuScreen> {
       child: Material(
         color: cellColor,
         child: InkWell(
-          hoverColor: CustomStyles.aurora[2],
-          splashColor: CustomStyles.aurora[1],
+          hoverColor: CustomStyles.nord13,
+          splashColor: CustomStyles.nord12,
           onTap: () => setState(() {
             globals.selectedRow = row;
             globals.selectedCol = col;
@@ -617,16 +606,16 @@ class _SudokuScreenState extends State<SudokuScreen> {
     var legal = globals.problem.isLegal(row, col);
     var correct = globals.problem.isCorrect(row, col);
     var doLegality = globals.legalityRadio.value == 1;
-    Color color = CustomStyles.frost[3];
+    Color color = CustomStyles.nord10;
 
     color = globals.doMistakes.value && doLegality && !legal
-        ? CustomStyles.aurora[0]
+        ? CustomStyles.nord11
         : color;
     color = globals.doMistakes.value && !doLegality && !correct
-        ? CustomStyles.aurora[0]
+        ? CustomStyles.nord11
         : color;
     color = initialHint ? CustomStyles.nord3 : color;
-    color = _givenAsHint(row, col) ? CustomStyles.aurora[4] : color;
+    color = _givenAsHint(row, col) ? CustomStyles.nord15 : color;
     return color;
   }
 
