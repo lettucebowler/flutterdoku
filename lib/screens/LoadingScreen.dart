@@ -38,7 +38,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
         children: [
           Container(
             // width: MediaQuery.of(context).size.width,
-            color: CustomStyles.polarNight[3],
+            color: CustomStyles.nord3,
           ),
           Center(
             child: Container(
@@ -62,7 +62,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
                         Text('LettuceSudoku',
                             style: TextStyle(
                                 fontSize: 30,
-                                color: CustomStyles.snowStorm[2])),
+                                color: CustomStyles.nord6)),
                       ],
                     ),
                   ),
@@ -79,7 +79,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
                         Text(
                           'Sudoku at its worst',
                           style: TextStyle(
-                            color: CustomStyles.snowStorm[2],
+                            color: CustomStyles.nord6,
                             fontSize: 20,
                           ),
                         ),

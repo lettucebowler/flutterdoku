@@ -5,6 +5,28 @@ class CustomStyles {
 
   static const int theme = 0xFF4c566a;
 
+  // Polar Night
+  static const nord0 = Color(0xFF2e3440);
+  static const nord1 = Color(0xFF3b4252);
+  static const nord2 = Color(0xFF434c5e);
+  static const nord3 = Color(theme);
+
+  static const nord4 = Color(0xFFd8dee9);
+  static const nord5 = Color(0xFFe5e9f0);
+  static const nord6 = Color(0xFFeceff4);
+
+  static const nord7 = Color(0xFFd8dee9);
+  static const nord8 = Color(0xFFd8dee9);
+  static const nord9 = Color(0xFFd8dee9);
+  static const nord10 = Color(0xFFd8dee9);
+
+  static const nord11 = Color(0xFFd8dee9);
+  static const nord12 = Color(0xFFd8dee9);
+  static const nord13 = Color(0xFFd8dee9);
+  static const nord14 = Color(0xFFd8dee9);
+  static const nord15 = Color(0xFFd8dee9);
+
+
   static const MaterialColor themeColor = MaterialColor(
     theme,
     const <int, Color>{
@@ -21,27 +43,14 @@ class CustomStyles {
     },
   );
 
-  static List polarNight = [
-    const Color(0xFF2e3440),
-    const Color(0xFF3b4252),
-    const Color(0xFF434c5e),
-    const Color(theme)
-  ];
-
-  static List snowStorm = [
-    const Color(0xFFd8dee9),
-    const Color(0xFFe5e9f0),
-    const Color(0xFFeceff4)
-  ];
-
-  static List frost = [
+  static const List frost = [
     const Color(0xFF8fbcbb),
     const Color(0xFF88c0d0),
     const Color(0xFF81a1c1),
     const Color(0xFF5e81ac)
   ];
 
-  static List aurora = [
+  static const List aurora = [
     const Color(0xFFbf616a),
     const Color(0xFFd08770),
     const Color(0xFFebcb8b),
@@ -49,23 +58,15 @@ class CustomStyles {
     const Color(0xFFb48ead)
   ];
 
-  static TextStyle boardText = TextStyle(
+  static const TextStyle boardText = TextStyle(
     fontFamily: 'FiraCode',
     fontSize: 26,
-    color: polarNight[3],
+    color: nord3,
   );
 
-  static TextStyle getFiraCode(Color color, double size) {
-    return TextStyle(
-      fontFamily: 'FiraCode',
-      fontSize: size,
-      color: color,
-    );
-  }
-
-  static TextStyle titleText = TextStyle(
+  static const TextStyle titleText = TextStyle(
 //    fontFamily: 'FiraCode',
     fontSize: 30,
-    color: snowStorm[2],
+    color: nord2,
   );
 }

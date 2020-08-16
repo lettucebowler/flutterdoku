@@ -8,8 +8,8 @@ import 'package:lettuce_sudoku/framework/problem/SolvingAssistant.dart';
 import 'package:lettuce_sudoku/util/CustomStyles.dart';
 import 'package:lettuce_sudoku/util/globals.dart';
 import 'package:lettuce_sudoku/util/helpers.dart';
-import 'package:lettuce_sudoku/util/widgets.dart';
 import 'package:lettuce_sudoku/util/globals.dart' as globals;
+import 'package:lettuce_sudoku/widgets/widgets.dart';
 
 class SudokuScreen extends StatefulWidget {
   SudokuScreen({Key key, this.title}) : super(key: key);
@@ -25,8 +25,8 @@ class _SudokuScreenState extends State<SudokuScreen> {
   SolvingAssistant _assistant;
   FocusNode focusNode = FocusNode();
   var _actionMap;
-  var _scaffoldKey = new GlobalKey<ScaffoldState>();
 
+//  var _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
@@ -53,139 +53,136 @@ class _SudokuScreenState extends State<SudokuScreen> {
       LogicalKeyboardKey.keyW: () => _shiftUp(),
 
       // Place 0 / Delete number from cell
-      LogicalKeyboardKey.digit0:
-      _getMove(_cellSelected(), 0, globals.selectedRow, globals.selectedCol),
-      LogicalKeyboardKey.numpad0:
-      _getMove(_cellSelected(), 0, globals.selectedRow, globals.selectedCol),
-      LogicalKeyboardKey.keyX: _getMove(_cellSelected(), 0, globals.selectedRow, globals.selectedCol),
-      LogicalKeyboardKey.delete:
-      _getMove(_cellSelected(), 0, globals.selectedRow, globals.selectedCol),
+      LogicalKeyboardKey.digit0: _getMove(
+          _cellSelected(), 0, globals.selectedRow, globals.selectedCol),
+      LogicalKeyboardKey.numpad0: _getMove(
+          _cellSelected(), 0, globals.selectedRow, globals.selectedCol),
+      LogicalKeyboardKey.keyX: _getMove(
+          _cellSelected(), 0, globals.selectedRow, globals.selectedCol),
+      LogicalKeyboardKey.delete: _getMove(
+          _cellSelected(), 0, globals.selectedRow, globals.selectedCol),
 
       // Place 1
-      LogicalKeyboardKey.digit1:
-      _getMove(_cellSelected(), 1, globals.selectedRow, globals.selectedCol),
-      LogicalKeyboardKey.numpad1:
-      _getMove(_cellSelected(), 1, globals.selectedRow, globals.selectedCol),
+      LogicalKeyboardKey.digit1: _getMove(
+          _cellSelected(), 1, globals.selectedRow, globals.selectedCol),
+      LogicalKeyboardKey.numpad1: _getMove(
+          _cellSelected(), 1, globals.selectedRow, globals.selectedCol),
 
       // Place 2
-      LogicalKeyboardKey.digit2:
-      _getMove(_cellSelected(), 2, globals.selectedRow, globals.selectedCol),
-      LogicalKeyboardKey.numpad2:
-      _getMove(_cellSelected(), 2, globals.selectedRow, globals.selectedCol),
+      LogicalKeyboardKey.digit2: _getMove(
+          _cellSelected(), 2, globals.selectedRow, globals.selectedCol),
+      LogicalKeyboardKey.numpad2: _getMove(
+          _cellSelected(), 2, globals.selectedRow, globals.selectedCol),
 
       // Place 3
-      LogicalKeyboardKey.digit3:
-      _getMove(_cellSelected(), 3, globals.selectedRow, globals.selectedCol),
-      LogicalKeyboardKey.numpad3:
-      _getMove(_cellSelected(), 3, globals.selectedRow, globals.selectedCol),
+      LogicalKeyboardKey.digit3: _getMove(
+          _cellSelected(), 3, globals.selectedRow, globals.selectedCol),
+      LogicalKeyboardKey.numpad3: _getMove(
+          _cellSelected(), 3, globals.selectedRow, globals.selectedCol),
 
       // Place 4
-      LogicalKeyboardKey.digit4:
-      _getMove(_cellSelected(), 4, globals.selectedRow, globals.selectedCol),
-      LogicalKeyboardKey.numpad4:
-      _getMove(_cellSelected(), 4, globals.selectedRow, globals.selectedCol),
+      LogicalKeyboardKey.digit4: _getMove(
+          _cellSelected(), 4, globals.selectedRow, globals.selectedCol),
+      LogicalKeyboardKey.numpad4: _getMove(
+          _cellSelected(), 4, globals.selectedRow, globals.selectedCol),
 
       // Place 5
-      LogicalKeyboardKey.digit5:
-      _getMove(_cellSelected(), 5, globals.selectedRow, globals.selectedCol),
-      LogicalKeyboardKey.numpad5:
-      _getMove(_cellSelected(), 5, globals.selectedRow, globals.selectedCol),
+      LogicalKeyboardKey.digit5: _getMove(
+          _cellSelected(), 5, globals.selectedRow, globals.selectedCol),
+      LogicalKeyboardKey.numpad5: _getMove(
+          _cellSelected(), 5, globals.selectedRow, globals.selectedCol),
 
       // Place 6
-      LogicalKeyboardKey.digit6:
-      _getMove(_cellSelected(), 6, globals.selectedRow, globals.selectedCol),
-      LogicalKeyboardKey.numpad6:
-      _getMove(_cellSelected(), 6, globals.selectedRow, globals.selectedCol),
+      LogicalKeyboardKey.digit6: _getMove(
+          _cellSelected(), 6, globals.selectedRow, globals.selectedCol),
+      LogicalKeyboardKey.numpad6: _getMove(
+          _cellSelected(), 6, globals.selectedRow, globals.selectedCol),
 
       // Place 7
-      LogicalKeyboardKey.digit7:
-      _getMove(_cellSelected(), 7, globals.selectedRow, globals.selectedCol),
-      LogicalKeyboardKey.numpad7:
-      _getMove(_cellSelected(), 7, globals.selectedRow, globals.selectedCol),
+      LogicalKeyboardKey.digit7: _getMove(
+          _cellSelected(), 7, globals.selectedRow, globals.selectedCol),
+      LogicalKeyboardKey.numpad7: _getMove(
+          _cellSelected(), 7, globals.selectedRow, globals.selectedCol),
 
       // Place 8
-      LogicalKeyboardKey.digit8:
-      _getMove(_cellSelected(), 8, globals.selectedRow, globals.selectedCol),
-      LogicalKeyboardKey.numpad8:
-      _getMove(_cellSelected(), 8, globals.selectedRow, globals.selectedCol),
+      LogicalKeyboardKey.digit8: _getMove(
+          _cellSelected(), 8, globals.selectedRow, globals.selectedCol),
+      LogicalKeyboardKey.numpad8: _getMove(
+          _cellSelected(), 8, globals.selectedRow, globals.selectedCol),
 
       // Place 9
-      LogicalKeyboardKey.digit9:
-      _getMove(_cellSelected(), 9, globals.selectedRow, globals.selectedCol),
-      LogicalKeyboardKey.numpad9:
-      _getMove(_cellSelected(), 9, globals.selectedRow, globals.selectedCol),
+      LogicalKeyboardKey.digit9: _getMove(
+          _cellSelected(), 9, globals.selectedRow, globals.selectedCol),
+      LogicalKeyboardKey.numpad9: _getMove(
+          _cellSelected(), 9, globals.selectedRow, globals.selectedCol),
 
       // Get Hint
-      LogicalKeyboardKey.keyH: () => _giveHint(globals.selectedRow, globals.selectedCol),
+      LogicalKeyboardKey.keyH: () =>
+          _giveHint(globals.selectedRow, globals.selectedCol),
 
       //Open Drawer
-      LogicalKeyboardKey.keyG: () => _toggleDrawer(context)
+//      LogicalKeyboardKey.keyG: () => _toggleDrawer(context)
     };
   }
 
   void _shiftLeft() {
     globals.selectedCol =
-    ((globals.selectedCol - 1) % globals.problem.board_size);
+        ((globals.selectedCol - 1) % globals.problem.board_size);
   }
 
   void _shiftRight() {
     globals.selectedCol =
-    ((globals.selectedCol + 1) % globals.problem.board_size);
+        ((globals.selectedCol + 1) % globals.problem.board_size);
   }
 
   void _shiftUp() {
     globals.selectedRow =
-    ((globals.selectedRow - 1) % globals.problem.board_size);
+        ((globals.selectedRow - 1) % globals.problem.board_size);
   }
 
   void _shiftDown() {
     globals.selectedRow =
-    ((globals.selectedRow + 1) % globals.problem.board_size);
+        ((globals.selectedRow + 1) % globals.problem.board_size);
   }
 
-  void _toggleDrawer(BuildContext context) {
-    if (_scaffoldKey.currentState.isDrawerOpen) {
-      Navigator.pop(context);
-    } else {
-      _scaffoldKey.currentState.openDrawer();
-    }
-  }
+//  void _toggleDrawer(BuildContext context) {
+//    if (_scaffoldKey.currentState.isDrawerOpen) {
+//      Navigator.pop(context);
+//    } else {
+//      _scaffoldKey.currentState.openDrawer();
+//    }
+//  }
 
   @override
   Widget build(BuildContext context) {
     FocusScope.of(context).requestFocus(focusNode);
     return Scaffold(
-      key: _scaffoldKey,
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'LettuceSudoku',
           textAlign: TextAlign.center,
           style: CustomStyles.titleText,
         ),
       ),
-      drawer: _getDrawer(_scaffoldKey),
-      body: Builder(
-        builder: (_scaffoldKey) => RawKeyboardListener(
-          autofocus: true,
-          focusNode: focusNode,
-          onKey: (event) {
-            if (event.runtimeType == RawKeyDownEvent)  {
-              Function action = _actionMap[event.data.logicalKey];
-              if (action != null) {
-                action();
-                setState(() {});
-              }
+      drawer: _getDrawer(),
+      body: RawKeyboardListener(
+        autofocus: true,
+        focusNode: focusNode,
+        onKey: (event) {
+          if (event.runtimeType == RawKeyDownEvent) {
+            Function action = _actionMap[event.data.logicalKey];
+            if (action != null) {
+              action();
+              setState(() {});
             }
-          },
-          child: _getBody(_scaffoldKey),
-        ),
+          }
+        },
+        child: _getBody(),
       ),
     );
   }
 
-
-
-  Widget _getDrawer(context) {
+  Widget _getDrawer() {
     var radioList = [
       getStyledRadio('Correctness', 0, globals.legalityRadio,
           (var val) => _setIntWrapper(0, globals.legalityRadio)),
@@ -204,7 +201,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
               ),
             ),
             decoration: BoxDecoration(
-              color: CustomStyles.polarNight[3],
+              color: CustomStyles.nord3,
             ),
           ),
           Row(
@@ -243,7 +240,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
                       'Initial Hints',
                       textAlign: TextAlign.left,
                       style: TextStyle(
-                        color: CustomStyles.polarNight[3],
+                        color: CustomStyles.nord3,
                         fontSize: 17,
                       ),
                     ),
@@ -282,11 +279,11 @@ class _SudokuScreenState extends State<SudokuScreen> {
                                     padding: EdgeInsets.fromLTRB(0, 0, 2, 2),
                                     child: getFlatButton(
                                         'Solve Game',
-                                        CustomStyles.snowStorm[2],
+                                        CustomStyles.nord6,
                                         17,
                                         TextAlign.center,
-                                        CustomStyles.polarNight[3],
-                                        CustomStyles.polarNight[0],
+                                        CustomStyles.nord3,
+                                        CustomStyles.nord0,
                                         () => _solveGame(globals.problem)),
                                   ),
                                 ),
@@ -298,11 +295,11 @@ class _SudokuScreenState extends State<SudokuScreen> {
                                     padding: EdgeInsets.fromLTRB(2, 0, 0, 2),
                                     child: getFlatButton(
                                         'Reset Game',
-                                        CustomStyles.snowStorm[2],
+                                        CustomStyles.nord6,
                                         17,
                                         TextAlign.center,
-                                        CustomStyles.polarNight[3],
-                                        CustomStyles.polarNight[0],
+                                        CustomStyles.nord3,
+                                        CustomStyles.nord0,
                                         () => _resetBoard(globals.problem)),
                                   ),
                                 ),
@@ -320,11 +317,11 @@ class _SudokuScreenState extends State<SudokuScreen> {
                                       padding: EdgeInsets.only(top: 2),
                                       child: getFlatButton(
                                           'New Game',
-                                          CustomStyles.snowStorm[2],
+                                          CustomStyles.nord6,
                                           17,
                                           TextAlign.center,
-                                          CustomStyles.polarNight[3],
-                                          CustomStyles.polarNight[0],
+                                          CustomStyles.nord3,
+                                          CustomStyles.nord0,
                                           () => _newGameAndSave())),
                                 ),
                               ),
@@ -451,7 +448,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
 
   Color _getCellColor(int row, int col) {
     Color peerCell = CustomStyles.frost[1];
-    Color background = CustomStyles.snowStorm[2];
+    Color background = CustomStyles.nord6;
     Color peerDigit = CustomStyles.frost[2];
     Color success = CustomStyles.aurora[3];
     Color color = background;
@@ -548,7 +545,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
       child: AspectRatio(
         aspectRatio: 1,
         child: Container(
-          color: CustomStyles.polarNight[3],
+          color: CustomStyles.nord3,
           child: GridView.count(
             crossAxisCount: globals.problem.board_size,
             childAspectRatio: 1,
@@ -585,11 +582,11 @@ class _SudokuScreenState extends State<SudokuScreen> {
                         aspectRatio: 1,
                         child: getFlatButton(
                           toPlace,
-                          CustomStyles.snowStorm[2],
+                          CustomStyles.nord6,
                           36,
                           TextAlign.center,
-                          CustomStyles.polarNight[3],
-                          CustomStyles.polarNight[0],
+                          CustomStyles.nord3,
+                          CustomStyles.nord0,
                           _getMove(_cellSelected(), num, globals.selectedRow,
                               globals.selectedCol),
                         ),
@@ -628,7 +625,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
     color = globals.doMistakes.value && !doLegality && !correct
         ? CustomStyles.aurora[0]
         : color;
-    color = initialHint ? CustomStyles.polarNight[3] : color;
+    color = initialHint ? CustomStyles.nord3 : color;
     color = _givenAsHint(row, col) ? CustomStyles.aurora[4] : color;
     return color;
   }
@@ -646,11 +643,11 @@ class _SudokuScreenState extends State<SudokuScreen> {
               padding: EdgeInsets.all(2),
               child: getFlatButton(
                 'New Game',
-                CustomStyles.snowStorm[2],
+                CustomStyles.nord6,
                 24,
                 TextAlign.center,
-                CustomStyles.polarNight[3],
-                CustomStyles.polarNight[0],
+                CustomStyles.nord3,
+                CustomStyles.nord0,
                 () => _newGameAndSave(),
               ),
             ),
@@ -664,11 +661,11 @@ class _SudokuScreenState extends State<SudokuScreen> {
               padding: EdgeInsets.all(2),
               child: getFlatButton(
                 'Get Hint',
-                CustomStyles.snowStorm[2],
+                CustomStyles.nord6,
                 24,
                 TextAlign.center,
-                CustomStyles.polarNight[3],
-                CustomStyles.polarNight[0],
+                CustomStyles.nord3,
+                CustomStyles.nord0,
                 () => _giveHint(globals.selectedRow, globals.selectedCol),
               ),
             ),
@@ -678,7 +675,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
     );
   }
 
-  Widget _getBody(BuildContext context) {
+  Widget _getBody() {
     return Container(
       padding: EdgeInsets.all(globals.bodySpacing),
       child: _makeBodyRow(context),
@@ -689,7 +686,13 @@ class _SudokuScreenState extends State<SudokuScreen> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
-        Flexible(flex: 15, child: Container(child: _getBoard())),
+        Flexible(
+          flex: 15,
+//          child: Container(
+            child: _getBoard()
+//          color: Colors.red,
+              ),
+        
         Flexible(
           flex: 6,
           child: AspectRatio(

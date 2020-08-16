@@ -38,7 +38,7 @@ Widget getStyledToggleRow(
         child: Text(
           label,
           style: TextStyle(
-            color: CustomStyles.polarNight[3],
+            color: CustomStyles.nord3,
             fontSize: 17,
           ),
           textAlign: TextAlign.left,
@@ -49,8 +49,8 @@ Widget getStyledToggleRow(
         child: Switch(
           value: setting.value,
           onChanged: onChanged,
-          activeColor: CustomStyles.polarNight[3],
-          inactiveThumbColor: CustomStyles.polarNight[3],
+          activeColor: CustomStyles.nord3,
+          inactiveThumbColor: CustomStyles.nord3,
           activeTrackColor: CustomStyles.aurora[3],
           inactiveTrackColor: CustomStyles.aurora[0],
         ),
@@ -72,12 +72,12 @@ Widget getStyledSliderRow(VariableWrapper setting, double min, double max,
         ),
       ),
       IconButton(
-        icon: Icon(Icons.remove, color: CustomStyles.polarNight[3]),
+        icon: Icon(Icons.remove, color: CustomStyles.nord3),
         onPressed: decrease,
       ),
       Text(setting.value.toString()),
       IconButton(
-        icon: Icon(Icons.add, color: CustomStyles.polarNight[3]),
+        icon: Icon(Icons.add, color: CustomStyles.nord3),
         onPressed: increase,
       ),
     ],
@@ -91,7 +91,7 @@ Widget getStyledRadio(
     children: [
       Text(label),
       Radio(
-        activeColor: CustomStyles.polarNight[3],
+        activeColor: CustomStyles.nord3,
         value: value,
         groupValue: groupValue.value,
         onChanged: onChanged,

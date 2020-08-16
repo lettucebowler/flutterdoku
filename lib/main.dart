@@ -17,9 +17,9 @@ class LettuceSudoku extends StatelessWidget {
     return MaterialApp(
       title: 'LettuceSudoku',
       theme: ThemeData(
-        primarySwatch: getMaterialColor(CustomStyles.polarNight[3]),
+        primarySwatch: getMaterialColor(CustomStyles.nord3),
         visualDensity: VisualDensity.adaptivePlatformDensity,
-        canvasColor: getMaterialColor(CustomStyles.snowStorm[2]),
+        canvasColor: getMaterialColor(CustomStyles.nord6),
       ),
       home: LoadingScreen(title: 'LettuceSudoku'),
     );
