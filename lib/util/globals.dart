@@ -1,4 +1,7 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:lettuce_sudoku/domains/sudoku/SudokuProblem.dart';
+import 'package:lettuce_sudoku/util/helpers.dart';
 
 VariableWrapper doPeerCells = VariableWrapper(true);
 VariableWrapper doPeerDigits = VariableWrapper(true);
@@ -11,6 +14,9 @@ int selectedCol = -1;
 double bodySpacing = 2;
 List hintsGiven = [];
 SudokuProblem problem;
+
+
+
 
 class VariableWrapper {
   var value;

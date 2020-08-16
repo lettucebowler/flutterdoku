@@ -24,7 +24,9 @@ class _SudokuScreenState extends State<SudokuScreen> {
   var menuHeight = 70;
   SolvingAssistant _assistant;
   FocusNode focusNode = FocusNode();
+  var _actionMap;
   var _scaffoldKey = new GlobalKey<ScaffoldState>();
+
 
   @override
   void initState() {
@@ -33,6 +35,120 @@ class _SudokuScreenState extends State<SudokuScreen> {
       _newGameAndSave();
     }
     _assistant = SolvingAssistant(globals.problem);
+    _actionMap = {
+      // Move Down
+      LogicalKeyboardKey.arrowDown: () => _shiftDown(),
+      LogicalKeyboardKey.keyS: () => _shiftDown(),
+
+      // Move Left
+      LogicalKeyboardKey.arrowLeft: () => _shiftLeft(),
+      LogicalKeyboardKey.keyA: () => _shiftLeft(),
+
+      // Move Right
+      LogicalKeyboardKey.arrowRight: () => _shiftRight(),
+      LogicalKeyboardKey.keyD: () => _shiftRight(),
+
+      // Move Up
+      LogicalKeyboardKey.arrowUp: () => _shiftUp(),
+      LogicalKeyboardKey.keyW: () => _shiftUp(),
+
+      // Place 0 / Delete number from cell
+      LogicalKeyboardKey.digit0:
+      _getMove(_cellSelected(), 0, globals.selectedRow, globals.selectedCol),
+      LogicalKeyboardKey.numpad0:
+      _getMove(_cellSelected(), 0, globals.selectedRow, globals.selectedCol),
+      LogicalKeyboardKey.keyX: _getMove(_cellSelected(), 0, globals.selectedRow, globals.selectedCol),
+      LogicalKeyboardKey.delete:
+      _getMove(_cellSelected(), 0, globals.selectedRow, globals.selectedCol),
+
+      // Place 1
+      LogicalKeyboardKey.digit1:
+      _getMove(_cellSelected(), 1, globals.selectedRow, globals.selectedCol),
+      LogicalKeyboardKey.numpad1:
+      _getMove(_cellSelected(), 1, globals.selectedRow, globals.selectedCol),
+
+      // Place 2
+      LogicalKeyboardKey.digit2:
+      _getMove(_cellSelected(), 2, globals.selectedRow, globals.selectedCol),
+      LogicalKeyboardKey.numpad2:
+      _getMove(_cellSelected(), 2, globals.selectedRow, globals.selectedCol),
+
+      // Place 3
+      LogicalKeyboardKey.digit3:
+      _getMove(_cellSelected(), 3, globals.selectedRow, globals.selectedCol),
+      LogicalKeyboardKey.numpad3:
+      _getMove(_cellSelected(), 3, globals.selectedRow, globals.selectedCol),
+
+      // Place 4
+      LogicalKeyboardKey.digit4:
+      _getMove(_cellSelected(), 4, globals.selectedRow, globals.selectedCol),
+      LogicalKeyboardKey.numpad4:
+      _getMove(_cellSelected(), 4, globals.selectedRow, globals.selectedCol),
+
+      // Place 5
+      LogicalKeyboardKey.digit5:
+      _getMove(_cellSelected(), 5, globals.selectedRow, globals.selectedCol),
+      LogicalKeyboardKey.numpad5:
+      _getMove(_cellSelected(), 5, globals.selectedRow, globals.selectedCol),
+
+      // Place 6
+      LogicalKeyboardKey.digit6:
+      _getMove(_cellSelected(), 6, globals.selectedRow, globals.selectedCol),
+      LogicalKeyboardKey.numpad6:
+      _getMove(_cellSelected(), 6, globals.selectedRow, globals.selectedCol),
+
+      // Place 7
+      LogicalKeyboardKey.digit7:
+      _getMove(_cellSelected(), 7, globals.selectedRow, globals.selectedCol),
+      LogicalKeyboardKey.numpad7:
+      _getMove(_cellSelected(), 7, globals.selectedRow, globals.selectedCol),
+
+      // Place 8
+      LogicalKeyboardKey.digit8:
+      _getMove(_cellSelected(), 8, globals.selectedRow, globals.selectedCol),
+      LogicalKeyboardKey.numpad8:
+      _getMove(_cellSelected(), 8, globals.selectedRow, globals.selectedCol),
+
+      // Place 9
+      LogicalKeyboardKey.digit9:
+      _getMove(_cellSelected(), 9, globals.selectedRow, globals.selectedCol),
+      LogicalKeyboardKey.numpad9:
+      _getMove(_cellSelected(), 9, globals.selectedRow, globals.selectedCol),
+
+      // Get Hint
+      LogicalKeyboardKey.keyH: () => _giveHint(globals.selectedRow, globals.selectedCol),
+
+      //Open Drawer
+      LogicalKeyboardKey.keyG: () => _toggleDrawer(context)
+    };
+  }
+
+  void _shiftLeft() {
+    globals.selectedCol =
+    ((globals.selectedCol - 1) % globals.problem.board_size);
+  }
+
+  void _shiftRight() {
+    globals.selectedCol =
+    ((globals.selectedCol + 1) % globals.problem.board_size);
+  }
+
+  void _shiftUp() {
+    globals.selectedRow =
+    ((globals.selectedRow - 1) % globals.problem.board_size);
+  }
+
+  void _shiftDown() {
+    globals.selectedRow =
+    ((globals.selectedRow + 1) % globals.problem.board_size);
+  }
+
+  void _toggleDrawer(BuildContext context) {
+    if (_scaffoldKey.currentState.isDrawerOpen) {
+      Navigator.pop(context);
+    } else {
+      _scaffoldKey.currentState.openDrawer();
+    }
   }
 
   @override
@@ -53,97 +169,8 @@ class _SudokuScreenState extends State<SudokuScreen> {
           autofocus: true,
           focusNode: focusNode,
           onKey: (event) {
-            if (event.runtimeType == RawKeyDownEvent) {
-              var row = globals.selectedRow;
-              var col = globals.selectedCol;
-              var actionMap = {
-                // Move Down
-                LogicalKeyboardKey.arrowDown: () => _shiftDown(),
-                LogicalKeyboardKey.keyS: () => _shiftDown(),
-
-                // Move Left
-                LogicalKeyboardKey.arrowLeft: () => _shiftLeft(),
-                LogicalKeyboardKey.keyA: () => _shiftLeft(),
-
-                // Move Right
-                LogicalKeyboardKey.arrowRight: () => _shiftRight(),
-                LogicalKeyboardKey.keyD: () => _shiftRight(),
-
-                // Move Up
-                LogicalKeyboardKey.arrowUp: () => _shiftUp(),
-                LogicalKeyboardKey.keyW: () => _shiftUp(),
-
-                // Place 0 / Delete number from cell
-                LogicalKeyboardKey.digit0:
-                    _getMove(_cellSelected(), 0, row, col),
-                LogicalKeyboardKey.numpad0:
-                    _getMove(_cellSelected(), 0, row, col),
-                LogicalKeyboardKey.keyX: _getMove(_cellSelected(), 0, row, col),
-                LogicalKeyboardKey.delete:
-                    _getMove(_cellSelected(), 0, row, col),
-
-                // Place 1
-                LogicalKeyboardKey.digit1:
-                    _getMove(_cellSelected(), 1, row, col),
-                LogicalKeyboardKey.numpad1:
-                    _getMove(_cellSelected(), 1, row, col),
-
-                // Place 2
-                LogicalKeyboardKey.digit2:
-                    _getMove(_cellSelected(), 2, row, col),
-                LogicalKeyboardKey.numpad2:
-                    _getMove(_cellSelected(), 2, row, col),
-
-                // Place 3
-                LogicalKeyboardKey.digit3:
-                    _getMove(_cellSelected(), 3, row, col),
-                LogicalKeyboardKey.numpad3:
-                    _getMove(_cellSelected(), 3, row, col),
-
-                // Place 4
-                LogicalKeyboardKey.digit4:
-                    _getMove(_cellSelected(), 4, row, col),
-                LogicalKeyboardKey.numpad4:
-                    _getMove(_cellSelected(), 4, row, col),
-
-                // Place 5
-                LogicalKeyboardKey.digit5:
-                    _getMove(_cellSelected(), 5, row, col),
-                LogicalKeyboardKey.numpad5:
-                    _getMove(_cellSelected(), 5, row, col),
-
-                // Place 6
-                LogicalKeyboardKey.digit6:
-                    _getMove(_cellSelected(), 6, row, col),
-                LogicalKeyboardKey.numpad6:
-                    _getMove(_cellSelected(), 6, row, col),
-
-                // Place 7
-                LogicalKeyboardKey.digit7:
-                    _getMove(_cellSelected(), 7, row, col),
-                LogicalKeyboardKey.numpad7:
-                    _getMove(_cellSelected(), 7, row, col),
-
-                // Place 8
-                LogicalKeyboardKey.digit8:
-                    _getMove(_cellSelected(), 8, row, col),
-                LogicalKeyboardKey.numpad8:
-                    _getMove(_cellSelected(), 8, row, col),
-
-                // Place 9
-                LogicalKeyboardKey.digit9:
-                    _getMove(_cellSelected(), 9, row, col),
-                LogicalKeyboardKey.numpad9:
-                    _getMove(_cellSelected(), 9, row, col),
-
-                // Get Hint
-                LogicalKeyboardKey.keyH: () => _giveHint(row, col),
-
-                //Open Drawer
-                LogicalKeyboardKey.keyG: () => _toggleDrawer(context)
-              };
-
-              Function action = actionMap[event.data.logicalKey];
+            if (event.runtimeType == RawKeyDownEvent)  {
+              Function action = _actionMap[event.data.logicalKey];
               if (action != null) {
                 action();
                 setState(() {});
@@ -156,33 +183,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
     );
   }
 
-  void _shiftLeft() {
-    globals.selectedCol =
-        ((globals.selectedCol - 1) % globals.problem.board_size);
-  }
 
-  void _shiftRight() {
-    globals.selectedCol =
-        ((globals.selectedCol + 1) % globals.problem.board_size);
-  }
-
-  void _shiftUp() {
-    globals.selectedRow =
-        ((globals.selectedRow - 1) % globals.problem.board_size);
-  }
-
-  void _shiftDown() {
-    globals.selectedRow =
-        ((globals.selectedRow + 1) % globals.problem.board_size);
-  }
-
-  void _toggleDrawer(BuildContext context) {
-    if (_scaffoldKey.currentState.isDrawerOpen) {
-      Navigator.pop(context);
-    } else {
-      _scaffoldKey.currentState.openDrawer();
-    }
-  }
 
   Widget _getDrawer(context) {
     var radioList = [
