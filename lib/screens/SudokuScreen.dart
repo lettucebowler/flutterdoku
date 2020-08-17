@@ -26,8 +26,6 @@ class _SudokuScreenState extends State<SudokuScreen> {
   FocusNode focusNode = FocusNode();
   var _actionMap;
 
-//  var _scaffoldKey = new GlobalKey<ScaffoldState>();
-
   @override
   void initState() {
     super.initState();
@@ -676,12 +674,11 @@ class _SudokuScreenState extends State<SudokuScreen> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
         Flexible(
-          flex: 15,
+            flex: 15,
 //          child: Container(
             child: _getBoard()
 //          color: Colors.red,
-              ),
-
+            ),
         Flexible(
           flex: 6,
           child: AspectRatio(
