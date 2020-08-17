@@ -85,19 +85,21 @@ Widget getStyledSliderRow(VariableWrapper setting, double min, double max,
 }
 
 Widget getStyledRadio(
-    String label, int value, var groupValue, Function onChanged) {
-  return Row(
-    mainAxisAlignment: MainAxisAlignment.end,
-    children: [
-      Text(label),
-      Radio(
-        activeColor: CustomStyles.nord3,
-        value: value,
-        groupValue: groupValue.value,
-        onChanged: onChanged,
-      ),
-    ],
-  );
+    Radio radio, String label, int value, var groupValue, Function onChanged) {
+  return radio == null || radio.value != value
+      ? Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Text(label),
+            Radio(
+              activeColor: CustomStyles.nord3,
+              value: value,
+              groupValue: groupValue.value,
+              onChanged: onChanged,
+            ),
+          ],
+        )
+      : radio;
 }
 
 Widget getWidgetGroup(List radioList) {

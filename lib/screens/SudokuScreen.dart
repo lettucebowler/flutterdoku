@@ -25,6 +25,9 @@ class _SudokuScreenState extends State<SudokuScreen> {
   SolvingAssistant _assistant;
   FocusNode focusNode = FocusNode();
   var _actionMap;
+  var _correctnessRadio;
+  var _legalityRadio;
+  Drawer _drawer;
 
   @override
   void initState() {
@@ -33,6 +36,31 @@ class _SudokuScreenState extends State<SudokuScreen> {
       _newGameAndSave();
     }
     _assistant = SolvingAssistant(globals.problem);
+  }
+
+  void _shiftLeft() {
+    globals.selectedCol =
+        ((globals.selectedCol - 1) % globals.problem.board_size);
+  }
+
+  void _shiftRight() {
+    globals.selectedCol =
+        ((globals.selectedCol + 1) % globals.problem.board_size);
+  }
+
+  void _shiftUp() {
+    globals.selectedRow =
+        ((globals.selectedRow - 1) % globals.problem.board_size);
+  }
+
+  void _shiftDown() {
+    globals.selectedRow =
+        ((globals.selectedRow + 1) % globals.problem.board_size);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    FocusScope.of(context).requestFocus(focusNode);
     _actionMap = {
       // Move Down
       LogicalKeyboardKey.arrowDown: () => _shiftDown(),
@@ -118,31 +146,6 @@ class _SudokuScreenState extends State<SudokuScreen> {
       LogicalKeyboardKey.keyH: () =>
           _giveHint(globals.selectedRow, globals.selectedCol),
     };
-  }
-
-  void _shiftLeft() {
-    globals.selectedCol =
-        ((globals.selectedCol - 1) % globals.problem.board_size);
-  }
-
-  void _shiftRight() {
-    globals.selectedCol =
-        ((globals.selectedCol + 1) % globals.problem.board_size);
-  }
-
-  void _shiftUp() {
-    globals.selectedRow =
-        ((globals.selectedRow - 1) % globals.problem.board_size);
-  }
-
-  void _shiftDown() {
-    globals.selectedRow =
-        ((globals.selectedRow + 1) % globals.problem.board_size);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    FocusScope.of(context).requestFocus(focusNode);
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -170,162 +173,183 @@ class _SudokuScreenState extends State<SudokuScreen> {
   }
 
   Widget _getDrawer() {
-    var radioList = [
-      getStyledRadio('Correctness', 0, globals.legalityRadio,
-          (var val) => _setIntWrapper(0, globals.legalityRadio)),
-      getStyledRadio('Legality', 1, globals.legalityRadio,
-          (var val) => _setIntWrapper(1, globals.legalityRadio)),
-    ];
-    return Drawer(
-      child: ListView(
-        padding: const EdgeInsets.all(0.0),
-        children: [
-          DrawerHeader(
-            child: Center(
-              child: Text(
-                'Settings',
-                style: CustomStyles.titleText,
-              ),
-            ),
-            decoration: BoxDecoration(
-              color: CustomStyles.nord3,
-            ),
-          ),
-          Row(
-            children: [
-              Spacer(flex: 2),
-              Expanded(
-                flex: 35,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    getStyledToggleRow(
-                        'Highlight Peer Cells',
-                        globals.doPeerCells,
-                        (bool value) =>
-                            _toggleBoolWrapper(globals.doPeerCells)),
-                    getStyledToggleRow(
-                        'Highlight Peer Digits',
-                        globals.doPeerDigits,
-                        (bool value) =>
-                            _toggleBoolWrapper(globals.doPeerDigits)),
-                    getStyledToggleRow('Show Mistakes', globals.doMistakes,
-                        (bool value) => _toggleBoolWrapper(globals.doMistakes)),
-                    AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 250),
-                      transitionBuilder:
-                          (Widget child, Animation<double> animation) =>
-                              SizeTransition(
-                        child: child,
-                        sizeFactor: animation,
-                      ),
-                      child: globals.doMistakes.value
-                          ? getWidgetGroup(radioList)
-                          : Container(),
+    return _drawer == null
+        ? Drawer(
+            child: ListView(
+              padding: const EdgeInsets.all(0.0),
+              children: [
+                DrawerHeader(
+                  child: Center(
+                    child: Text(
+                      'Settings',
+                      style: CustomStyles.titleText,
                     ),
-                    Text(
-                      'Initial Hints',
-                      textAlign: TextAlign.left,
-                      style: TextStyle(
-                        color: CustomStyles.nord3,
-                        fontSize: 17,
+                  ),
+                  decoration: BoxDecoration(
+                    color: CustomStyles.nord3,
+                  ),
+                ),
+                Row(
+                  children: [
+                    Spacer(flex: 2),
+                    Expanded(
+                      flex: 35,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          getStyledToggleRow(
+                              'Highlight Peer Cells',
+                              globals.doPeerCells,
+                              (bool value) =>
+                                  _toggleBoolWrapper(globals.doPeerCells)),
+                          getStyledToggleRow(
+                              'Highlight Peer Digits',
+                              globals.doPeerDigits,
+                              (bool value) =>
+                                  _toggleBoolWrapper(globals.doPeerDigits)),
+                          getStyledToggleRow(
+                              'Show Mistakes',
+                              globals.doMistakes,
+                              (bool value) =>
+                                  _toggleBoolWrapper(globals.doMistakes)),
+                          AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 250),
+                            transitionBuilder:
+                                (Widget child, Animation<double> animation) =>
+                                    SizeTransition(
+                              child: child,
+                              sizeFactor: animation,
+                            ),
+                            child: globals.doMistakes.value
+                                ? Column(
+                                    children: [
+                                      getStyledRadio(
+                                          _correctnessRadio,
+                                          'Correctness',
+                                          0,
+                                          globals.legalityRadio,
+                                          (var val) => _setIntWrapper(
+                                              0, globals.legalityRadio)),
+                                      getStyledRadio(
+                                          _correctnessRadio,
+                                          'Legality',
+                                          1,
+                                          globals.legalityRadio,
+                                          (var val) => _setIntWrapper(
+                                              1, globals.legalityRadio)),
+                                    ],
+                                  )
+                                : Container(),
+                          ),
+                          Text(
+                            'Initial Hints',
+                            textAlign: TextAlign.left,
+                            style: TextStyle(
+                              color: CustomStyles.nord3,
+                              fontSize: 17,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
                 ),
-              ),
-            ],
-          ),
-          getStyledSliderRow(
-              globals.initialHints,
-              17,
-              50,
-              (double val) => _setIntWrapper(val.toInt(), globals.initialHints),
-              () => _setIntWrapper(
-                  globals.initialHints.value - 1, globals.initialHints),
-              () => _setIntWrapper(
-                  globals.initialHints.value + 1, globals.initialHints)),
-          Row(
-            children: [
-              Spacer(flex: 2),
-              Expanded(
-                flex: 33,
-                child: AspectRatio(
-                  aspectRatio: 3,
-                  child: Container(
-                    height: 120,
-                    child: Column(
-                      children: [
-                        Expanded(
-                          child: Row(
+                getStyledSliderRow(
+                    globals.initialHints,
+                    17,
+                    50,
+                    (double val) =>
+                        _setIntWrapper(val.toInt(), globals.initialHints),
+                    () => _setIntWrapper(
+                        globals.initialHints.value - 1, globals.initialHints),
+                    () => _setIntWrapper(
+                        globals.initialHints.value + 1, globals.initialHints)),
+                Row(
+                  children: [
+                    Spacer(flex: 2),
+                    Expanded(
+                      flex: 33,
+                      child: AspectRatio(
+                        aspectRatio: 3,
+                        child: Container(
+                          height: 120,
+                          child: Column(
                             children: [
                               Expanded(
-                                child: AspectRatio(
-                                  aspectRatio: 1,
-                                  child: Container(
-                                    padding: EdgeInsets.fromLTRB(0, 0, 2, 2),
-                                    child: getFlatButton(
-                                        'Solve Game',
-                                        CustomStyles.nord6,
-                                        17,
-                                        TextAlign.center,
-                                        CustomStyles.nord3,
-                                        CustomStyles.nord0,
-                                        () => _solveGame(globals.problem)),
-                                  ),
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: AspectRatio(
+                                        aspectRatio: 1,
+                                        child: Container(
+                                          padding:
+                                              EdgeInsets.fromLTRB(0, 0, 2, 2),
+                                          child: getFlatButton(
+                                              'Solve Game',
+                                              CustomStyles.nord6,
+                                              17,
+                                              TextAlign.center,
+                                              CustomStyles.nord3,
+                                              CustomStyles.nord0,
+                                              () =>
+                                                  _solveGame(globals.problem)),
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: AspectRatio(
+                                        aspectRatio: 1,
+                                        child: Container(
+                                          padding:
+                                              EdgeInsets.fromLTRB(2, 0, 0, 2),
+                                          child: getFlatButton(
+                                              'Reset Game',
+                                              CustomStyles.nord6,
+                                              17,
+                                              TextAlign.center,
+                                              CustomStyles.nord3,
+                                              CustomStyles.nord0,
+                                              () =>
+                                                  _resetBoard(globals.problem)),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                               Expanded(
-                                child: AspectRatio(
-                                  aspectRatio: 1,
-                                  child: Container(
-                                    padding: EdgeInsets.fromLTRB(2, 0, 0, 2),
-                                    child: getFlatButton(
-                                        'Reset Game',
-                                        CustomStyles.nord6,
-                                        17,
-                                        TextAlign.center,
-                                        CustomStyles.nord3,
-                                        CustomStyles.nord0,
-                                        () => _resetBoard(globals.problem)),
-                                  ),
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: AspectRatio(
+                                        aspectRatio: 1,
+                                        child: Container(
+                                            padding: EdgeInsets.only(top: 2),
+                                            child: getFlatButton(
+                                                'New Game',
+                                                CustomStyles.nord6,
+                                                17,
+                                                TextAlign.center,
+                                                CustomStyles.nord3,
+                                                CustomStyles.nord0,
+                                                () => _newGameAndSave())),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ],
                           ),
                         ),
-                        Expanded(
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: AspectRatio(
-                                  aspectRatio: 1,
-                                  child: Container(
-                                      padding: EdgeInsets.only(top: 2),
-                                      child: getFlatButton(
-                                          'New Game',
-                                          CustomStyles.nord6,
-                                          17,
-                                          TextAlign.center,
-                                          CustomStyles.nord3,
-                                          CustomStyles.nord0,
-                                          () => _newGameAndSave())),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
-                  ),
+                    Spacer(flex: 2),
+                  ],
                 ),
-              ),
-              Spacer(flex: 2),
-            ],
-          ),
-        ],
-      ),
-    );
+              ],
+            ),
+          )
+        : _drawer;
   }
 
   void _newGame() {
@@ -404,6 +428,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
   }
 
   void _doMove(int num, int row, int col) {
+    print("doMove");
     SudokuState initialState = globals.problem.getInitialState();
     var initialBoard = initialState.getTiles();
     var notInitialHint = initialBoard[row][col] == 0;
@@ -590,11 +615,16 @@ class _SudokuScreenState extends State<SudokuScreen> {
   }
 
   Function _getMove(bool selected, int num, int row, int col) {
-    return selected
-        ? () => setState(() {
-              _doMove(num, globals.selectedRow, globals.selectedCol);
-            })
-        : () => setState(() {});
+    Function func = () => {};
+    if (selected) {
+      func = () => _applyMove(num, row, col);
+    }
+    return func;
+  }
+
+  void _applyMove(int num, int row, int col) {
+    _doMove(num, row, col);
+    setState(() {});
   }
 
   Color _getTextColor(int row, int col) {
@@ -710,4 +740,8 @@ class _SudokuScreenState extends State<SudokuScreen> {
       ],
     );
   }
+
+  Widget _getRadio(
+    Radio radio,
+  ) {}
 }
