@@ -28,6 +28,8 @@ class _SudokuScreenState extends State<SudokuScreen> {
   var _correctnessRadio;
   var _legalityRadio;
   Drawer _drawer;
+  Container board;
+  List<Widget> sudokuGrid = [];
 
   @override
   void initState() {
@@ -36,6 +38,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
       _newGameAndSave();
     }
     _assistant = SolvingAssistant(globals.problem);
+    board = _makeBoard();
   }
 
   void _shiftLeft() {
@@ -178,7 +181,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
             child: ListView(
               padding: const EdgeInsets.all(0.0),
               children: [
-                DrawerHeader(
+                const DrawerHeader(
                   child: Center(
                     child: Text(
                       'Settings',
@@ -191,27 +194,78 @@ class _SudokuScreenState extends State<SudokuScreen> {
                 ),
                 Row(
                   children: [
-                    Spacer(flex: 2),
+                    const Spacer(flex: 2),
                     Expanded(
                       flex: 35,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          getStyledToggleRow(
-                              'Highlight Peer Cells',
-                              globals.doPeerCells,
-                              (bool value) =>
-                                  _toggleBoolWrapper(globals.doPeerCells)),
-                          getStyledToggleRow(
-                              'Highlight Peer Digits',
-                              globals.doPeerDigits,
-                              (bool value) =>
-                                  _toggleBoolWrapper(globals.doPeerDigits)),
-                          getStyledToggleRow(
-                              'Show Mistakes',
-                              globals.doMistakes,
-                              (bool value) =>
-                                  _toggleBoolWrapper(globals.doMistakes)),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text(
+                                'Highlight Peer Cells',
+                                style: TextStyle(
+                                  color: CustomStyles.nord3,
+                                  fontSize: 17,
+                                ),
+                                textAlign: TextAlign.left,
+                              ),
+                              Switch(
+                                value: globals.doPeerCells.value,
+                                onChanged: (bool value) =>
+                                    _toggleBoolWrapper(globals.doPeerCells),
+                                activeColor: CustomStyles.nord3,
+                                inactiveThumbColor: CustomStyles.nord3,
+                                activeTrackColor: CustomStyles.nord14,
+                                inactiveTrackColor: CustomStyles.nord15,
+                              ),
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text(
+                                'Highlight Peer Digits',
+                                style: TextStyle(
+                                  color: CustomStyles.nord3,
+                                  fontSize: 17,
+                                ),
+                                textAlign: TextAlign.left,
+                              ),
+                              Switch(
+                                value: globals.doPeerDigits.value,
+                                onChanged: (bool value) =>
+                                    _toggleBoolWrapper(globals.doPeerDigits),
+                                activeColor: CustomStyles.nord3,
+                                inactiveThumbColor: CustomStyles.nord3,
+                                activeTrackColor: CustomStyles.nord14,
+                                inactiveTrackColor: CustomStyles.nord15,
+                              ),
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Show Mistakes',
+                                style: TextStyle(
+                                  color: CustomStyles.nord3,
+                                  fontSize: 17,
+                                ),
+                                textAlign: TextAlign.left,
+                              ),
+                              Switch(
+                                value: globals.doMistakes.value,
+                                onChanged: (bool value) =>
+                                    _toggleBoolWrapper(globals.doMistakes),
+                                activeColor: CustomStyles.nord3,
+                                inactiveThumbColor: CustomStyles.nord3,
+                                activeTrackColor: CustomStyles.nord14,
+                                inactiveTrackColor: CustomStyles.nord15,
+                              ),
+                            ],
+                          ),
                           AnimatedSwitcher(
                             duration: const Duration(milliseconds: 250),
                             transitionBuilder:
@@ -231,7 +285,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
                                           (var val) => _setIntWrapper(
                                               0, globals.legalityRadio)),
                                       getStyledRadio(
-                                          _correctnessRadio,
+                                          _legalityRadio,
                                           'Legality',
                                           1,
                                           globals.legalityRadio,
@@ -241,7 +295,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
                                   )
                                 : Container(),
                           ),
-                          Text(
+                          const Text(
                             'Initial Hints',
                             textAlign: TextAlign.left,
                             style: TextStyle(
@@ -254,19 +308,33 @@ class _SudokuScreenState extends State<SudokuScreen> {
                     ),
                   ],
                 ),
-                getStyledSliderRow(
-                    globals.initialHints,
-                    17,
-                    50,
-                    (double val) =>
-                        _setIntWrapper(val.toInt(), globals.initialHints),
-                    () => _setIntWrapper(
-                        globals.initialHints.value - 1, globals.initialHints),
-                    () => _setIntWrapper(
-                        globals.initialHints.value + 1, globals.initialHints)),
                 Row(
                   children: [
-                    Spacer(flex: 2),
+                    Expanded(
+                      child: Slider(
+                        value: globals.initialHints.value.toDouble(),
+                        onChanged: (double val) =>
+                            _setIntWrapper(val.toInt(), globals.initialHints),
+                        min: 17,
+                        max: 50,
+                      ),
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.remove, color: CustomStyles.nord3),
+                      onPressed: () => _setIntWrapper(
+                          globals.initialHints.value - 1, globals.initialHints),
+                    ),
+                    Text(globals.initialHints.value.toString()),
+                    IconButton(
+                        icon: Icon(Icons.add, color: CustomStyles.nord3),
+                        onPressed: () => _setIntWrapper(
+                            globals.initialHints.value + 1,
+                            globals.initialHints))
+                  ],
+                ),
+                Row(
+                  children: [
+                    const Spacer(flex: 2),
                     Expanded(
                       flex: 33,
                       child: AspectRatio(
@@ -284,15 +352,24 @@ class _SudokuScreenState extends State<SudokuScreen> {
                                         child: Container(
                                           padding:
                                               EdgeInsets.fromLTRB(0, 0, 2, 2),
-                                          child: getFlatButton(
-                                              'Solve Game',
-                                              CustomStyles.nord6,
-                                              17,
-                                              TextAlign.center,
-                                              CustomStyles.nord3,
-                                              CustomStyles.nord0,
-                                              () =>
-                                                  _solveGame(globals.problem)),
+                                          child: FlatButton(
+                                            color: CustomStyles.nord3,
+                                            splashColor: CustomStyles.nord0,
+                                            onPressed: () =>
+                                                _solveGame(problem),
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(0.0)),
+                                            child: AutoSizeText(
+                                              'Solve game',
+                                              textAlign: TextAlign.center,
+                                              maxLines: 1,
+                                              style: TextStyle(
+                                                color: CustomStyles.nord6,
+                                                fontSize: 17,
+                                              ),
+                                            ),
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -302,15 +379,24 @@ class _SudokuScreenState extends State<SudokuScreen> {
                                         child: Container(
                                           padding:
                                               EdgeInsets.fromLTRB(2, 0, 0, 2),
-                                          child: getFlatButton(
+                                          child: FlatButton(
+                                            color: CustomStyles.nord3,
+                                            splashColor: CustomStyles.nord0,
+                                            onPressed: () =>
+                                                _resetBoard(problem),
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(0.0)),
+                                            child: AutoSizeText(
                                               'Reset Game',
-                                              CustomStyles.nord6,
-                                              17,
-                                              TextAlign.center,
-                                              CustomStyles.nord3,
-                                              CustomStyles.nord0,
-                                              () =>
-                                                  _resetBoard(globals.problem)),
+                                              textAlign: TextAlign.center,
+                                              maxLines: 1,
+                                              style: TextStyle(
+                                                color: CustomStyles.nord6,
+                                                fontSize: 17,
+                                              ),
+                                            ),
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -324,15 +410,25 @@ class _SudokuScreenState extends State<SudokuScreen> {
                                       child: AspectRatio(
                                         aspectRatio: 1,
                                         child: Container(
-                                            padding: EdgeInsets.only(top: 2),
-                                            child: getFlatButton(
-                                                'New Game',
-                                                CustomStyles.nord6,
-                                                17,
-                                                TextAlign.center,
-                                                CustomStyles.nord3,
-                                                CustomStyles.nord0,
-                                                () => _newGameAndSave())),
+                                          padding: EdgeInsets.only(top: 2),
+                                          child: FlatButton(
+                                            color: CustomStyles.nord3,
+                                            splashColor: CustomStyles.nord0,
+                                            onPressed: () => _newGameAndSave(),
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(0.0)),
+                                            child: AutoSizeText(
+                                              'New Game',
+                                              textAlign: TextAlign.center,
+                                              maxLines: 1,
+                                              style: TextStyle(
+                                                color: CustomStyles.nord6,
+                                                fontSize: 17,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
                                       ),
                                     ),
                                   ],
@@ -343,7 +439,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
                         ),
                       ),
                     ),
-                    Spacer(flex: 2),
+                    const Spacer(flex: 2),
                   ],
                 ),
               ],
@@ -428,7 +524,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
   }
 
   void _doMove(int num, int row, int col) {
-    print("doMove");
+    // print("doMove");
     SudokuState initialState = globals.problem.getInitialState();
     var initialBoard = initialState.getTiles();
     var notInitialHint = initialBoard[row][col] == 0;
@@ -440,6 +536,9 @@ class _SudokuScreenState extends State<SudokuScreen> {
           ' ' +
           col.toString();
       _assistant.tryMove(move);
+      var changeIndex =
+          row * globals.problem.board_size + col % globals.problem.board_size;
+      sudokuGrid[changeIndex] = _makeBoardButton(changeIndex);
       saveGame();
     }
   }
@@ -507,7 +606,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
     String toPlace = cellNum == 0 ? '' : cellNum.toString();
 
     Color cellColor = _getCellColor(row, col);
-    return Container(
+    Container button = Container(
       padding: _getBoardPadding(index),
       child: Material(
         color: cellColor,
@@ -535,6 +634,8 @@ class _SudokuScreenState extends State<SudokuScreen> {
         ),
       ),
     );
+    sudokuGrid.add(button);
+    return button;
   }
 
   void _toggleBoolWrapper(VariableWrapper setting) {
@@ -551,8 +652,12 @@ class _SudokuScreenState extends State<SudokuScreen> {
     });
   }
 
-  Widget _getBoard() {
-    return Container(
+  Widget _makeBoard() {
+    sudokuGrid = List.generate(
+        globals.problem.board_size * globals.problem.board_size, (index) {
+      return _makeBoardButton(index);
+    });
+    Container board = Container(
       padding: EdgeInsets.all(2),
       child: AspectRatio(
         aspectRatio: 1,
@@ -561,15 +666,12 @@ class _SudokuScreenState extends State<SudokuScreen> {
           child: GridView.count(
             crossAxisCount: globals.problem.board_size,
             childAspectRatio: 1,
-            children: List.generate(
-                globals.problem.board_size * globals.problem.board_size,
-                (index) {
-              return _makeBoardButton(index);
-            }),
+            children: sudokuGrid,
           ),
         ),
       ),
     );
+    return board;
   }
 
   Widget _getMoveButtons() {
@@ -704,11 +806,11 @@ class _SudokuScreenState extends State<SudokuScreen> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
         Flexible(
-            flex: 15,
+          flex: 15,
 //          child: Container(
-            child: _getBoard()
+          child: board,
 //          color: Colors.red,
-            ),
+        ),
         Flexible(
           flex: 6,
           child: AspectRatio(
@@ -740,8 +842,4 @@ class _SudokuScreenState extends State<SudokuScreen> {
       ],
     );
   }
-
-  Widget _getRadio(
-    Radio radio,
-  ) {}
 }

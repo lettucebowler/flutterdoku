@@ -29,35 +29,34 @@ Widget getFlatButton(
   );
 }
 
-Widget getStyledToggleRow(
-    String label, VariableWrapper setting, Function onChanged) {
-  return Row(
-    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    children: [
-      Container(
-        child: Text(
-          label,
-          style: TextStyle(
-            color: CustomStyles.nord3,
-            fontSize: 17,
-          ),
-          textAlign: TextAlign.left,
-        ),
-      ),
-      Align(
-        alignment: Alignment.centerRight,
-        child: Switch(
-          value: setting.value,
-          onChanged: onChanged,
-          activeColor: CustomStyles.nord3,
-          inactiveThumbColor: CustomStyles.nord3,
-          activeTrackColor: CustomStyles.nord14,
-          inactiveTrackColor: CustomStyles.nord15,
-        ),
-      ),
-    ],
-  );
-}
+//Widget getStyledToggleRow(Switch toggle, String label, VariableWrapper setting, Function onChanged) {
+//  return toggle == null? Row(
+//    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//    children: [
+//      Container(
+//        child: Text(
+//          label,
+//          style: TextStyle(
+//            color: CustomStyles.nord3,
+//            fontSize: 17,
+//          ),
+//          textAlign: TextAlign.left,
+//        ),
+//      ),
+//      Align(
+//        alignment: Alignment.centerRight,
+//        child: Switch(
+//          value: setting.value,
+//          onChanged: onChanged,
+//          activeColor: CustomStyles.nord3,
+//          inactiveThumbColor: CustomStyles.nord3,
+//          activeTrackColor: CustomStyles.nord14,
+//          inactiveTrackColor: CustomStyles.nord15,
+//        ),
+//      ),
+//    ],
+//  ) : toggle;
+//}
 
 Widget getStyledSliderRow(VariableWrapper setting, double min, double max,
     Function onChange, Function decrease, Function increase) {
