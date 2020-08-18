@@ -43,47 +43,22 @@ class _SudokuScreenState extends State<SudokuScreen> {
     _gameButtons = _getGameButtons();
     _assistant = SolvingAssistant(globals.problem);
     _populateGridList();
-  }
-
-  void _shiftLeft() {
-    globals.selectedCol =
-        ((globals.selectedCol - 1) % globals.problem.board_size);
-  }
-
-  void _shiftRight() {
-    globals.selectedCol =
-        ((globals.selectedCol + 1) % globals.problem.board_size);
-  }
-
-  void _shiftUp() {
-    globals.selectedRow =
-        ((globals.selectedRow - 1) % globals.problem.board_size);
-  }
-
-  void _shiftDown() {
-    globals.selectedRow =
-        ((globals.selectedRow + 1) % globals.problem.board_size);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    FocusScope.of(context).requestFocus(focusNode);
     _actionMap = {
       // Move Down
-      LogicalKeyboardKey.arrowDown: () => _shiftDown(),
-      LogicalKeyboardKey.keyS: () => _shiftDown(),
+      LogicalKeyboardKey.arrowDown: () => _shiftFocus(1, 0),
+      LogicalKeyboardKey.keyS: () => _shiftFocus(1, 0),
 
       // Move Left
-      LogicalKeyboardKey.arrowLeft: () => _shiftLeft(),
-      LogicalKeyboardKey.keyA: () => _shiftLeft(),
+      LogicalKeyboardKey.arrowLeft: () => _shiftFocus(0, -1),
+      LogicalKeyboardKey.keyA: () => _shiftFocus(0, -1),
 
       // Move Right
-      LogicalKeyboardKey.arrowRight: () => _shiftRight(),
-      LogicalKeyboardKey.keyD: () => _shiftRight(),
+      LogicalKeyboardKey.arrowRight: () => _shiftFocus(0, 1),
+      LogicalKeyboardKey.keyD: () => _shiftFocus(0, 1),
 
       // Move Up
-      LogicalKeyboardKey.arrowUp: () => _shiftUp(),
-      LogicalKeyboardKey.keyW: () => _shiftUp(),
+      LogicalKeyboardKey.arrowUp: () => _shiftFocus(-1, 0),
+      LogicalKeyboardKey.keyW: () => _shiftFocus(-1, 0),
 
       // Place 0 / Delete number from cell
       LogicalKeyboardKey.digit0: () =>
@@ -153,9 +128,29 @@ class _SudokuScreenState extends State<SudokuScreen> {
       LogicalKeyboardKey.keyH: () =>
           _giveHint(globals.selectedRow, globals.selectedCol),
     };
-    if (globals.problem.success()) {
-      _populateGridList();
+  }
+
+  void _shiftFocus(int rowOffset, int colOffset) {
+    if (_cellSelected()) {
+      var currentState = globals.problem.getCurrentState() as SudokuState;
+      var currentBoard = currentState.getTiles();
+      var num = currentBoard[globals.selectedRow][globals.selectedCol];
+      _whiteoutBoard(num, globals.selectedRow, globals.selectedCol);
+      globals.selectedRow =
+          ((globals.selectedRow + rowOffset) % globals.problem.board_size);
+      globals.selectedCol =
+          ((globals.selectedCol + colOffset) % globals.problem.board_size);
+      _updateCells(globals.selectedRow, globals.selectedCol);
     }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    FocusScope.of(context).requestFocus(focusNode);
+
+//    if (globals.problem.success()) {
+//      _populateGridList();
+//    }
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -552,7 +547,8 @@ class _SudokuScreenState extends State<SudokuScreen> {
             row.toString() +
             ' ' +
             col.toString();
-        _whiteoutBoard(currentBoard[globals.selectedRow][globals.selectedCol], globals.selectedRow, globals.selectedCol);
+        _whiteoutBoard(currentBoard[globals.selectedRow][globals.selectedCol],
+            globals.selectedRow, globals.selectedCol);
 
         _assistant.tryMove(move);
         var changeIndex =
@@ -575,7 +571,8 @@ class _SudokuScreenState extends State<SudokuScreen> {
         _giveHint(i, j);
       }
     }
-    setState(() {});
+    _populateGridList();
+    // setState(() {});
   }
 
   bool _cellSelected() {
@@ -641,16 +638,13 @@ class _SudokuScreenState extends State<SudokuScreen> {
           splashColor: CustomStyles.nord12,
           onTap: () => setState(() {
             if (_cellSelected()) {
-              // globals.selectedRow = -1;
-              // globals.selectedCol = -1;
-              _whiteoutBoard(currentBoard[globals.selectedRow][globals.selectedCol], globals.selectedRow, globals.selectedCol);
+              _whiteoutBoard(
+                  currentBoard[globals.selectedRow][globals.selectedCol],
+                  globals.selectedRow,
+                  globals.selectedCol);
             }
-            // var tempRow = globals.selectedRow;
-            // var tempCol = globals.selectedCol;
-            // _whiteoutBoard(tempRow, tempCol);
             globals.selectedRow = row;
             globals.selectedCol = col;
-
             _updateCells(globals.selectedRow, globals.selectedCol);
           }),
           child: Center(
@@ -675,15 +669,17 @@ class _SudokuScreenState extends State<SudokuScreen> {
   }
 
   void _updateCells(int row, int col) {
-    if(globals.doPeerCells.value) {
+    if (globals.doPeerCells.value) {
       for (var i = 0; i < globals.problem.board_size; i++) {
         var rowIndex = _getIndex(row, i);
 //      print("rowIndex: " + rowIndex.toString());
-        sudokuGrid[rowIndex] = _makeBoardButton(rowIndex, _getCellColor(row, i));
+        sudokuGrid[rowIndex] =
+            _makeBoardButton(rowIndex, _getCellColor(row, i));
 
         var colIndex = _getIndex(i, col);
 //      print("colIndex: " + colIndex.toString());
-        sudokuGrid[colIndex] = _makeBoardButton(colIndex, _getCellColor(i, col));
+        sudokuGrid[colIndex] =
+            _makeBoardButton(colIndex, _getCellColor(i, col));
 
         var blockRow =
             row ~/ globals.problem.cell_size * globals.problem.cell_size;
@@ -700,17 +696,18 @@ class _SudokuScreenState extends State<SudokuScreen> {
                 blockCol + i % globals.problem.cell_size));
       }
     }
-    if(globals.doPeerDigits.value) {
+    if (globals.doPeerDigits.value) {
       var currentState = globals.problem.getCurrentState() as SudokuState;
       var currentBoard = currentState.getTiles();
       var num = currentState.getTiles()[row][col];
 //      print('num: ' + num.toString());
-      for(var i = 0; i < globals.problem.board_size; i++) {
-        for(var j = 0; j < globals.problem.board_size; j++) {
+      for (var i = 0; i < globals.problem.board_size; i++) {
+        for (var j = 0; j < globals.problem.board_size; j++) {
           if (currentBoard[i][j] == num) {
 //            print('i\'m in');
             var k = _getIndex(i, j);
-;            sudokuGrid[k] = _makeBoardButton(k, _getCellColor(i, j));
+            ;
+            sudokuGrid[k] = _makeBoardButton(k, _getCellColor(i, j));
           }
         }
       }
