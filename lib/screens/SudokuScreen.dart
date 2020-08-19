@@ -317,7 +317,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
                           color: CustomStyles.nord0,
                           key: ValueKey(0),
                           icon: Icon(
-                            Icons.remove,
+                            Icons.remove_circle_outline_outlined,
                             color: CustomStyles.nord11,
                           ),
                           onPressed: initialHints.value > 17
@@ -330,7 +330,10 @@ class _SudokuScreenState extends State<SudokuScreen> {
                       : IconButton(
                           color: CustomStyles.nord0,
                           key: ValueKey(1),
-                          icon: Icon(Icons.remove, color: CustomStyles.nord6),
+                          icon: Icon(
+                            Icons.remove_circle_outline_outlined,
+                            color: CustomStyles.nord6,
+                          ),
                           onPressed: initialHints.value > 17
                               ? () {
                                   _setIntWrapper(
@@ -352,14 +355,20 @@ class _SudokuScreenState extends State<SudokuScreen> {
                   child: initialHints.value < 50
                       ? IconButton(
                           key: ValueKey(0),
-                          icon: Icon(Icons.add, color: CustomStyles.nord14),
+                          icon: Icon(
+                            Icons.add_circle_outline_outlined,
+                            color: CustomStyles.nord14,
+                          ),
                           onPressed: () {
                             _setIntWrapper(
                                 initialHints.value + 1, initialHints);
                           })
                       : IconButton(
                           key: ValueKey(1),
-                          icon: Icon(Icons.add, color: CustomStyles.nord6),
+                          icon: Icon(
+                            Icons.add_circle_outline_outlined,
+                            color: CustomStyles.nord6,
+                          ),
                           onPressed: () {},
                         ),
                 ),
