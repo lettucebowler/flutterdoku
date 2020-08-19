@@ -30,7 +30,11 @@ class _SudokuScreenState extends State<SudokuScreen> {
 
   Widget _moveButtons;
   Widget _gameButtons;
-  List<Widget> sudokuGrid = [];
+  List<Widget> sudokuGrid = List(81);
+  // List<Widget> buttonGrid = List(81);
+  List<Widget> materialGrid = List(81);
+  List<Widget> inkwellGrid = List(81);
+  List<Widget> textGrid = List(81);
 
   @override
   void initState() {
@@ -674,6 +678,104 @@ class _SudokuScreenState extends State<SudokuScreen> {
     return color;
   }
 
+  void _whiteoutBoard(int num, int row, int col) {
+    var currentState = problem.getCurrentState() as SudokuState;
+    var currentBoard = currentState.getTiles();
+    for (var i = 0; i < problem.board_size; i++) {
+      for (var j = 0; j < problem.board_size; j++) {
+        var sameRow = i == row;
+        var sameCol = j == col;
+        var sameFloor = i ~/ problem.cell_size == row ~/ problem.cell_size;
+        var sameTower = j ~/ problem.cell_size == col ~/ problem.cell_size;
+        var sameBlock = sameFloor && sameTower;
+        var sameNum = num == currentBoard[i][j] && num != 0;
+        if (sameRow || sameCol || sameBlock || sameNum) {
+          var index = getIndex(i, j, problem.board_size);
+          sudokuGrid[index] = _makeBoardButton(index, CustomStyles.nord6);
+        }
+      }
+    }
+  }
+
+  void _toggleBoolWrapper(VariableWrapper setting) {
+    setState(() {
+      setting.value = !setting.value;
+      saveToPrefs();
+    });
+  }
+
+  void _setIntWrapper(int value, VariableWrapper setting) {
+    setState(() {
+      setting.value = value;
+      saveToPrefs();
+    });
+  }
+
+  void _populateGridList() {
+    sudokuGrid =
+        List.generate(problem.board_size * problem.board_size, (index) {
+      return _makeBoardButton(
+          index,
+          _getCellColor(
+              index ~/ problem.board_size, index % problem.board_size));
+    });
+  }
+
+//  Widget _makeCellText(int index) {
+//    var row = index ~/ problem.board_size;
+//    var col = index % problem.board_size;
+//    SudokuState currentState = problem.getCurrentState();
+//    List currentBoard = currentState.getTiles();
+//    var cellNum = currentBoard[row][col];
+//    String toPlace = cellNum == 0 ? '' : cellNum.toString();
+//    var text = AutoSizeText(
+//      toPlace,
+//      textAlign: TextAlign.center,
+//      maxLines: 1,
+//      stepGranularity: 1,
+//      minFontSize: 1,
+//      maxFontSize: 40,
+//      style: TextStyle(
+//        color: _getTextColor(row, col),
+//        fontSize: 40,
+//      ),
+//    );
+//    textGrid[index] = text;
+//    return text;
+//  }
+//
+//  Widget _makeInkwell(int index, Widget child) {
+//    var row = index ~/ problem.board_size;
+//    var col = index % problem.board_size;
+//    SudokuState currentState = problem.getCurrentState();
+//    List currentBoard = currentState.getTiles();
+//    var ink = InkWell(
+//      hoverColor: CustomStyles.nord13,
+//      splashColor: CustomStyles.nord12,
+//      onTap: () => setState(() {
+//        if (_cellSelected()) {
+//          _whiteoutBoard(
+//              currentBoard[selectedRow][selectedCol], selectedRow, selectedCol);
+//        }
+//        selectedRow = row;
+//        selectedCol = col;
+//        _updateCells(selectedRow, selectedCol);
+//      }),
+//      child: Center(child: child),
+//    );
+//    inkwellGrid[index] = ink;
+//    return ink;
+//  }
+//
+//  Widget _makeMaterial(int index, Color color) {
+//    var material = Material(
+//      color: color,
+//      child: inkwellGrid[index],
+//    );
+//    materialGrid[index] = material;
+//    return material;
+//  }
+
   Widget _makeBoardButton(int index, Color color) {
     var row = index ~/ problem.board_size;
     var col = index % problem.board_size;
@@ -715,6 +817,54 @@ class _SudokuScreenState extends State<SudokuScreen> {
       ),
     );
     return button;
+
+//    var row = index ~/ problem.board_size;
+//    var col = index % problem.board_size;
+//    SudokuState currentState = problem.getCurrentState();
+//    List currentBoard = currentState.getTiles();
+//    var cellNum = currentBoard[row][col];
+//    String toPlace = cellNum == 0 ? '' : cellNum.toString();
+//
+//     var text = AutoSizeText(
+//       toPlace,
+//       textAlign: TextAlign.center,
+//       maxLines: 1,
+//       stepGranularity: 1,
+//       minFontSize: 1,
+//       maxFontSize: 40,
+//       style: TextStyle(
+//         color: _getTextColor(row, col),
+//         fontSize: 40,
+//       ),
+//     );
+//
+//     var ink = InkWell(
+//       hoverColor: CustomStyles.nord13,
+//       splashColor: CustomStyles.nord12,
+//       onTap: () => setState(() {
+//         if (_cellSelected()) {
+//           _whiteoutBoard(
+//               currentBoard[selectedRow][selectedCol], selectedRow, selectedCol);
+//         }
+//         selectedRow = row;
+//         selectedCol = col;
+//         _updateCells(selectedRow, selectedCol);
+//       }),
+//       child: Center(child: text),
+//     );
+//
+//     var material = Material(
+//       color: color,
+//       child: ink,
+//     );
+//
+////    mat = mat == null ? _makeMaterial(index, color) : mat;
+//
+//    Container button = Container(
+//      padding: _getBoardPadding(index),
+//      child: material,
+//    );
+//    return button;
   }
 
   void _updateCells(int row, int col) {
@@ -722,8 +872,11 @@ class _SudokuScreenState extends State<SudokuScreen> {
       if (doPeerCells.value) {
         for (var i = 0; i < problem.board_size; i++) {
           var rowIndex = getIndex(row, i, problem.board_size);
+//          materialGrid[rowIndex] =
+//              _makeMaterial(rowIndex, _getCellColor(row, i), inkwellGrid[rowIndex]);
           sudokuGrid[rowIndex] =
-              _makeBoardButton(rowIndex, _getCellColor(row, i));
+//              _makeBoardButton(rowIndex, _getCellColor(row, i), materialGrid[rowIndex], inkwellGrid[rowIndex], textGrid[rowIndex]);
+          _makeBoardButton(rowIndex, _getCellColor(row, i));
 
           var colIndex = getIndex(i, col, problem.board_size);
           sudokuGrid[colIndex] =
@@ -745,7 +898,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
         var num = currentState.getTiles()[row][col];
         for (var i = 0; i < problem.board_size; i++) {
           for (var j = 0; j < problem.board_size; j++) {
-            if (currentBoard[i][j] == num) {
+            if (currentBoard[i][j] == num && num != 0) {
               var k = getIndex(i, j, problem.board_size);
               sudokuGrid[k] = _makeBoardButton(k, _getCellColor(i, j));
             }
@@ -757,50 +910,6 @@ class _SudokuScreenState extends State<SudokuScreen> {
     } else {
       _populateGridList();
     }
-  }
-
-  void _whiteoutBoard(int num, int row, int col) {
-    var currentState = problem.getCurrentState() as SudokuState;
-    var currentBoard = currentState.getTiles();
-    for (var i = 0; i < problem.board_size; i++) {
-      for (var j = 0; j < problem.board_size; j++) {
-        var sameRow = i == row;
-        var sameCol = j == col;
-        var sameFloor = i ~/ problem.cell_size == row ~/ problem.cell_size;
-        var sameTower = j ~/ problem.cell_size == col ~/ problem.cell_size;
-        var sameBlock = sameFloor && sameTower;
-        var sameNum = num == currentBoard[i][j] && num != 0;
-        if (sameRow || sameCol || sameBlock || sameNum) {
-          var index = getIndex(i, j, problem.board_size);
-          // print(sameNum ? 'sameNum' : 'diffNum');
-          sudokuGrid[index] = _makeBoardButton(index, CustomStyles.nord6);
-        }
-      }
-    }
-  }
-
-  void _toggleBoolWrapper(VariableWrapper setting) {
-    setState(() {
-      setting.value = !setting.value;
-      saveToPrefs();
-    });
-  }
-
-  void _setIntWrapper(int value, VariableWrapper setting) {
-    setState(() {
-      setting.value = value;
-      saveToPrefs();
-    });
-  }
-
-  void _populateGridList() {
-    sudokuGrid =
-        List.generate(problem.board_size * problem.board_size, (index) {
-      return _makeBoardButton(
-          index,
-          _getCellColor(
-              index ~/ problem.board_size, index % problem.board_size));
-    });
   }
 
   Widget _getMoveButtons() {
