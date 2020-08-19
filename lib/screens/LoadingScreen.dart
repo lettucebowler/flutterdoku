@@ -26,11 +26,10 @@ class _LoadingScreenState extends State<LoadingScreen> {
     });
 
     SudokuScreen game = SudokuScreen();
-
-    Timer(
-        Duration(seconds: 1),
-        () => Navigator.push(
-            context, MaterialPageRoute(builder: (context) => game)));
+    Timer(Duration(seconds: 1), () {
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => game));
+    });
   }
 
   @override
