@@ -63,8 +63,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
                         // Padding(padding: EdgeInsets.only(top: 30)),
                         Text('LettuceSudoku',
                             style: TextStyle(
-                                fontSize: 30,
-                                color: CustomStyles.nord6)),
+                                fontSize: 30, color: CustomStyles.nord6)),
                       ],
                     ),
                   ),
