@@ -252,7 +252,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
                         ],
                       ),
                       AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 250),
+                        duration: const Duration(milliseconds: 300),
                         transitionBuilder:
                             (Widget child, Animation<double> animation) =>
                                 SizeTransition(
@@ -304,12 +304,12 @@ class _SudokuScreenState extends State<SudokuScreen> {
                   ),
                 ),
                 AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 250),
+                  duration: const Duration(milliseconds: 300),
                   transitionBuilder:
                       (Widget child, Animation<double> animation) =>
-                          RotationTransition(
+                          ScaleTransition(
                     child: child,
-                    turns: animation,
+                    scale: animation,
                     // sizeFactor: animation,
                   ),
                   child: initialHints.value > 17
@@ -317,7 +317,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
                           color: CustomStyles.nord0,
                           key: ValueKey(0),
                           icon: Icon(
-                            Icons.remove_circle_outline_outlined,
+                            Icons.remove_circle,
                             color: CustomStyles.nord11,
                           ),
                           onPressed: initialHints.value > 17
@@ -331,7 +331,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
                           color: CustomStyles.nord0,
                           key: ValueKey(1),
                           icon: Icon(
-                            Icons.remove_circle_outline_outlined,
+                            Icons.remove_circle,
                             color: CustomStyles.nord6,
                           ),
                           onPressed: initialHints.value > 17
@@ -344,19 +344,19 @@ class _SudokuScreenState extends State<SudokuScreen> {
                 ),
                 Text(initialHints.value.toString()),
                 AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 250),
+                  duration: const Duration(milliseconds: 300),
                   transitionBuilder:
                       (Widget child, Animation<double> animation) =>
-                          RotationTransition(
+                          ScaleTransition(
                     child: child,
-                    turns: animation,
+                    scale: animation,
                     // sizeFactor: animation,
                   ),
                   child: initialHints.value < 50
                       ? IconButton(
                           key: ValueKey(0),
                           icon: Icon(
-                            Icons.add_circle_outline_outlined,
+                            Icons.add_circle,
                             color: CustomStyles.nord14,
                           ),
                           onPressed: () {
@@ -366,7 +366,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
                       : IconButton(
                           key: ValueKey(1),
                           icon: Icon(
-                            Icons.add_circle_outline_outlined,
+                            Icons.add_circle,
                             color: CustomStyles.nord6,
                           ),
                           onPressed: () {},
@@ -591,7 +591,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
             row.toString() +
             ' ' +
             col.toString();
-        print('doMove: ' + move);
+        // print('doMove: ' + move);
 
         _assistant.tryMove(move);
         var changeIndex = row * problem.board_size + col % problem.board_size;
@@ -772,7 +772,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
         var sameNum = num == currentBoard[i][j] && num != 0;
         if (sameRow || sameCol || sameBlock || sameNum) {
           var index = getIndex(i, j, problem.board_size);
-          print(sameNum ? 'sameNum' : 'diffNum');
+          // print(sameNum ? 'sameNum' : 'diffNum');
           sudokuGrid[index] = _makeBoardButton(index, CustomStyles.nord6);
         }
       }
