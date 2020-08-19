@@ -303,31 +303,65 @@ class _SudokuScreenState extends State<SudokuScreen> {
                     max: 50,
                   ),
                 ),
-                IconButton(
-                  // disabledColor: CustomStyles.nord6,
-                  // splashColor: CustomStyles.nord11,
-                  color: CustomStyles.nord0,
-                  icon: Icon(Icons.remove,
-                      color: initialHints.value > 17
-                          ? CustomStyles.nord11
-                          : CustomStyles.nord6),
-                  onPressed: initialHints.value > 17
-                      ? () {
-                          _setIntWrapper(initialHints.value - 1, initialHints);
-                        }
-                      : () {},
+                AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 250),
+                  transitionBuilder:
+                      (Widget child, Animation<double> animation) =>
+                          RotationTransition(
+                    child: child,
+                    turns: animation,
+                    // sizeFactor: animation,
+                  ),
+                  child: initialHints.value > 17
+                      ? IconButton(
+                          color: CustomStyles.nord0,
+                          key: ValueKey(0),
+                          icon: Icon(
+                            Icons.remove,
+                            color: CustomStyles.nord11,
+                          ),
+                          onPressed: initialHints.value > 17
+                              ? () {
+                                  _setIntWrapper(
+                                      initialHints.value - 1, initialHints);
+                                }
+                              : () {},
+                        )
+                      : IconButton(
+                          color: CustomStyles.nord0,
+                          key: ValueKey(1),
+                          icon: Icon(Icons.remove, color: CustomStyles.nord6),
+                          onPressed: initialHints.value > 17
+                              ? () {
+                                  _setIntWrapper(
+                                      initialHints.value - 1, initialHints);
+                                }
+                              : () {},
+                        ),
                 ),
                 Text(initialHints.value.toString()),
-                IconButton(
-                  icon: Icon(Icons.add,
-                      color: initialHints.value < 50
-                          ? CustomStyles.nord14
-                          : CustomStyles.nord6),
-                  onPressed: initialHints.value < 50
-                      ? () {
-                          _setIntWrapper(initialHints.value + 1, initialHints);
-                        }
-                      : () {},
+                AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 250),
+                  transitionBuilder:
+                      (Widget child, Animation<double> animation) =>
+                          RotationTransition(
+                    child: child,
+                    turns: animation,
+                    // sizeFactor: animation,
+                  ),
+                  child: initialHints.value < 50
+                      ? IconButton(
+                          key: ValueKey(0),
+                          icon: Icon(Icons.add, color: CustomStyles.nord14),
+                          onPressed: () {
+                            _setIntWrapper(
+                                initialHints.value + 1, initialHints);
+                          })
+                      : IconButton(
+                          key: ValueKey(1),
+                          icon: Icon(Icons.add, color: CustomStyles.nord6),
+                          onPressed: () {},
+                        ),
                 ),
               ],
             ),
