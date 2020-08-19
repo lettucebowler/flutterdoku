@@ -4,13 +4,13 @@ import 'package:lettuce_sudoku/domains/sudoku/SudokuState.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:lettuce_sudoku/util/globals.dart' as globals;
 
-var settingsMap = {
-  'doPeerCells': globals.doPeerCells,
-  'doPeerDigits': globals.doPeerDigits,
-  'doMistakes': globals.doMistakes,
-  'initialHints': globals.initialHints,
-  'legalityRadio': globals.legalityRadio
-};
+// var settingsMap = {
+//   'doPeerCells': globals.doPeerCells,
+//   'doPeerDigits': globals.doPeerDigits,
+//   'doMistakes': globals.doMistakes,
+//   'initialHints': globals.initialHints,
+//   'legalityRadio': globals.legalityRadio
+// };
 
 Future<bool> readFromPrefs() async {
   final prefs = await SharedPreferences.getInstance();
@@ -19,10 +19,13 @@ Future<bool> readFromPrefs() async {
   final mistakes = prefs.getBool('doMistakes');
   final hints = prefs.getInt('initialHints');
   final legality = prefs.getInt('legalityRadio');
+
+  final hintsGood = hints != null && hints >= 17 && hints <= 50;
+
   globals.doPeerCells.value = peerCells != null ? peerCells : true;
   globals.doPeerDigits.value = peerDigits != null ? peerDigits : true;
   globals.doMistakes.value = mistakes != null ? mistakes : true;
-  globals.initialHints.value = hints != null ? hints : 30;
+  globals.initialHints.value = hintsGood ? hints : 30;
   globals.legalityRadio.value = legality == 1 || legality == 0 ? legality : 0;
   return true;
 }
@@ -130,5 +133,3 @@ MaterialColor getMaterialColor(Color color) {
     900: color,
   });
 }
-
-

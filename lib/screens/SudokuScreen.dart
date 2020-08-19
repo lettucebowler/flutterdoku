@@ -61,71 +61,71 @@ class _SudokuScreenState extends State<SudokuScreen> {
 
       // Place 0 / Delete number from cell
       LogicalKeyboardKey.digit0: () =>
-          _doMove(0, globals.selectedRow, globals.selectedCol),
+          _doMoveAndApply(0, globals.selectedRow, globals.selectedCol),
       LogicalKeyboardKey.numpad0: () =>
-          _doMove(0, globals.selectedRow, globals.selectedCol),
+          _doMoveAndApply(0, globals.selectedRow, globals.selectedCol),
       LogicalKeyboardKey.keyX: () =>
-          _doMove(0, globals.selectedRow, globals.selectedCol),
+          _doMoveAndApply(0, globals.selectedRow, globals.selectedCol),
       LogicalKeyboardKey.delete: () =>
-          _doMove(0, globals.selectedRow, globals.selectedCol),
+          _doMoveAndApply(0, globals.selectedRow, globals.selectedCol),
 
       // Place 1
       LogicalKeyboardKey.digit1: () =>
-          _doMove(1, globals.selectedRow, globals.selectedCol),
+          _doMoveAndApply(1, globals.selectedRow, globals.selectedCol),
       LogicalKeyboardKey.numpad1: () =>
-          _doMove(1, globals.selectedRow, globals.selectedCol),
+          _doMoveAndApply(1, globals.selectedRow, globals.selectedCol),
 
       // Place 2
       LogicalKeyboardKey.digit2: () =>
-          _doMove(2, globals.selectedRow, globals.selectedCol),
+          _doMoveAndApply(2, globals.selectedRow, globals.selectedCol),
       LogicalKeyboardKey.numpad2: () =>
-          _doMove(2, globals.selectedRow, globals.selectedCol),
+          _doMoveAndApply(2, globals.selectedRow, globals.selectedCol),
 
       // Place 3
       LogicalKeyboardKey.digit3: () =>
-          _doMove(3, globals.selectedRow, globals.selectedCol),
+          _doMoveAndApply(3, globals.selectedRow, globals.selectedCol),
       LogicalKeyboardKey.numpad3: () =>
-          _doMove(3, globals.selectedRow, globals.selectedCol),
+          _doMoveAndApply(3, globals.selectedRow, globals.selectedCol),
 
       // Place 4
       LogicalKeyboardKey.digit4: () =>
-          _doMove(4, globals.selectedRow, globals.selectedCol),
+          _doMoveAndApply(4, globals.selectedRow, globals.selectedCol),
       LogicalKeyboardKey.numpad4: () =>
-          _doMove(4, globals.selectedRow, globals.selectedCol),
+          _doMoveAndApply(4, globals.selectedRow, globals.selectedCol),
 
       // Place 5
       LogicalKeyboardKey.digit5: () =>
-          _doMove(5, globals.selectedRow, globals.selectedCol),
+          _doMoveAndApply(5, globals.selectedRow, globals.selectedCol),
       LogicalKeyboardKey.numpad5: () =>
-          _doMove(5, globals.selectedRow, globals.selectedCol),
+          _doMoveAndApply(5, globals.selectedRow, globals.selectedCol),
 
       // Place 6
       LogicalKeyboardKey.digit6: () =>
-          _doMove(6, globals.selectedRow, globals.selectedCol),
+          _doMoveAndApply(6, globals.selectedRow, globals.selectedCol),
       LogicalKeyboardKey.numpad6: () =>
-          _doMove(6, globals.selectedRow, globals.selectedCol),
+          _doMoveAndApply(6, globals.selectedRow, globals.selectedCol),
 
       // Place 7
       LogicalKeyboardKey.digit7: () =>
-          _doMove(7, globals.selectedRow, globals.selectedCol),
+          _doMoveAndApply(7, globals.selectedRow, globals.selectedCol),
       LogicalKeyboardKey.numpad7: () =>
-          _doMove(7, globals.selectedRow, globals.selectedCol),
+          _doMoveAndApply(7, globals.selectedRow, globals.selectedCol),
 
       // Place 8
       LogicalKeyboardKey.digit8: () =>
-          _doMove(8, globals.selectedRow, globals.selectedCol),
+          _doMoveAndApply(8, globals.selectedRow, globals.selectedCol),
       LogicalKeyboardKey.numpad8: () =>
-          _doMove(8, globals.selectedRow, globals.selectedCol),
+          _doMoveAndApply(8, globals.selectedRow, globals.selectedCol),
 
       // Place 9
       LogicalKeyboardKey.digit9: () =>
-          _doMove(9, globals.selectedRow, globals.selectedCol),
+          _doMoveAndApply(9, globals.selectedRow, globals.selectedCol),
       LogicalKeyboardKey.numpad9: () =>
-          _doMove(9, globals.selectedRow, globals.selectedCol),
+          _doMoveAndApply(9, globals.selectedRow, globals.selectedCol),
 
       // Get Hint
       LogicalKeyboardKey.keyH: () =>
-          _giveHint(globals.selectedRow, globals.selectedCol),
+          _giveHintAndApply(globals.selectedRow, globals.selectedCol),
     };
   }
 
@@ -242,8 +242,10 @@ class _SudokuScreenState extends State<SudokuScreen> {
                           ),
                           Switch(
                             value: globals.doMistakes.value,
-                            onChanged: (bool value) =>
-                                _toggleBoolWrapper(globals.doMistakes),
+                            onChanged: (bool value) {
+                              _toggleBoolWrapper(globals.doMistakes);
+                              _populateGridList();
+                            },
                             activeColor: CustomStyles.nord3,
                             inactiveThumbColor: CustomStyles.nord3,
                             activeTrackColor: CustomStyles.nord14,
@@ -266,16 +268,15 @@ class _SudokuScreenState extends State<SudokuScreen> {
                                       _correctnessRadio,
                                       'Correctness',
                                       0,
-                                      globals.legalityRadio,
-                                      (var val) => _setIntWrapper(
-                                          0, globals.legalityRadio)),
-                                  getStyledRadio(
-                                      _legalityRadio,
-                                      'Legality',
-                                      1,
-                                      globals.legalityRadio,
-                                      (var val) => _setIntWrapper(
-                                          1, globals.legalityRadio)),
+                                      globals.legalityRadio, (var val) {
+                                    _setIntWrapper(0, globals.legalityRadio);
+                                    _populateGridList();
+                                  }),
+                                  getStyledRadio(_legalityRadio, 'Legality', 1,
+                                      globals.legalityRadio, (var val) {
+                                    _setIntWrapper(1, globals.legalityRadio);
+                                    _populateGridList();
+                                  }),
                                 ],
                               )
                             : Container(),
@@ -338,7 +339,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
                                       child: FlatButton(
                                         color: CustomStyles.nord3,
                                         splashColor: CustomStyles.nord0,
-                                        onPressed: () => _solveGame(problem),
+                                        onPressed: () => _solveGameAndApply(),
                                         shape: RoundedRectangleBorder(
                                             borderRadius:
                                                 BorderRadius.circular(0.0)),
@@ -516,6 +517,14 @@ class _SudokuScreenState extends State<SudokuScreen> {
     }
   }
 
+  void _giveHintAndApply(int row, int col) {
+    setState(() {
+      _giveHint(row, col);
+      saveGame();
+      _updateCells(row, col);
+    });
+  }
+
   void _doMove(int num, int row, int col) {
     var currentState = globals.problem.getCurrentState() as SudokuState;
     var currentBoard = currentState.getTiles();
@@ -539,14 +548,19 @@ class _SudokuScreenState extends State<SudokuScreen> {
             row * globals.problem.board_size + col % globals.problem.board_size;
         sudokuGrid[changeIndex] =
             _makeBoardButton(changeIndex, _getCellColor(row, col));
-        saveGame();
-        _updateCells(row, col);
-        setState(() {});
       }
     }
   }
 
-  void _solveGame(SudokuProblem problem) {
+  void _doMoveAndApply(int num, int row, int col) {
+    setState(() {
+      _doMove(num, row, col);
+      saveGame();
+      _updateCells(row, col);
+    });
+  }
+
+  void _solveGame() {
     globals.selectedRow = 0;
     globals.selectedCol = 0;
     int boardSize = problem.board_size;
@@ -555,7 +569,14 @@ class _SudokuScreenState extends State<SudokuScreen> {
         _giveHint(i, j);
       }
     }
-    _populateGridList();
+  }
+
+  void _solveGameAndApply() {
+    setState(() {
+      _solveGame();
+      _populateGridList();
+      saveGame();
+    });
   }
 
   bool _cellSelected() {
@@ -648,44 +669,48 @@ class _SudokuScreenState extends State<SudokuScreen> {
   }
 
   void _updateCells(int row, int col) {
-    if (globals.doPeerCells.value) {
-      for (var i = 0; i < globals.problem.board_size; i++) {
-        var rowIndex = _getIndex(row, i);
-        sudokuGrid[rowIndex] =
-            _makeBoardButton(rowIndex, _getCellColor(row, i));
+    if (!problem.success()) {
+      if (globals.doPeerCells.value) {
+        for (var i = 0; i < globals.problem.board_size; i++) {
+          var rowIndex = _getIndex(row, i);
+          sudokuGrid[rowIndex] =
+              _makeBoardButton(rowIndex, _getCellColor(row, i));
 
-        var colIndex = _getIndex(i, col);
-        sudokuGrid[colIndex] =
-            _makeBoardButton(colIndex, _getCellColor(i, col));
+          var colIndex = _getIndex(i, col);
+          sudokuGrid[colIndex] =
+              _makeBoardButton(colIndex, _getCellColor(i, col));
 
-        var blockRow =
-            row ~/ globals.problem.cell_size * globals.problem.cell_size;
-        var blockCol =
-            col ~/ globals.problem.cell_size * globals.problem.cell_size;
-        var blockIndex = _getIndex(blockRow + i ~/ globals.problem.cell_size,
-            blockCol + i % globals.problem.cell_size);
-        sudokuGrid[blockIndex] = _makeBoardButton(
-            blockIndex,
-            _getCellColor(blockRow + i ~/ globals.problem.cell_size,
-                blockCol + i % globals.problem.cell_size));
+          var blockRow =
+              row ~/ globals.problem.cell_size * globals.problem.cell_size;
+          var blockCol =
+              col ~/ globals.problem.cell_size * globals.problem.cell_size;
+          var blockIndex = _getIndex(blockRow + i ~/ globals.problem.cell_size,
+              blockCol + i % globals.problem.cell_size);
+          sudokuGrid[blockIndex] = _makeBoardButton(
+              blockIndex,
+              _getCellColor(blockRow + i ~/ globals.problem.cell_size,
+                  blockCol + i % globals.problem.cell_size));
+        }
       }
-    }
-    if (globals.doPeerDigits.value) {
-      var currentState = globals.problem.getCurrentState() as SudokuState;
-      var currentBoard = currentState.getTiles();
-      var num = currentState.getTiles()[row][col];
-      for (var i = 0; i < globals.problem.board_size; i++) {
-        for (var j = 0; j < globals.problem.board_size; j++) {
-          if (currentBoard[i][j] == num) {
-            var k = _getIndex(i, j);
-            ;
-            sudokuGrid[k] = _makeBoardButton(k, _getCellColor(i, j));
+      if (globals.doPeerDigits.value) {
+        var currentState = globals.problem.getCurrentState() as SudokuState;
+        var currentBoard = currentState.getTiles();
+        var num = currentState.getTiles()[row][col];
+        for (var i = 0; i < globals.problem.board_size; i++) {
+          for (var j = 0; j < globals.problem.board_size; j++) {
+            if (currentBoard[i][j] == num) {
+              var k = _getIndex(i, j);
+              ;
+              sudokuGrid[k] = _makeBoardButton(k, _getCellColor(i, j));
+            }
           }
         }
       }
+      var index = _getIndex(row, col);
+      sudokuGrid[index] = _makeBoardButton(index, _getCellColor(row, col));
+    } else {
+      _populateGridList();
     }
-    var index = _getIndex(row, col);
-    sudokuGrid[index] = _makeBoardButton(index, _getCellColor(row, col));
   }
 
   void _whiteoutBoard(int num, int row, int col) {
@@ -763,7 +788,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
                           CustomStyles.nord3,
                           CustomStyles.nord0,
                           () {
-                            _doMove(
+                            _doMoveAndApply(
                                 num, globals.selectedRow, globals.selectedCol);
                           },
                         ),
@@ -837,7 +862,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
                 CustomStyles.nord3,
                 CustomStyles.nord0,
                 () {
-                  _giveHint(globals.selectedRow, globals.selectedCol);
+                  _giveHintAndApply(globals.selectedRow, globals.selectedCol);
                 },
               ),
             ),
