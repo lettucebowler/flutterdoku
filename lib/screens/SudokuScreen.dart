@@ -149,7 +149,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
+        title: const AutoSizeText(
           'LettuceSudoku',
           textAlign: TextAlign.center,
           style: CustomStyles.titleText,
