@@ -304,15 +304,31 @@ class _SudokuScreenState extends State<SudokuScreen> {
                   ),
                 ),
                 IconButton(
-                  icon: Icon(Icons.remove, color: CustomStyles.nord3),
-                  onPressed: () =>
-                      _setIntWrapper(initialHints.value - 1, initialHints),
+                  // disabledColor: CustomStyles.nord6,
+                  // splashColor: CustomStyles.nord11,
+                  color: CustomStyles.nord0,
+                  icon: Icon(Icons.remove,
+                      color: initialHints.value > 17
+                          ? CustomStyles.nord11
+                          : CustomStyles.nord6),
+                  onPressed: initialHints.value > 17
+                      ? () {
+                          _setIntWrapper(initialHints.value - 1, initialHints);
+                        }
+                      : () {},
                 ),
                 Text(initialHints.value.toString()),
                 IconButton(
-                    icon: Icon(Icons.add, color: CustomStyles.nord3),
-                    onPressed: () =>
-                        _setIntWrapper(initialHints.value + 1, initialHints))
+                  icon: Icon(Icons.add,
+                      color: initialHints.value < 50
+                          ? CustomStyles.nord14
+                          : CustomStyles.nord6),
+                  onPressed: initialHints.value < 50
+                      ? () {
+                          _setIntWrapper(initialHints.value + 1, initialHints);
+                        }
+                      : () {},
+                ),
               ],
             ),
             Row(
@@ -521,8 +537,6 @@ class _SudokuScreenState extends State<SudokuScreen> {
   }
 
   void _doMove(int num, int row, int col) {
-    var currentState = problem.getCurrentState() as SudokuState;
-    var currentBoard = currentState.getTiles();
     if (!problem.success() && _cellSelected()) {
       SudokuState initialState = problem.getInitialState();
       var initialBoard = initialState.getTiles();
@@ -535,8 +549,6 @@ class _SudokuScreenState extends State<SudokuScreen> {
             ' ' +
             col.toString();
         print('doMove: ' + move);
-        _whiteoutBoard(
-            currentBoard[selectedRow][selectedCol], selectedRow, selectedCol);
 
         _assistant.tryMove(move);
         var changeIndex = row * problem.board_size + col % problem.board_size;
@@ -547,11 +559,14 @@ class _SudokuScreenState extends State<SudokuScreen> {
   }
 
   void _doMoveAndApply(int num, int row, int col) {
-    setState(() {
-      _doMove(num, row, col);
-      saveGame();
-      _updateCells(row, col);
-    });
+    var currentState = problem.getCurrentState() as SudokuState;
+    var currentBoard = currentState.getTiles();
+    _whiteoutBoard(
+        currentBoard[selectedRow][selectedCol], selectedRow, selectedCol);
+    _doMove(num, row, col);
+    saveGame();
+    _updateCells(row, col);
+    setState(() {});
   }
 
   void _solveGame() {
@@ -688,8 +703,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
         for (var i = 0; i < problem.board_size; i++) {
           for (var j = 0; j < problem.board_size; j++) {
             if (currentBoard[i][j] == num) {
-              var k = getIndex(row, col, problem.board_size);
-              ;
+              var k = getIndex(i, j, problem.board_size);
               sudokuGrid[k] = _makeBoardButton(k, _getCellColor(i, j));
             }
           }
@@ -712,8 +726,10 @@ class _SudokuScreenState extends State<SudokuScreen> {
         var sameFloor = i ~/ problem.cell_size == row ~/ problem.cell_size;
         var sameTower = j ~/ problem.cell_size == col ~/ problem.cell_size;
         var sameBlock = sameFloor && sameTower;
-        if (sameRow || sameCol || sameBlock || num == currentBoard[i][j]) {
+        var sameNum = num == currentBoard[i][j] && num != 0;
+        if (sameRow || sameCol || sameBlock || sameNum) {
           var index = getIndex(i, j, problem.board_size);
+          print(sameNum ? 'sameNum' : 'diffNum');
           sudokuGrid[index] = _makeBoardButton(index, CustomStyles.nord6);
         }
       }
