@@ -604,9 +604,9 @@ class _SudokuScreenState extends State<SudokuScreen> {
   void _doMoveAndApply(int num, int row, int col) {
     var currentState = problem.getCurrentState() as SudokuState;
     var currentBoard = currentState.getTiles();
+    _doMove(num, row, col);
     _whiteoutBoard(
         currentBoard[selectedRow][selectedCol], selectedRow, selectedCol);
-    _doMove(num, row, col);
     saveGame();
     _updateCells(row, col);
     setState(() {});
@@ -766,7 +766,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
         for (var i = 0; i < problem.board_size; i++) {
           var rowIndex = getIndex(row, i, problem.board_size);
           _sudokuGrid[rowIndex] =
-          _makeBoardButton(rowIndex, _getCellColor(row, i));
+              _makeBoardButton(rowIndex, _getCellColor(row, i));
 
           var colIndex = getIndex(i, col, problem.board_size);
           _sudokuGrid[colIndex] =
