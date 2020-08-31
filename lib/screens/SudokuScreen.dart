@@ -863,49 +863,6 @@ class _SudokuScreenState extends State<SudokuScreen> {
   }
 
   Widget _getMoveButtons() {
-    // return Column(
-    //   mainAxisAlignment: MainAxisAlignment.end,
-    //   children: [
-    //     Expanded(
-    //       child: Column(
-    //         children: List.generate(2, (rowIndex) {
-    //           return Row(
-    //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    //             children: List.generate(5, (colIndex) {
-    //               int offset = rowIndex * 5;
-    //               int num = (colIndex + 1 + offset) % (problem.board_size + 1);
-    //               String toPlace = num == 0 ? 'X' : (num).toString();
-    //               return Expanded(
-    //                 child: Container(
-    //                   padding: EdgeInsets.all(2),
-    //                   child: AspectRatio(
-    //                     aspectRatio: 1,
-    //                     child: getFlatButton(
-    //                       toPlace,
-    //                       CustomStyles.nord6,
-    //                       36,
-    //                       TextAlign.center,
-    //                       CustomStyles.nord3,
-    //                       CustomStyles.nord0,
-    //                       () {
-    //                         if (selectionRadio.value == 1) {
-    //                           selectedNum = num;
-    //                         } else {
-    //                           _doMoveAndApply(num, selectedRow, selectedCol);
-    //                         }
-    //                       },
-    //                     ),
-    //                   ),
-    //                 ),
-    //               );
-    //             }),
-    //           );
-    //         }),
-    //       ),
-    //     ),
-    //   ],
-    // );
-
     return GridView.builder(
       itemCount: _moveGrid.length,
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
