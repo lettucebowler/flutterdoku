@@ -1,8 +1,11 @@
+import 'dart:html';
+
 import 'package:lettuce_sudoku/domains/sudoku/SudokuProblem.dart';
 
 VariableWrapper doPeerCells = VariableWrapper(true);
 VariableWrapper doPeerDigits = VariableWrapper(true);
 VariableWrapper doMistakes = VariableWrapper(true);
+VariableWrapper cellFist = VariableWrapper(true);
 VariableWrapper maxHints = VariableWrapper(5);
 VariableWrapper initialHints = VariableWrapper(30);
 VariableWrapper legalityRadio = VariableWrapper(0);
