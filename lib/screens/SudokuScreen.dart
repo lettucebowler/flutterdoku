@@ -669,6 +669,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
         ? peerDigit
         : color;
     color = cells && rowSelected && colSelected ? background : color;
+    color = digits && !cells && rowSelected && colSelected ? peerCell : color;
     color = problem.success() ? success : color;
 
     return color;
