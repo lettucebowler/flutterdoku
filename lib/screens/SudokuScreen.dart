@@ -140,7 +140,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
 
       // Get Hint
       LogicalKeyboardKey.keyH: () =>
-          _giveHintAndApply(selectedRow, selectedCol),
+          _doMoveAndApply(10, selectedRow, selectedCol),
     };
   }
 
@@ -153,20 +153,16 @@ class _SudokuScreenState extends State<SudokuScreen> {
         _whiteoutBoard(num, selectedRow, selectedCol);
         selectedRow = ((selectedRow + rowOffset) % problem.board_size);
         selectedCol = ((selectedCol + colOffset) % problem.board_size);
-        if (_digitGood()) {
-          if (selectedNum == 10) {
-            _giveHint(selectedRow, selectedCol);
-          } else {
-            _doMove(selectedNum, selectedRow, selectedCol);
-          }
+        if (_digitGood(selectedNum) && selectedNum == 1) {
+          _doMove(selectedNum, selectedRow, selectedCol);
         }
         _updateCells(selectedRow, selectedCol);
       });
     }
   }
 
-  bool _digitGood() {
-    return selectionRadio.value == 1 && selectedNum > -1 && selectedNum <= 10;
+  bool _digitGood(int num) {
+    return num > -1 && num <= 10;
   }
 
   @override
@@ -604,47 +600,29 @@ class _SudokuScreenState extends State<SudokuScreen> {
     return hint;
   }
 
-  void _giveHint(int row, int col) {
-    var validRow = row > -1 && row < 10;
-    var validCol = col > -1 && col < 10;
-    var validCell = validRow && validCol;
-    if (!_assistant.isProblemSolved() && validCell) {
-      SudokuState finalState = problem.getFinalState();
-      List finalBoard = finalState.getTiles();
-      var num = finalBoard[row][col];
-      if (!problem.isCorrect(row, col)) {
-        hintsGiven.add([row, col]);
-        _doMove(num, row, col);
-      }
-    }
-  }
-
-  void _giveHintAndApply(int row, int col) {
-    setState(() {
-      _giveHint(row, col);
-      saveGame();
-      _updateCells(row, col);
-    });
-  }
-
   void _doMove(int num, int row, int col) {
     bool numGood = num > -1 && num < 11;
-    if (!_assistant.isProblemSolved() && _cellSelected() && numGood) {
+    if (!_assistant.isProblemSolved() &&
+        _cellSelected() &&
+        numGood &&
+        _digitGood(num)) {
       SudokuState initialState = problem.getInitialState();
       var initialBoard = initialState.getTiles();
       var notInitialHint = initialBoard[row][col] == 0;
       if (notInitialHint) {
-        if (num < 10) {
-          var move = 'Place ' +
-              num.toString() +
-              ' at ' +
-              row.toString() +
-              ' ' +
-              col.toString();
-          _assistant.tryMove(move);
-        } else if (num == 10) {
-          _giveHint(row, col);
+        if (num == 10) {
+          SudokuState finalState = problem.getFinalState();
+          List finalBoard = finalState.getTiles();
+          num = finalBoard[row][col];
+          hintsGiven.add([row, col]);
         }
+        var move = 'Place ' +
+            num.toString() +
+            ' at ' +
+            row.toString() +
+            ' ' +
+            col.toString();
+        _assistant.tryMove(move);
       }
       var changeIndex = row * problem.board_size + col % problem.board_size;
       _sudokuGrid[changeIndex] =
@@ -669,7 +647,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
     int boardSize = problem.board_size;
     for (var i = 0; i < boardSize; i++) {
       for (var j = 0; j < boardSize; j++) {
-        _giveHint(i, j);
+        _doMove(10, i, j);
       }
     }
   }
@@ -793,11 +771,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
             if (selectionRadio.value == 1 &&
                 selectedNum > -1 &&
                 selectedNum <= 10) {
-              if (selectedNum == 10) {
-                _giveHint(row, col);
-              } else {
-                _doMove(selectedNum, row, col);
-              }
+              _doMove(selectedNum, row, col);
             }
             _updateCells(selectedRow, selectedCol);
             setState(() {});
@@ -866,7 +840,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
 
   void _populateMoveGrid() {
     _moveGrid = List.generate(10, (index) {
-      int num = index + 1 % problem.board_size;
+      int num = (index + 1) % (problem.board_size + 1);
       String toPlace = num == 0 ? 'X' : (num).toString();
       return getFlatButton(
         toPlace,
@@ -879,7 +853,9 @@ class _SudokuScreenState extends State<SudokuScreen> {
           if (selectionRadio.value == 1) {
             selectedNum = num;
           } else {
-            _doMoveAndApply(num, selectedRow, selectedCol);
+            if (_cellSelected()) {
+              _doMoveAndApply(num, selectedRow, selectedCol);
+            }
           }
         },
       );
@@ -998,7 +974,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
                   if (selectionRadio.value == 1) {
                     selectedNum = 10;
                   } else {
-                    _giveHintAndApply(selectedRow, selectedCol);
+                    _doMoveAndApply(10, selectedRow, selectedCol);
                   }
                 },
               ),
