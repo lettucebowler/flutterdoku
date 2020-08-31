@@ -24,8 +24,6 @@ class _SudokuScreenState extends State<SudokuScreen> {
   SolvingAssistant _assistant;
   FocusNode focusNode = FocusNode();
   var _actionMap;
-  var _correctnessRadio;
-  var _legalityRadio;
 
   Widget _moveButtons;
   Widget _gameButtons;
@@ -43,20 +41,36 @@ class _SudokuScreenState extends State<SudokuScreen> {
     _populateGridList();
     _actionMap = {
       // Move Down
-      LogicalKeyboardKey.arrowDown: () => _shiftFocus(1, 0),
-      LogicalKeyboardKey.keyS: () => _shiftFocus(1, 0),
+      LogicalKeyboardKey.arrowDown: () {
+        _shiftFocus(1, 0);
+      },
+      LogicalKeyboardKey.keyS: () {
+        _shiftFocus(1, 0);
+      },
 
       // Move Left
-      LogicalKeyboardKey.arrowLeft: () => _shiftFocus(0, -1),
-      LogicalKeyboardKey.keyA: () => _shiftFocus(0, -1),
+      LogicalKeyboardKey.arrowLeft: () {
+        _shiftFocus(0, -1);
+      },
+      LogicalKeyboardKey.keyA: () {
+        _shiftFocus(0, -1);
+      },
 
       // Move Right
-      LogicalKeyboardKey.arrowRight: () => _shiftFocus(0, 1),
-      LogicalKeyboardKey.keyD: () => _shiftFocus(0, 1),
+      LogicalKeyboardKey.arrowRight: () {
+        _shiftFocus(0, 1);
+      },
+      LogicalKeyboardKey.keyD: () {
+        _shiftFocus(0, 1);
+      },
 
       // Move Up
-      LogicalKeyboardKey.arrowUp: () => _shiftFocus(-1, 0),
-      LogicalKeyboardKey.keyW: () => _shiftFocus(-1, 0),
+      LogicalKeyboardKey.arrowUp: () {
+        _shiftFocus(-1, 0);
+      },
+      LogicalKeyboardKey.keyW: () {
+        _shiftFocus(-1, 0);
+      },
 
       // Place 0 / Delete number from cell
       LogicalKeyboardKey.digit0: () =>
@@ -137,9 +151,20 @@ class _SudokuScreenState extends State<SudokuScreen> {
         _whiteoutBoard(num, selectedRow, selectedCol);
         selectedRow = ((selectedRow + rowOffset) % problem.board_size);
         selectedCol = ((selectedCol + colOffset) % problem.board_size);
+        if (_digitGood()) {
+          if (selectedNum == 10) {
+            _giveHint(selectedRow, selectedCol);
+          } else {
+            _doMove(selectedNum, selectedRow, selectedCol);
+          }
+        }
         _updateCells(selectedRow, selectedCol);
       });
     }
+  }
+
+  bool _digitGood() {
+    return selectionRadio.value == 1 && selectedNum > -1 && selectedNum <= 10;
   }
 
   @override
@@ -262,21 +287,42 @@ class _SudokuScreenState extends State<SudokuScreen> {
                             ? Column(
                                 children: [
                                   getStyledRadio(
-                                      _correctnessRadio,
-                                      'Correctness',
-                                      0,
-                                      legalityRadio, (var val) {
+                                      'Correctness', 0, legalityRadio,
+                                      (var val) {
                                     _setIntWrapper(0, legalityRadio);
                                     _populateGridList();
                                   }),
-                                  getStyledRadio(_legalityRadio, 'Legality', 1,
-                                      legalityRadio, (var val) {
+                                  getStyledRadio('Legality', 1, legalityRadio,
+                                      (var val) {
                                     _setIntWrapper(1, legalityRadio);
                                     _populateGridList();
                                   }),
                                 ],
                               )
                             : Container(),
+                      ),
+                      Text(
+                        'Selection Order',
+                        style: TextStyle(
+                          color: CustomStyles.nord3,
+                          fontSize: 17,
+                        ),
+                        textAlign: TextAlign.left,
+                      ),
+                      Column(
+                        children: [
+                          getStyledRadio('Cell First', 0, selectionRadio,
+                              (var val) {
+                            _setIntWrapper(0, selectionRadio);
+                            // _populateGridList();
+                          }),
+                          getStyledRadio('Digit First', 1, selectionRadio,
+                              (var val) {
+                            _setIntWrapper(1, selectionRadio);
+                            selectedNum = -1;
+                            // _populateGridList();
+                          }),
+                        ],
                       ),
                       const Text(
                         'Initial Hints',
@@ -515,12 +561,13 @@ class _SudokuScreenState extends State<SudokuScreen> {
   void _resetGlobals() {
     selectedRow = -1;
     selectedCol = -1;
+    selectedNum = -1;
     hintsGiven.clear();
   }
 
   void _resetBoard(Problem problem) {
     setState(() {
-      problem.setCurrentState(problem.getInitialState());
+      _assistant.reset();
       _resetGlobals();
       _populateGridList();
     });
@@ -559,7 +606,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
     var validRow = row > -1 && row < 10;
     var validCol = col > -1 && col < 10;
     var validCell = validRow && validCol;
-    if (!problem.success() && validCell) {
+    if (!_assistant.isProblemSolved() && validCell) {
       SudokuState finalState = problem.getFinalState();
       List finalBoard = finalState.getTiles();
       var num = finalBoard[row][col];
@@ -579,19 +626,17 @@ class _SudokuScreenState extends State<SudokuScreen> {
   }
 
   void _doMove(int num, int row, int col) {
-    if (!problem.success() && _cellSelected()) {
+    if (!_assistant.isProblemSolved() && _cellSelected()) {
       SudokuState initialState = problem.getInitialState();
       var initialBoard = initialState.getTiles();
       var notInitialHint = initialBoard[row][col] == 0;
-      if (!problem.success() && notInitialHint) {
+      if (notInitialHint) {
         var move = 'Place ' +
             num.toString() +
             ' at ' +
             row.toString() +
             ' ' +
             col.toString();
-        // print('doMove: ' + move);
-
         _assistant.tryMove(move);
         var changeIndex = row * problem.board_size + col % problem.board_size;
         _sudokuGrid[changeIndex] =
@@ -731,15 +776,25 @@ class _SudokuScreenState extends State<SudokuScreen> {
         child: InkWell(
           hoverColor: CustomStyles.nord13,
           splashColor: CustomStyles.nord12,
-          onTap: () => setState(() {
+          onTap: () {
             if (_cellSelected()) {
               _whiteoutBoard(currentBoard[selectedRow][selectedCol],
                   selectedRow, selectedCol);
             }
             selectedRow = row;
             selectedCol = col;
+            if (selectionRadio.value == 1 &&
+                selectedNum > -1 &&
+                selectedNum <= 10) {
+              if (selectedNum == 10) {
+                _giveHint(row, col);
+              } else {
+                _doMove(selectedNum, row, col);
+              }
+            }
             _updateCells(selectedRow, selectedCol);
-          }),
+            setState(() {});
+          },
           child: Center(
             child: AutoSizeText(
               toPlace,
@@ -828,7 +883,11 @@ class _SudokuScreenState extends State<SudokuScreen> {
                           CustomStyles.nord3,
                           CustomStyles.nord0,
                           () {
-                            _doMoveAndApply(num, selectedRow, selectedCol);
+                            if (selectionRadio.value == 1) {
+                              selectedNum = num;
+                            } else {
+                              _doMoveAndApply(num, selectedRow, selectedCol);
+                            }
                           },
                         ),
                       ),
@@ -900,7 +959,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
                 CustomStyles.nord3,
                 CustomStyles.nord0,
                 () {
-                  _giveHintAndApply(selectedRow, selectedCol);
+                  selectedNum = 10;
                 },
               ),
             ),

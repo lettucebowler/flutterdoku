@@ -9,7 +9,7 @@ Future<bool> readFromPrefs() async {
   final peerCells = prefs.getBool('doPeerCells');
   final peerDigits = prefs.getBool('doPeerDigits');
   final mistakes = prefs.getBool('doMistakes');
-  final cellNow = prefs.getBool('cellFirst');
+  final cellNow = prefs.getInt('cellFirst');
   final hints = prefs.getInt('initialHints');
   final legality = prefs.getInt('legalityRadio');
 
@@ -20,7 +20,7 @@ Future<bool> readFromPrefs() async {
   doMistakes.value = mistakes ?? true;
   initialHints.value = hintsGood ? hints : 30;
   legalityRadio.value = legality == 1 || legality == 0 ? legality : 0;
-  cellFirst.value = cellNow ?? true;
+  selectionRadio.value = cellNow ?? true;
   return true;
 }
 
@@ -31,11 +31,11 @@ saveToPrefs() async {
   final digits = doPeerDigits.value;
   final mistakes = doMistakes.value;
   final hints = initialHints.value;
-  final cellNow = cellFirst.value;
+  final cellNow = selectionRadio.value;
   prefs.setBool('doPeerCells', cells);
   prefs.setBool('doPeerDigits', digits);
   prefs.setBool('doMistakes', mistakes);
-  prefs.setBool('cellFirst', cellNow);
+  prefs.setInt('cellFirst', cellNow);
   prefs.setInt('legalityRadio', legality);
   prefs.setInt('initialHints', hints);
 }

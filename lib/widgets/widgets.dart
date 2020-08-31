@@ -29,7 +29,8 @@ Widget getFlatButton(
   );
 }
 
-Widget getStyledToggleRow(String label, VariableWrapper setting, Function onChanged) {
+Widget getStyledToggleRow(
+    String label, VariableWrapper setting, Function onChanged) {
   return Row(
     mainAxisAlignment: MainAxisAlignment.spaceBetween,
     children: [
@@ -84,21 +85,19 @@ Widget getStyledSliderRow(VariableWrapper setting, double min, double max,
 }
 
 Widget getStyledRadio(
-    Radio radio, String label, int value, var groupValue, Function onChanged) {
-  return radio == null || radio.value != value
-      ? Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Text(label),
-            Radio(
-              activeColor: CustomStyles.nord3,
-              value: value,
-              groupValue: groupValue.value,
-              onChanged: onChanged,
-            ),
-          ],
-        )
-      : radio;
+    String label, int value, var groupValue, Function onChanged) {
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.end,
+    children: [
+      Text(label),
+      Radio(
+        activeColor: CustomStyles.nord3,
+        value: value,
+        groupValue: groupValue.value,
+        onChanged: onChanged,
+      ),
+    ],
+  );
 }
 
 Widget getWidgetGroup(List radioList) {
