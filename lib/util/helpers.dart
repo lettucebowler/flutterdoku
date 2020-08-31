@@ -20,7 +20,7 @@ Future<bool> readFromPrefs() async {
   doMistakes.value = mistakes ?? true;
   initialHints.value = hintsGood ? hints : 30;
   legalityRadio.value = legality == 1 || legality == 0 ? legality : 0;
-  selectionRadio.value = cellNow ?? true;
+  selectionRadio.value = cellNow ?? 0;
   return true;
 }
 
