@@ -28,6 +28,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
   Widget _moveButtons;
   Widget _gameButtons;
   List<Widget> _sudokuGrid = List(81);
+  List<Widget> _moveGrid = List(10);
 
   @override
   void initState() {
@@ -39,6 +40,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
     _gameButtons = _getGameButtons();
     _assistant = SolvingAssistant(problem);
     _populateGridList();
+    _populateMoveGrid();
     _actionMap = {
       // Move Down
       LogicalKeyboardKey.arrowDown: () {
@@ -626,22 +628,27 @@ class _SudokuScreenState extends State<SudokuScreen> {
   }
 
   void _doMove(int num, int row, int col) {
-    if (!_assistant.isProblemSolved() && _cellSelected()) {
+    bool numGood = num > -1 && num < 11;
+    if (!_assistant.isProblemSolved() && _cellSelected() && numGood) {
       SudokuState initialState = problem.getInitialState();
       var initialBoard = initialState.getTiles();
       var notInitialHint = initialBoard[row][col] == 0;
       if (notInitialHint) {
-        var move = 'Place ' +
-            num.toString() +
-            ' at ' +
-            row.toString() +
-            ' ' +
-            col.toString();
-        _assistant.tryMove(move);
-        var changeIndex = row * problem.board_size + col % problem.board_size;
-        _sudokuGrid[changeIndex] =
-            _makeBoardButton(changeIndex, _getCellColor(row, col));
+        if (num < 10) {
+          var move = 'Place ' +
+              num.toString() +
+              ' at ' +
+              row.toString() +
+              ' ' +
+              col.toString();
+          _assistant.tryMove(move);
+        } else if (num == 10) {
+          _giveHint(row, col);
+        }
       }
+      var changeIndex = row * problem.board_size + col % problem.board_size;
+      _sudokuGrid[changeIndex] =
+          _makeBoardButton(changeIndex, _getCellColor(row, col));
     }
   }
 
@@ -857,48 +864,77 @@ class _SudokuScreenState extends State<SudokuScreen> {
     }
   }
 
+  void _populateMoveGrid() {
+    _moveGrid = List.generate(10, (index) {
+      int num = index + 1 % problem.board_size;
+      String toPlace = num == 0 ? 'X' : (num).toString();
+      return getFlatButton(
+        toPlace,
+        CustomStyles.nord6,
+        36,
+        TextAlign.center,
+        CustomStyles.nord3,
+        CustomStyles.nord0,
+        () {
+          if (selectionRadio.value == 1) {
+            selectedNum = num;
+          } else {
+            _doMoveAndApply(num, selectedRow, selectedCol);
+          }
+        },
+      );
+    });
+  }
+
   Widget _getMoveButtons() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        Expanded(
-          child: Column(
-            children: List.generate(2, (rowIndex) {
-              return Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: List.generate(5, (colIndex) {
-                  int offset = rowIndex * 5;
-                  int num = (colIndex + 1 + offset) % (problem.board_size + 1);
-                  String toPlace = num == 0 ? 'X' : (num).toString();
-                  return Expanded(
-                    child: Container(
-                      padding: EdgeInsets.all(2),
-                      child: AspectRatio(
-                        aspectRatio: 1,
-                        child: getFlatButton(
-                          toPlace,
-                          CustomStyles.nord6,
-                          36,
-                          TextAlign.center,
-                          CustomStyles.nord3,
-                          CustomStyles.nord0,
-                          () {
-                            if (selectionRadio.value == 1) {
-                              selectedNum = num;
-                            } else {
-                              _doMoveAndApply(num, selectedRow, selectedCol);
-                            }
-                          },
-                        ),
-                      ),
-                    ),
-                  );
-                }),
-              );
-            }),
-          ),
-        ),
-      ],
+    // return Column(
+    //   mainAxisAlignment: MainAxisAlignment.end,
+    //   children: [
+    //     Expanded(
+    //       child: Column(
+    //         children: List.generate(2, (rowIndex) {
+    //           return Row(
+    //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    //             children: List.generate(5, (colIndex) {
+    //               int offset = rowIndex * 5;
+    //               int num = (colIndex + 1 + offset) % (problem.board_size + 1);
+    //               String toPlace = num == 0 ? 'X' : (num).toString();
+    //               return Expanded(
+    //                 child: Container(
+    //                   padding: EdgeInsets.all(2),
+    //                   child: AspectRatio(
+    //                     aspectRatio: 1,
+    //                     child: getFlatButton(
+    //                       toPlace,
+    //                       CustomStyles.nord6,
+    //                       36,
+    //                       TextAlign.center,
+    //                       CustomStyles.nord3,
+    //                       CustomStyles.nord0,
+    //                       () {
+    //                         if (selectionRadio.value == 1) {
+    //                           selectedNum = num;
+    //                         } else {
+    //                           _doMoveAndApply(num, selectedRow, selectedCol);
+    //                         }
+    //                       },
+    //                     ),
+    //                   ),
+    //                 ),
+    //               );
+    //             }),
+    //           );
+    //         }),
+    //       ),
+    //     ),
+    //   ],
+    // );
+
+    return GridView.builder(
+      itemCount: _moveGrid.length,
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 5, mainAxisSpacing: 4, crossAxisSpacing: 4),
+      itemBuilder: (BuildContext context, int index) => _moveGrid[index],
     );
   }
 
@@ -959,7 +995,11 @@ class _SudokuScreenState extends State<SudokuScreen> {
                 CustomStyles.nord3,
                 CustomStyles.nord0,
                 () {
-                  selectedNum = 10;
+                  if (selectionRadio.value == 1) {
+                    selectedNum = 10;
+                  } else {
+                    _giveHintAndApply(selectedRow, selectedCol);
+                  }
                 },
               ),
             ),
@@ -1002,7 +1042,9 @@ class _SudokuScreenState extends State<SudokuScreen> {
         Flexible(
           flex: 6,
           child: AspectRatio(
-              aspectRatio: 5 / 2, child: Container(child: _moveButtons)),
+              aspectRatio: 5 / 2,
+              child:
+                  Container(padding: EdgeInsets.all(2), child: _moveButtons)),
         ),
         Flexible(
           flex: 2,
