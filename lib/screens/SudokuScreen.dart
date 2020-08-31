@@ -6,7 +6,6 @@ import 'package:lettuce_sudoku/domains/sudoku/SudokuState.dart';
 import 'package:lettuce_sudoku/framework/problem/Problem.dart';
 import 'package:lettuce_sudoku/framework/problem/SolvingAssistant.dart';
 import 'package:lettuce_sudoku/util/CustomStyles.dart';
-import 'package:lettuce_sudoku/util/SudokuScreenFunctions.dart';
 import 'package:lettuce_sudoku/util/globals.dart';
 import 'package:lettuce_sudoku/util/helpers.dart';
 import 'package:lettuce_sudoku/widgets/widgets.dart';
