@@ -1,5 +1,3 @@
-import 'dart:html';
-
 import 'package:lettuce_sudoku/domains/sudoku/SudokuProblem.dart';
 
 VariableWrapper doPeerCells = VariableWrapper(true);
