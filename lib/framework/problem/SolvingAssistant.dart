@@ -1,8 +1,7 @@
 import 'dart:core';
-
-import 'package:lettuce_sudoku/framework/problem/Mover.dart';
-import 'package:lettuce_sudoku/framework/problem/Problem.dart';
-import 'package:lettuce_sudoku/framework/problem/State.dart';
+import 'Mover.dart';
+import 'Problem.dart';
+import 'State.dart';
 
 /*
  * This class provides support as the user attempts to solve a problem.

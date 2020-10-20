@@ -1,6 +1,5 @@
 import 'dart:core';
-
-import 'package:lettuce_sudoku/framework/problem/State.dart';
+import '../../framework/problem/State.dart';
 
 /*
  * This class represents states of various tile-moving puzzle problems,

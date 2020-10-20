@@ -1,7 +1,6 @@
 import 'dart:core';
-
-import 'package:lettuce_sudoku/framework/problem/Mover.dart';
-import 'package:lettuce_sudoku/framework/problem/State.dart';
+import 'State.dart';
+import 'Mover.dart';
 
 /*
  * This class represents problems in a problem solving domain.
