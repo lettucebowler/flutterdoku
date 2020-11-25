@@ -66,10 +66,19 @@ saveGame() async {
     hintString += hintsGiven[i][1].toString();
   }
 
+  String moveString = '';
+  for (var i = 0; i < movesDone.length; i++) {
+    moveString += movesDone[i].oldNum.toString();
+    moveString += movesDone[i].newNum.toString();
+    moveString += movesDone[i].row.toString();
+    moveString += movesDone[i].col.toString();
+  }
+
   prefs.setString('initialBoard', initialString);
   prefs.setString('currentBoard', currentString);
   prefs.setString('finalBoard', finalString);
   prefs.setString('hintsGiven', hintString);
+  prefs.setString('movesDone', moveString);
 }
 
 Future<bool> applyGameState() async {
@@ -78,6 +87,7 @@ Future<bool> applyGameState() async {
   final currentString = prefs.getString('currentBoard') ?? '';
   final finalString = prefs.getString('finalBoard') ?? '';
   final hintString = prefs.getString('hintsGiven') ?? '';
+  final moveString = prefs.getString('movesDone') ?? '';
   List initialBoard = List.generate(9, (i) => List(9), growable: false);
   List currentBoard = List.generate(9, (i) => List(9), growable: false);
   List finalBoard = List.generate(9, (i) => List(9), growable: false);
@@ -96,6 +106,15 @@ Future<bool> applyGameState() async {
     int row = int.parse(hintString[i * 2]);
     int col = int.parse(hintString[i * 2 + 1]);
     hintsGiven.add([row, col]);
+  }
+
+  movesDone = [];
+  for(var i = 0; i < moveString.length ~/ 4; i++) {
+    int oldNum = int.parse(moveString[i * 4]);
+    int newNum = int.parse(moveString[i * 4 + 1]);
+    int row = int.parse(moveString[i * 4 + 2]);
+    int col = int.parse(moveString[i * 4 + 3]);
+    movesDone.add(Move(oldNum, newNum, row, col));
   }
 
   return true;

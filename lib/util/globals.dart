@@ -13,11 +13,27 @@ int selectedCol = -1;
 int selectedNum = -1;
 double bodySpacing = 2;
 List hintsGiven = [];
+List movesDone = [];
 SudokuProblem problem;
 
 class VariableWrapper {
   var value;
   VariableWrapper(var value) {
     this.value = value;
+  }
+}
+
+class Move {
+
+  int oldNum;
+  int newNum;
+  int row;
+  int col;
+
+  Move(oldNum, newNum, row, col) {
+    this.oldNum = oldNum;
+    this.newNum = newNum;
+    this.row = row;
+    this.col = col;
   }
 }

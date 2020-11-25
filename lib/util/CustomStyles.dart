@@ -9,7 +9,7 @@ class CustomStyles {
   static const nord0 = Color(0xFF2e3440);
   static const nord1 = Color(0xFF3b4252);
   static const nord2 = Color(0xFF434c5e);
-  static const nord3 = Color(theme);
+  static const nord3 = Color(0xFF4c566a);
 
   // Snow Storm
   static const nord4 = Color(0xFFd8dee9);

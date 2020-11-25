@@ -561,6 +561,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
     selectedCol = -1;
     selectedNum = -1;
     hintsGiven.clear();
+    movesDone.clear();
   }
 
   void _resetBoard(Problem problem) {
@@ -608,6 +609,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
         _digitGood(num)) {
       SudokuState initialState = problem.getInitialState();
       var initialBoard = initialState.getTiles();
+      
       var notInitialHint = initialBoard[row][col] == 0;
       if (notInitialHint) {
         if (num == 10) {
@@ -623,6 +625,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
             ' ' +
             col.toString();
         _assistant.tryMove(move);
+        
       }
       var changeIndex = row * problem.board_size + col % problem.board_size;
       _sudokuGrid[changeIndex] =
@@ -630,10 +633,26 @@ class _SudokuScreenState extends State<SudokuScreen> {
     }
   }
 
+  void _undoMove() {
+    var initialState = problem.initialState as SudokuState;
+    var currentState = problem.currentState as SudokuState;
+    if(!currentState.equals(initialState) && movesDone.isNotEmpty) {
+      Move lastMove = movesDone.removeLast();
+      var num = lastMove.oldNum;
+      var row = lastMove.row;
+      var col = lastMove.col;
+      _selectCell(row, col);
+      _doMoveAndApply(num, row, col);
+      movesDone.removeLast();
+    }
+    
+  }
+
   void _doMoveAndApply(int num, int row, int col) {
-    var currentState = problem.getCurrentState() as SudokuState;
+    var currentState = problem.currentState as SudokuState;
     var currentBoard = currentState.getTiles();
     _doMove(num, row, col);
+    movesDone.add(Move(currentBoard[row][col], num, row, col));
     _whiteoutBoard(
         currentBoard[selectedRow][selectedCol], selectedRow, selectedCol);
     saveGame();
@@ -669,39 +688,50 @@ class _SudokuScreenState extends State<SudokuScreen> {
     Color background = CustomStyles.nord6;
     Color peerDigit = CustomStyles.nord9;
     Color success = CustomStyles.nord14;
+    Color wrong = CustomStyles.nord12;
+    Color selected = CustomStyles.nord13;
     Color color = background;
+
+    SudokuState currentState = problem.getCurrentState();
+    List currentBoard = currentState.getTiles();
 
     bool rowSelected = row == selectedRow;
     bool colSelected = col == selectedCol;
+    bool isSelected = rowSelected && colSelected;
+
     bool floorSelected =
         row ~/ problem.cell_size == selectedRow ~/ problem.cell_size;
     bool towerSelected =
         col ~/ problem.cell_size == selectedCol ~/ problem.cell_size;
-    bool cells = doPeerCells.value;
-    bool digits = doPeerDigits.value;
-    SudokuState currentState = problem.getCurrentState();
-    List currentBoard = currentState.getTiles();
-    bool sameDigit = _cellSelected() &&
-        currentBoard[row][col] == currentBoard[selectedRow][selectedCol];
+    bool blockSelected = floorSelected && towerSelected;
+
+    bool doCells = doPeerCells.value;
+    bool doDigits = doPeerDigits.value;
+    bool isPeerCell = _cellSelected() && !isSelected && (rowSelected || colSelected || blockSelected);
     bool nonZero = _cellSelected() && currentBoard[row][col] != 0;
+    bool isPeerDigit = _cellSelected() && currentBoard[row][col] == currentBoard[selectedRow][selectedCol] && nonZero;
+    bool peerCellNotPeerDigit = isPeerCell && !isPeerDigit;
 
-    color = rowSelected && colSelected ? peerDigit : color;
-    color = cells &&
-            _cellSelected() &&
-            (rowSelected || colSelected || (floorSelected && towerSelected))
-        ? peerCell
-        : color;
-    color = digits &&
-            _cellSelected() &&
-            ((sameDigit && nonZero) ||
-                (sameDigit && rowSelected && colSelected))
-        ? peerDigit
-        : color;
-    color = cells && rowSelected && colSelected ? background : color;
-    color = digits && !cells && rowSelected && colSelected ? peerCell : color;
-    color = problem.success() ? success : color;
-
-    return color;
+    if(problem.success()) {
+      return success;
+    }
+    else if(_cellSelected()) {
+      if(peerCellNotPeerDigit && doCells) {
+        return peerCell;
+      }
+      else if(isPeerDigit && nonZero && !isSelected && doDigits) {
+        return isPeerCell && !problem.isLegal(row, col) && doMistakes.value ? wrong : peerDigit;
+      }
+      else if(isSelected) {
+        return selected;
+      }
+      else {
+        return color;
+      }
+    }
+    else {
+      return color;
+    }
   }
 
   void _whiteoutBoard(int num, int row, int col) {
@@ -761,21 +791,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
         child: InkWell(
           hoverColor: CustomStyles.nord13,
           splashColor: CustomStyles.nord12,
-          onTap: () {
-            if (_cellSelected()) {
-              _whiteoutBoard(currentBoard[selectedRow][selectedCol],
-                  selectedRow, selectedCol);
-            }
-            selectedRow = row;
-            selectedCol = col;
-            if (selectionRadio.value == 1 &&
-                selectedNum > -1 &&
-                selectedNum <= 10) {
-              _doMove(selectedNum, row, col);
-            }
-            _updateCells(selectedRow, selectedCol);
-            setState(() {});
-          },
+          onTap: () => _selectCell(row, col),
           child: Center(
             child: AutoSizeText(
               toPlace,
@@ -794,6 +810,21 @@ class _SudokuScreenState extends State<SudokuScreen> {
       ),
     );
     return button;
+  }
+
+  void _selectCell(int row, int col) {
+    var currentState = problem.currentState as SudokuState;
+    var currentBoard = currentState.getTiles();
+    if (_cellSelected()) {
+      var num = currentBoard[selectedRow][selectedCol];
+      _whiteoutBoard(num, selectedRow, selectedCol);
+    }
+    selectedRow = row;
+    selectedCol = col;
+    if (selectionRadio.value == 1 && selectedNum > -1 && selectedNum <= 10) {
+      _doMove(selectedNum, row, col);            }
+      _updateCells(selectedRow, selectedCol);
+      setState(() {});
   }
 
   void _updateCells(int row, int col) {
@@ -886,7 +917,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
         ? CustomStyles.nord11
         : color;
     color = initialHint ? CustomStyles.nord3 : color;
-    color = _givenAsHint(row, col) ? CustomStyles.nord15 : color;
+    color = _givenAsHint(row, col) ? CustomStyles.nord3 : color;
     return color;
   }
 
@@ -896,6 +927,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
       children: <Widget>[
         Flexible(
           fit: FlexFit.tight,
+          flex: 2, 
           child: AspectRatio(
             aspectRatio: 1,
             child: Container(
@@ -916,6 +948,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
         ),
         Flexible(
           fit: FlexFit.tight,
+          flex: 2, 
           child: AspectRatio(
             aspectRatio: 1,
             child: Container(
@@ -933,6 +966,27 @@ class _SudokuScreenState extends State<SudokuScreen> {
                   } else {
                     _doMoveAndApply(10, selectedRow, selectedCol);
                   }
+                },
+              ),
+            ),
+          ),
+        ),
+        Flexible(
+          fit: FlexFit.tight,
+          flex: 1,
+          child: AspectRatio(
+            aspectRatio: 1,
+            child: Container(
+              padding: EdgeInsets.all(2),
+              child: getFlatButton(
+                '<-',
+                CustomStyles.nord6,
+                24,
+                TextAlign.center,
+                CustomStyles.nord3,
+                CustomStyles.nord0,
+                () {
+                  _undoMove();
                 },
               ),
             ),
