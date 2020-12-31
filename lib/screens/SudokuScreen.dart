@@ -1,5 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:lettuce_sudoku/domains/sudoku/SudokuProblem.dart';
 import 'package:lettuce_sudoku/domains/sudoku/SudokuState.dart';
@@ -282,7 +283,8 @@ class _SudokuScreenState extends State<SudokuScreen> {
                           sizeFactor: animation,
                         ),
                         child: doMistakes.value
-                            ? Column(
+                            ? Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
                                   getStyledRadio(
                                       'Correctness', 0, legalityRadio,
@@ -307,7 +309,8 @@ class _SudokuScreenState extends State<SudokuScreen> {
                         ),
                         textAlign: TextAlign.left,
                       ),
-                      Column(
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           getStyledRadio('Cell First', 0, selectionRadio,
                               (var val) {
@@ -609,7 +612,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
         _digitGood(num)) {
       SudokuState initialState = problem.getInitialState();
       var initialBoard = initialState.getTiles();
-      
+
       var notInitialHint = initialBoard[row][col] == 0;
       if (notInitialHint) {
         if (num == 10) {
@@ -625,7 +628,6 @@ class _SudokuScreenState extends State<SudokuScreen> {
             ' ' +
             col.toString();
         _assistant.tryMove(move);
-        
       }
       var changeIndex = row * problem.board_size + col % problem.board_size;
       _sudokuGrid[changeIndex] =
@@ -636,7 +638,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
   void _undoMove() {
     var initialState = problem.initialState as SudokuState;
     var currentState = problem.currentState as SudokuState;
-    if(!currentState.equals(initialState) && movesDone.isNotEmpty) {
+    if (!currentState.equals(initialState) && movesDone.isNotEmpty) {
       Move lastMove = movesDone.removeLast();
       var num = lastMove.oldNum;
       var row = lastMove.row;
@@ -645,7 +647,6 @@ class _SudokuScreenState extends State<SudokuScreen> {
       _doMoveAndApply(num, row, col);
       movesDone.removeLast();
     }
-    
   }
 
   void _doMoveAndApply(int num, int row, int col) {
@@ -707,29 +708,30 @@ class _SudokuScreenState extends State<SudokuScreen> {
 
     bool doCells = doPeerCells.value;
     bool doDigits = doPeerDigits.value;
-    bool isPeerCell = _cellSelected() && !isSelected && (rowSelected || colSelected || blockSelected);
+    bool isPeerCell = _cellSelected() &&
+        !isSelected &&
+        (rowSelected || colSelected || blockSelected);
     bool nonZero = _cellSelected() && currentBoard[row][col] != 0;
-    bool isPeerDigit = _cellSelected() && currentBoard[row][col] == currentBoard[selectedRow][selectedCol] && nonZero;
+    bool isPeerDigit = _cellSelected() &&
+        currentBoard[row][col] == currentBoard[selectedRow][selectedCol] &&
+        nonZero;
     bool peerCellNotPeerDigit = isPeerCell && !isPeerDigit;
 
-    if(problem.success()) {
+    if (problem.success()) {
       return success;
-    }
-    else if(_cellSelected()) {
-      if(peerCellNotPeerDigit && doCells) {
+    } else if (_cellSelected()) {
+      if (peerCellNotPeerDigit && doCells) {
         return peerCell;
-      }
-      else if(isPeerDigit && nonZero && !isSelected && doDigits) {
-        return isPeerCell && !problem.isLegal(row, col) && doMistakes.value ? wrong : peerDigit;
-      }
-      else if(isSelected) {
+      } else if (isPeerDigit && nonZero && !isSelected && doDigits) {
+        return isPeerCell && !problem.isLegal(row, col) && doMistakes.value
+            ? wrong
+            : peerDigit;
+      } else if (isSelected) {
         return selected;
-      }
-      else {
+      } else {
         return color;
       }
-    }
-    else {
+    } else {
       return color;
     }
   }
@@ -822,9 +824,10 @@ class _SudokuScreenState extends State<SudokuScreen> {
     selectedRow = row;
     selectedCol = col;
     if (selectionRadio.value == 1 && selectedNum > -1 && selectedNum <= 10) {
-      _doMove(selectedNum, row, col);            }
-      _updateCells(selectedRow, selectedCol);
-      setState(() {});
+      _doMove(selectedNum, row, col);
+    }
+    _updateCells(selectedRow, selectedCol);
+    setState(() {});
   }
 
   void _updateCells(int row, int col) {
@@ -927,7 +930,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
       children: <Widget>[
         Flexible(
           fit: FlexFit.tight,
-          flex: 2, 
+          flex: 2,
           child: AspectRatio(
             aspectRatio: 1,
             child: Container(
@@ -948,7 +951,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
         ),
         Flexible(
           fit: FlexFit.tight,
-          flex: 2, 
+          flex: 2,
           child: AspectRatio(
             aspectRatio: 1,
             child: Container(
@@ -1016,6 +1019,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
               child: Container(
                 color: CustomStyles.nord3,
                 child: GridView.builder(
+                  physics: const NeverScrollableScrollPhysics(),
                   itemCount: _sudokuGrid.length,
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: problem.board_size),
