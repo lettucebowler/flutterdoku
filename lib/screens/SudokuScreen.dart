@@ -292,11 +292,19 @@ class _SudokuScreenState extends State<SudokuScreen> {
                                     _setIntWrapper(0, legalityRadio);
                                     _populateGridList();
                                   }),
+                                  Padding(
+                                      padding: EdgeInsets.only(
+                                    right: 12,
+                                  )),
                                   getStyledRadio('Legality', 1, legalityRadio,
                                       (var val) {
                                     _setIntWrapper(1, legalityRadio);
                                     _populateGridList();
                                   }),
+                                  Padding(
+                                      padding: EdgeInsets.only(
+                                    right: 4,
+                                  )),
                                 ],
                               )
                             : Container(),
@@ -323,6 +331,10 @@ class _SudokuScreenState extends State<SudokuScreen> {
                             selectedNum = -1;
                             // _populateGridList();
                           }),
+                          Padding(
+                              padding: EdgeInsets.only(
+                            right: 4,
+                          )),
                         ],
                       ),
                       const Text(
