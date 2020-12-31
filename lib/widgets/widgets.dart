@@ -89,7 +89,13 @@ Widget getStyledRadio(
   return Row(
     mainAxisAlignment: MainAxisAlignment.end,
     children: [
-      Text(label),
+      Text(
+        label,
+        style: TextStyle(
+          color: CustomStyles.nord3,
+          fontSize: 14,
+        ),
+      ),
       Radio(
         activeColor: CustomStyles.nord3,
         value: value,

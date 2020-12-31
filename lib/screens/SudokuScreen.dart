@@ -287,21 +287,24 @@ class _SudokuScreenState extends State<SudokuScreen> {
                             ? Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
-                                  getStyledRadio(
-                                      'Correctness', 0, legalityRadio,
-                                      (var val) {
-                                    _setIntWrapper(0, legalityRadio);
-                                    _populateGridList();
-                                  }),
-                                  Padding(
-                                      padding: EdgeInsets.only(
-                                    right: 12,
-                                  )),
-                                  getStyledRadio('Legality', 1, legalityRadio,
-                                      (var val) {
-                                    _setIntWrapper(1, legalityRadio);
-                                    _populateGridList();
-                                  }),
+                                  Container(
+                                    width: 130,
+                                    child: getStyledRadio(
+                                        'Correctness', 0, legalityRadio,
+                                        (var val) {
+                                      _setIntWrapper(0, legalityRadio);
+                                      _populateGridList();
+                                    }),
+                                  ),
+                                  Container(
+                                    width: 110,
+                                    child: getStyledRadio(
+                                        'Legality', 1, legalityRadio,
+                                        (var val) {
+                                      _setIntWrapper(1, legalityRadio);
+                                      _populateGridList();
+                                    }),
+                                  ),
                                   Padding(
                                       padding: EdgeInsets.only(
                                     right: 4,
@@ -321,17 +324,23 @@ class _SudokuScreenState extends State<SudokuScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          getStyledRadio('Cell First', 0, selectionRadio,
-                              (var val) {
-                            _setIntWrapper(0, selectionRadio);
-                            // _populateGridList();
-                          }),
-                          getStyledRadio('Digit First', 1, selectionRadio,
-                              (var val) {
-                            _setIntWrapper(1, selectionRadio);
-                            selectedNum = -1;
-                            // _populateGridList();
-                          }),
+                          Container(
+                            width: 130,
+                            child: getStyledRadio(
+                                'Cell First', 0, selectionRadio, (var val) {
+                              _setIntWrapper(0, selectionRadio);
+                              // _populateGridList();
+                            }),
+                          ),
+                          Container(
+                            width: 110,
+                            child: getStyledRadio(
+                                'Digit First', 1, selectionRadio, (var val) {
+                              _setIntWrapper(1, selectionRadio);
+                              selectedNum = -1;
+                              // _populateGridList();
+                            }),
+                          ),
                           Padding(
                               padding: EdgeInsets.only(
                             right: 4,
