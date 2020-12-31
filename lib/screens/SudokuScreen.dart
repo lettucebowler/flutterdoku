@@ -177,6 +177,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
           textAlign: TextAlign.center,
           style: CustomStyles.titleText,
         ),
+        brightness: Brightness.dark,
       ),
       drawer: Drawer(
         child: ListView(
