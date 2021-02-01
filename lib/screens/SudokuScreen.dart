@@ -26,8 +26,6 @@ class _SudokuScreenState extends State<SudokuScreen> {
   FocusNode focusNode = FocusNode();
   var _actionMap;
 
-  Widget _moveButtons;
-  Widget _gameButtons;
   List<Widget> _sudokuGrid = List(81);
   List<Widget> _moveGrid = List(10);
 
@@ -37,8 +35,6 @@ class _SudokuScreenState extends State<SudokuScreen> {
     if (problem == null) {
       _newGameAndSave();
     }
-    _moveButtons = _getMoveButtons();
-    _gameButtons = _getGameButtons();
     _assistant = SolvingAssistant(problem);
     _populateGridList();
     _populateMoveGrid();
@@ -198,9 +194,8 @@ class _SudokuScreenState extends State<SudokuScreen> {
               children: [
                 const Spacer(flex: 2),
                 Expanded(
-                  flex: 35,
+                  flex: 33,
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -226,7 +221,6 @@ class _SudokuScreenState extends State<SudokuScreen> {
                           ),
                         ],
                       ),
-                      // _doPeerCellsToggle,
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -275,279 +269,361 @@ class _SudokuScreenState extends State<SudokuScreen> {
                           ),
                         ],
                       ),
-                      AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 300),
-                        transitionBuilder:
-                            (Widget child, Animation<double> animation) =>
-                                SizeTransition(
-                          child: child,
-                          sizeFactor: animation,
-                        ),
-                        child: doMistakes.value
-                            ? Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  Container(
-                                    width: 130,
-                                    child: getStyledRadio(
-                                        'Correctness', 0, legalityRadio,
-                                        (var val) {
-                                      _setIntWrapper(0, legalityRadio);
-                                      _populateGridList();
-                                    }),
-                                  ),
-                                  Container(
-                                    width: 110,
-                                    child: getStyledRadio(
-                                        'Legality', 1, legalityRadio,
-                                        (var val) {
-                                      _setIntWrapper(1, legalityRadio);
-                                      _populateGridList();
-                                    }),
-                                  ),
-                                  Padding(
-                                      padding: EdgeInsets.only(
-                                    right: 4,
-                                  )),
-                                ],
-                              )
-                            : Container(),
+                      LettuceRadio(
+                        label: 'Correctness',
+                        padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                        value: 0,
+                        groupValue: legalityRadio.value,
+                        onChanged: (int value) {
+                          _setIntWrapper(value, legalityRadio);
+                          _populateGridList();
+                        },
                       ),
-                      Text(
-                        'Selection Order',
-                        style: TextStyle(
-                          color: CustomStyles.nord3,
-                          fontSize: 17,
-                        ),
-                        textAlign: TextAlign.left,
+                      LettuceRadio(
+                        label: 'Legality',
+                        padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                        value: 1,
+                        groupValue: legalityRadio.value,
+                        onChanged: (int value) {
+                          _setIntWrapper(value, legalityRadio);
+                          _populateGridList();
+                        },
                       ),
+                      // Row(
+                      //   children: [
+                      //     Text(
+                      //       'Selection Order',
+                      //       style: TextStyle(
+                      //         color: CustomStyles.nord3,
+                      //         fontSize: 17,
+                      //       ),
+                      //       textAlign: TextAlign.left,
+                      //     ),
+                      //     Spacer(),
+                      //   ],
+                      // ),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Container(
-                            width: 130,
-                            child: getStyledRadio(
-                                'Cell First', 0, selectionRadio, (var val) {
-                              _setIntWrapper(0, selectionRadio);
-                              // _populateGridList();
-                            }),
+                          Text(
+                            'Selection Order',
+                            style: TextStyle(
+                              color: CustomStyles.nord3,
+                              fontSize: 17,
+                            ),
+                            textAlign: TextAlign.left,
                           ),
-                          Container(
-                            width: 110,
-                            child: getStyledRadio(
-                                'Digit First', 1, selectionRadio, (var val) {
-                              _setIntWrapper(1, selectionRadio);
-                              selectedNum = -1;
-                              // _populateGridList();
-                            }),
+                          Visibility(
+                            visible: false,
+                            maintainSize: true,
+                            maintainAnimation: true,
+                            maintainState: true,
+                            child: Switch(
+                              value: doMistakes.value,
+                              onChanged: null,
+                            ),
                           ),
-                          Padding(
-                              padding: EdgeInsets.only(
-                            right: 4,
-                          )),
                         ],
                       ),
-                      const Text(
-                        'Initial Hints',
-                        textAlign: TextAlign.left,
-                        style: TextStyle(
-                          color: CustomStyles.nord3,
-                          fontSize: 17,
-                        ),
+                      LettuceRadio(
+                        label: 'Cell First',
+                        padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                        value: 0,
+                        groupValue: selectionRadio.value,
+                        onChanged: (int value) {
+                          _setIntWrapper(value, selectionRadio);
+                          // _populateGridList();
+                        },
+                      ),
+                      LettuceRadio(
+                        label: 'Number First',
+                        padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                        value: 1,
+                        groupValue: selectionRadio.value,
+                        onChanged: (int value) {
+                          _setIntWrapper(value, selectionRadio);
+                          // _populateGridList();
+                        },
                       ),
                     ],
                   ),
                 ),
-              ],
-            ),
-            Row(
-              children: [
-                Expanded(
-                  child: Slider(
-                    value: initialHints.value.toDouble(),
-                    onChanged: (double val) =>
-                        _setIntWrapper(val.toInt(), initialHints),
-                    min: 17,
-                    max: 50,
-                  ),
-                ),
-                AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 300),
-                  transitionBuilder:
-                      (Widget child, Animation<double> animation) =>
-                          ScaleTransition(
-                    child: child,
-                    scale: animation,
-                    // sizeFactor: animation,
-                  ),
-                  child: initialHints.value > 17
-                      ? IconButton(
-                          color: CustomStyles.nord0,
-                          key: ValueKey(0),
-                          icon: Icon(
-                            Icons.remove_circle,
-                            color: CustomStyles.nord11,
-                          ),
-                          onPressed: initialHints.value > 17
-                              ? () {
-                                  _setIntWrapper(
-                                      initialHints.value - 1, initialHints);
-                                }
-                              : () {},
-                        )
-                      : IconButton(
-                          color: CustomStyles.nord0,
-                          key: ValueKey(1),
-                          icon: Icon(
-                            Icons.remove_circle,
-                            color: CustomStyles.nord6,
-                          ),
-                          onPressed: initialHints.value > 17
-                              ? () {
-                                  _setIntWrapper(
-                                      initialHints.value - 1, initialHints);
-                                }
-                              : () {},
-                        ),
-                ),
-                Text(initialHints.value.toString()),
-                AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 300),
-                  transitionBuilder:
-                      (Widget child, Animation<double> animation) =>
-                          ScaleTransition(
-                    child: child,
-                    scale: animation,
-                    // sizeFactor: animation,
-                  ),
-                  child: initialHints.value < 50
-                      ? IconButton(
-                          key: ValueKey(0),
-                          icon: Icon(
-                            Icons.add_circle,
-                            color: CustomStyles.nord14,
-                          ),
-                          onPressed: () {
-                            _setIntWrapper(
-                                initialHints.value + 1, initialHints);
-                          })
-                      : IconButton(
-                          key: ValueKey(1),
-                          icon: Icon(
-                            Icons.add_circle,
-                            color: CustomStyles.nord6,
-                          ),
-                          onPressed: () {},
-                        ),
-                ),
-              ],
-            ),
-            Row(
-              children: [
-                const Spacer(flex: 2),
-                Expanded(
-                  flex: 33,
-                  child: AspectRatio(
-                    aspectRatio: 3,
-                    child: Container(
-                      height: 120,
-                      child: Column(
-                        children: [
-                          Expanded(
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: AspectRatio(
-                                    aspectRatio: 1,
-                                    child: Container(
-                                      padding: EdgeInsets.fromLTRB(0, 0, 2, 2),
-                                      child: FlatButton(
-                                        color: CustomStyles.nord3,
-                                        splashColor: CustomStyles.nord0,
-                                        onPressed: () => _solveGameAndApply(),
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(0.0)),
-                                        child: AutoSizeText(
-                                          'Solve game',
-                                          textAlign: TextAlign.center,
-                                          maxLines: 1,
-                                          style: TextStyle(
-                                            color: CustomStyles.nord6,
-                                            fontSize: 17,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: AspectRatio(
-                                    aspectRatio: 1,
-                                    child: Container(
-                                      padding: EdgeInsets.fromLTRB(2, 0, 0, 2),
-                                      child: FlatButton(
-                                        color: CustomStyles.nord3,
-                                        splashColor: CustomStyles.nord0,
-                                        onPressed: () => _resetBoard(problem),
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(0.0)),
-                                        child: AutoSizeText(
-                                          'Reset Game',
-                                          textAlign: TextAlign.center,
-                                          maxLines: 1,
-                                          style: TextStyle(
-                                            color: CustomStyles.nord6,
-                                            fontSize: 17,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Expanded(
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: AspectRatio(
-                                    aspectRatio: 1,
-                                    child: Container(
-                                      padding: EdgeInsets.only(top: 2),
-                                      child: FlatButton(
-                                        color: CustomStyles.nord3,
-                                        splashColor: CustomStyles.nord0,
-                                        onPressed: () => _newGameAndSave(),
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(0.0)),
-                                        child: AutoSizeText(
-                                          'New Game',
-                                          textAlign: TextAlign.center,
-                                          maxLines: 1,
-                                          style: TextStyle(
-                                            color: CustomStyles.nord6,
-                                            fontSize: 17,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
                 const Spacer(flex: 2),
               ],
             ),
+            // Row(
+            //   children: [
+            //     const Spacer(flex: 2),
+            //     Expanded(
+            //       flex: 33,
+            //       child: Column(
+            //         crossAxisAlignment: CrossAxisAlignment.start,
+            //         children: [
+            //           Row(
+            //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //             children: [
+            //               const Text(
+            //                 'Highlight Peer Cells',
+            //                 style: TextStyle(
+            //                   color: CustomStyles.nord3,
+            //                   fontSize: 17,
+            //                 ),
+            //                 textAlign: TextAlign.left,
+            //               ),
+            //               Switch(
+            //                 value: doPeerCells.value,
+            //                 onChanged: (bool value) {
+            //                   _toggleBoolWrapper(doPeerCells);
+            //                   _populateGridList();
+            //                 },
+            //                 activeColor: CustomStyles.nord3,
+            //                 inactiveThumbColor: CustomStyles.nord3,
+            //                 activeTrackColor: CustomStyles.nord14,
+            //                 inactiveTrackColor: CustomStyles.nord15,
+            //               ),
+            //             ],
+            //           ),
+            //           // _doPeerCellsToggle,
+            //
+            //           Text(
+            //             'Selection Order',
+            //             style: TextStyle(
+            //               color: CustomStyles.nord3,
+            //               fontSize: 17,
+            //             ),
+            //             textAlign: TextAlign.left,
+            //           ),
+            //           Row(
+            //             mainAxisAlignment: MainAxisAlignment.end,
+            //             children: [
+            //               Container(
+            //                 width: 130,
+            //                 child: getStyledRadio(
+            //                     'Cell First', 0, selectionRadio, (var val) {
+            //                   _setIntWrapper(0, selectionRadio);
+            //                   // _populateGridList();
+            //                 }),
+            //               ),
+            //               Container(
+            //                 width: 110,
+            //                 child: getStyledRadio(
+            //                     'Digit First', 1, selectionRadio, (var val) {
+            //                   _setIntWrapper(1, selectionRadio);
+            //                   selectedNum = -1;
+            //                   // _populateGridList();
+            //                 }),
+            //               ),
+            //               Padding(
+            //                   padding: EdgeInsets.only(
+            //                 right: 4,
+            //               )),
+            //             ],
+            //           ),
+            //           const Text(
+            //             'Initial Hints',
+            //             textAlign: TextAlign.left,
+            //             style: TextStyle(
+            //               color: CustomStyles.nord3,
+            //               fontSize: 17,
+            //             ),
+            //           ),
+            //         ],
+            //       ),
+            //     ),
+            //     const Spacer(flex: 2),
+            //   ],
+            // ),
+            // Row(
+            //   children: [
+            //     const Spacer(flex: 2),
+            //     Expanded(
+            //       flex: 33,
+            //       child: Slider(
+            //         value: initialHints.value.toDouble(),
+            //         onChanged: (double val) =>
+            //             _setIntWrapper(val.toInt(), initialHints),
+            //         min: 17,
+            //         max: 50,
+            //       ),
+            //     ),
+            //     AnimatedSwitcher(
+            //       duration: const Duration(milliseconds: 300),
+            //       transitionBuilder:
+            //           (Widget child, Animation<double> animation) =>
+            //               ScaleTransition(
+            //         child: child,
+            //         scale: animation,
+            //         // sizeFactor: animation,
+            //       ),
+            //       child: initialHints.value > 17
+            //           ? IconButton(
+            //               color: CustomStyles.nord0,
+            //               key: ValueKey(0),
+            //               icon: Icon(
+            //                 Icons.remove_circle,
+            //                 color: CustomStyles.nord11,
+            //               ),
+            //               onPressed: initialHints.value > 17
+            //                   ? () {
+            //                       _setIntWrapper(
+            //                           initialHints.value - 1, initialHints);
+            //                     }
+            //                   : () {},
+            //             )
+            //           : IconButton(
+            //               color: CustomStyles.nord0,
+            //               key: ValueKey(1),
+            //               icon: Icon(
+            //                 Icons.remove_circle,
+            //                 color: CustomStyles.nord6,
+            //               ),
+            //               onPressed: initialHints.value > 17
+            //                   ? () {
+            //                       _setIntWrapper(
+            //                           initialHints.value - 1, initialHints);
+            //                     }
+            //                   : () {},
+            //             ),
+            //     ),
+            //     Text(initialHints.value.toString()),
+            //     AnimatedSwitcher(
+            //       duration: const Duration(milliseconds: 300),
+            //       transitionBuilder:
+            //           (Widget child, Animation<double> animation) =>
+            //               ScaleTransition(
+            //         child: child,
+            //         scale: animation,
+            //         // sizeFactor: animation,
+            //       ),
+            //       child: initialHints.value < 50
+            //           ? IconButton(
+            //               key: ValueKey(0),
+            //               icon: Icon(
+            //                 Icons.add_circle,
+            //                 color: CustomStyles.nord14,
+            //               ),
+            //               onPressed: () {
+            //                 _setIntWrapper(
+            //                     initialHints.value + 1, initialHints);
+            //               })
+            //           : IconButton(
+            //               key: ValueKey(1),
+            //               icon: Icon(
+            //                 Icons.add_circle,
+            //                 color: CustomStyles.nord6,
+            //               ),
+            //               onPressed: () {},
+            //             ),
+            //     ),
+            //     const Spacer(flex: 2),
+            //   ],
+            // ),
+            // Row(
+            //   children: [
+            //     const Spacer(flex: 2),
+            //     Expanded(
+            //       flex: 33,
+            //       child: AspectRatio(
+            //         aspectRatio: 3,
+            //         child: Container(
+            //           height: 120,
+            //           child: Column(
+            //             children: [
+            //               Expanded(
+            //                 child: Row(
+            //                   children: [
+            //                     Expanded(
+            //                       child: AspectRatio(
+            //                         aspectRatio: 1,
+            //                         child: Container(
+            //                           padding: EdgeInsets.fromLTRB(0, 0, 2, 2),
+            //                           child: FlatButton(
+            //                             color: CustomStyles.nord3,
+            //                             splashColor: CustomStyles.nord0,
+            //                             onPressed: () => _solveGameAndApply(),
+            //                             shape: RoundedRectangleBorder(
+            //                                 borderRadius:
+            //                                     BorderRadius.circular(0.0)),
+            //                             child: AutoSizeText(
+            //                               'Solve game',
+            //                               textAlign: TextAlign.center,
+            //                               maxLines: 1,
+            //                               style: TextStyle(
+            //                                 color: CustomStyles.nord6,
+            //                                 fontSize: 17,
+            //                               ),
+            //                             ),
+            //                           ),
+            //                         ),
+            //                       ),
+            //                     ),
+            //                     Expanded(
+            //                       child: AspectRatio(
+            //                         aspectRatio: 1,
+            //                         child: Container(
+            //                           padding: EdgeInsets.fromLTRB(2, 0, 0, 2),
+            //                           child: FlatButton(
+            //                             color: CustomStyles.nord3,
+            //                             splashColor: CustomStyles.nord0,
+            //                             onPressed: () => _resetBoard(problem),
+            //                             shape: RoundedRectangleBorder(
+            //                                 borderRadius:
+            //                                     BorderRadius.circular(0.0)),
+            //                             child: AutoSizeText(
+            //                               'Reset Game',
+            //                               textAlign: TextAlign.center,
+            //                               maxLines: 1,
+            //                               style: TextStyle(
+            //                                 color: CustomStyles.nord6,
+            //                                 fontSize: 17,
+            //                               ),
+            //                             ),
+            //                           ),
+            //                         ),
+            //                       ),
+            //                     ),
+            //                   ],
+            //                 ),
+            //               ),
+            //               Expanded(
+            //                 child: Row(
+            //                   children: [
+            //                     Expanded(
+            //                       child: AspectRatio(
+            //                         aspectRatio: 1,
+            //                         child: Container(
+            //                           padding: EdgeInsets.only(top: 2),
+            //                           child: FlatButton(
+            //                             color: CustomStyles.nord3,
+            //                             splashColor: CustomStyles.nord0,
+            //                             onPressed: () => _newGameAndSave(),
+            //                             shape: RoundedRectangleBorder(
+            //                                 borderRadius:
+            //                                     BorderRadius.circular(0.0)),
+            //                             child: AutoSizeText(
+            //                               'New Game',
+            //                               textAlign: TextAlign.center,
+            //                               maxLines: 1,
+            //                               style: TextStyle(
+            //                                 color: CustomStyles.nord6,
+            //                                 fontSize: 17,
+            //                               ),
+            //                             ),
+            //                           ),
+            //                         ),
+            //                       ),
+            //                     ),
+            //                   ],
+            //                 ),
+            //               ),
+            //             ],
+            //           ),
+            //         ),
+            //       ),
+            //     ),
+            //     const Spacer(flex: 2),
+            //   ],
+            // ),
           ],
         ),
       ),
@@ -562,7 +638,151 @@ class _SudokuScreenState extends State<SudokuScreen> {
             }
           }
         },
-        child: _getBody(),
+        child: Container(
+          padding: EdgeInsets.all(bodySpacing),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Flexible(child: Container()),
+              Container(
+                width: getBodyWidth(context),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Flexible(
+                      flex: 15,
+                      child: Container(
+                        padding: EdgeInsets.all(2),
+                        child: AspectRatio(
+                          aspectRatio: 1,
+                          child: Container(
+                            color: CustomStyles.nord3,
+                            child: GridView.builder(
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: _sudokuGrid.length,
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: problem.board_size),
+                              itemBuilder: (BuildContext context, int index) =>
+                                  _sudokuGrid[index],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Flexible(
+                      flex: 6,
+                      child: AspectRatio(
+                        aspectRatio: 5 / 2,
+                        child: Container(
+                          padding: EdgeInsets.all(2),
+                          child: GridView.builder(
+                            itemCount: _moveGrid.length,
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 5,
+                                    mainAxisSpacing: 4,
+                                    crossAxisSpacing: 4),
+                            itemBuilder: (BuildContext context, int index) =>
+                                _moveGrid[index],
+                          ),
+                        ),
+                      ),
+                    ),
+                    Flexible(
+                      flex: 3,
+                      child: AspectRatio(
+                        aspectRatio: 5,
+                        child: Container(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Flexible(
+                                fit: FlexFit.tight,
+                                flex: 2,
+                                child: AspectRatio(
+                                  aspectRatio: 1,
+                                  child: Container(
+                                    padding: EdgeInsets.all(2),
+                                    child: LettuceButton(
+                                      label: 'New Game',
+                                      textColor: CustomStyles.nord6,
+                                      textSize: 24,
+                                      textAlign: TextAlign.center,
+                                      buttonColor: CustomStyles.nord3,
+                                      hoverColor: CustomStyles.nord2,
+                                      highlightColor: CustomStyles.nord1,
+                                      splashColor: CustomStyles.nord0,
+                                      onTap: () {
+                                        _newGameAndSave();
+                                      },
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Flexible(
+                                fit: FlexFit.tight,
+                                flex: 2,
+                                child: AspectRatio(
+                                  aspectRatio: 1,
+                                  child: Container(
+                                    padding: EdgeInsets.all(2),
+                                    child: LettuceButton(
+                                      label: 'Get Hint',
+                                      textColor: CustomStyles.nord6,
+                                      textSize: 24,
+                                      textAlign: TextAlign.center,
+                                      buttonColor: CustomStyles.nord3,
+                                      hoverColor: CustomStyles.nord2,
+                                      highlightColor: CustomStyles.nord1,
+                                      splashColor: CustomStyles.nord0,
+                                      onTap: () {
+                                        if (selectionRadio.value == 1) {
+                                          selectedNum = 10;
+                                        } else {
+                                          _doMoveAndApply(
+                                              10, selectedRow, selectedCol);
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Flexible(
+                                fit: FlexFit.tight,
+                                flex: 1,
+                                child: AspectRatio(
+                                  aspectRatio: 1,
+                                  child: Container(
+                                    padding: EdgeInsets.all(2),
+                                    child: LettuceIconButton(
+                                      icon: Icons.undo_sharp,
+                                      iconColor: CustomStyles.nord6,
+                                      iconSize: 30,
+                                      textAlign: TextAlign.center,
+                                      buttonColor: CustomStyles.nord3,
+                                      hoverColor: CustomStyles.nord2,
+                                      highlightColor: CustomStyles.nord1,
+                                      splashColor: CustomStyles.nord0,
+                                      onTap: () {
+                                        _undoMove();
+                                      },
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Flexible(child: Container()),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -808,32 +1028,22 @@ class _SudokuScreenState extends State<SudokuScreen> {
     List currentBoard = currentState.getTiles();
     var cellNum = currentBoard[row][col];
     String toPlace = cellNum == 0 ? '' : cellNum.toString();
-    Container button = Container(
+    return Container(
       padding: _getBoardPadding(index),
-      child: Material(
-        color: color,
-        child: InkWell(
-          hoverColor: CustomStyles.nord13,
-          splashColor: CustomStyles.nord12,
-          onTap: () => _selectCell(row, col),
-          child: Center(
-            child: AutoSizeText(
-              toPlace,
-              textAlign: TextAlign.center,
-              maxLines: 1,
-              stepGranularity: 1,
-              minFontSize: 1,
-              maxFontSize: 40,
-              style: TextStyle(
-                color: _getTextColor(row, col),
-                fontSize: 40,
-              ),
-            ),
-          ),
-        ),
+      child: LettuceButton(
+        buttonColor: _getCellColor(
+            index ~/ problem.board_size, index % problem.board_size),
+        hoverColor: CustomStyles.nord13,
+        highlightColor: CustomStyles.nord13,
+        splashColor: CustomStyles.nord12,
+        textColor: _getTextColor(row, col),
+        textSize: 40,
+        label: toPlace,
+        onTap: () {
+          _selectCell(row, col);
+        },
       ),
     );
-    return button;
   }
 
   void _selectCell(int row, int col) {
@@ -895,36 +1105,48 @@ class _SudokuScreenState extends State<SudokuScreen> {
   }
 
   void _populateMoveGrid() {
-    _moveGrid = List.generate(10, (index) {
-      int num = (index + 1) % (problem.board_size + 1);
-      String toPlace = num == 0 ? 'X' : (num).toString();
-      return getFlatButton(
-        toPlace,
-        CustomStyles.nord6,
-        36,
-        TextAlign.center,
-        CustomStyles.nord3,
-        CustomStyles.nord0,
-        () {
-          if (selectionRadio.value == 1) {
-            selectedNum = num;
-          } else {
-            if (_cellSelected()) {
-              _doMoveAndApply(num, selectedRow, selectedCol);
+    _moveGrid = List.generate(
+      9,
+      (index) {
+        int num = (index + 1) % (problem.board_size + 1);
+        return LettuceButton(
+          buttonColor: CustomStyles.nord3,
+          hoverColor: CustomStyles.nord2,
+          highlightColor: CustomStyles.nord1,
+          splashColor: CustomStyles.nord0,
+          textSize: 36,
+          textColor: CustomStyles.nord6,
+          label: num.toString(),
+          onTap: () {
+            if (selectionRadio.value == 1) {
+              selectedNum = num;
+            } else {
+              if (_cellSelected()) {
+                _doMoveAndApply(num, selectedRow, selectedCol);
+              }
             }
-          }
-        },
-      );
-    });
-  }
-
-  Widget _getMoveButtons() {
-    return GridView.builder(
-      itemCount: _moveGrid.length,
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 5, mainAxisSpacing: 4, crossAxisSpacing: 4),
-      itemBuilder: (BuildContext context, int index) => _moveGrid[index],
+          },
+        );
+      },
     );
+    _moveGrid.add(LettuceIconButton(
+      buttonColor: CustomStyles.nord3,
+      hoverColor: CustomStyles.nord2,
+      highlightColor: CustomStyles.nord1,
+      splashColor: CustomStyles.nord0,
+      icon: Icons.clear_sharp,
+      iconSize: 36,
+      iconColor: CustomStyles.nord6,
+      onTap: () {
+        if (selectionRadio.value == 1) {
+          selectedNum = 0;
+        } else {
+          if (_cellSelected()) {
+            _doMoveAndApply(0, selectedRow, selectedCol);
+          }
+        }
+      },
+    ));
   }
 
   Color _getTextColor(int row, int col) {
@@ -944,145 +1166,5 @@ class _SudokuScreenState extends State<SudokuScreen> {
     color = initialHint ? CustomStyles.nord3 : color;
     color = _givenAsHint(row, col) ? CustomStyles.nord3 : color;
     return color;
-  }
-
-  Widget _getGameButtons() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: <Widget>[
-        Flexible(
-          fit: FlexFit.tight,
-          flex: 2,
-          child: AspectRatio(
-            aspectRatio: 1,
-            child: Container(
-              padding: EdgeInsets.all(2),
-              child: getFlatButton(
-                'New Game',
-                CustomStyles.nord6,
-                24,
-                TextAlign.center,
-                CustomStyles.nord3,
-                CustomStyles.nord0,
-                () {
-                  _newGameAndSave();
-                },
-              ),
-            ),
-          ),
-        ),
-        Flexible(
-          fit: FlexFit.tight,
-          flex: 2,
-          child: AspectRatio(
-            aspectRatio: 1,
-            child: Container(
-              padding: EdgeInsets.all(2),
-              child: getFlatButton(
-                'Get Hint',
-                CustomStyles.nord6,
-                24,
-                TextAlign.center,
-                CustomStyles.nord3,
-                CustomStyles.nord0,
-                () {
-                  if (selectionRadio.value == 1) {
-                    selectedNum = 10;
-                  } else {
-                    _doMoveAndApply(10, selectedRow, selectedCol);
-                  }
-                },
-              ),
-            ),
-          ),
-        ),
-        Flexible(
-          fit: FlexFit.tight,
-          flex: 1,
-          child: AspectRatio(
-            aspectRatio: 1,
-            child: Container(
-              padding: EdgeInsets.all(2),
-              child: getFlatButton(
-                '<-',
-                CustomStyles.nord6,
-                24,
-                TextAlign.center,
-                CustomStyles.nord3,
-                CustomStyles.nord0,
-                () {
-                  _undoMove();
-                },
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _getBody() {
-    return Container(
-      padding: EdgeInsets.all(bodySpacing),
-      child: _makeBodyRow(context),
-    );
-  }
-
-  Widget _makeGameCol(bool doVertical) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: <Widget>[
-        Flexible(
-          flex: 15,
-          child: Container(
-            padding: EdgeInsets.all(2),
-            child: AspectRatio(
-              aspectRatio: 1,
-              child: Container(
-                color: CustomStyles.nord3,
-                child: GridView.builder(
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: _sudokuGrid.length,
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: problem.board_size),
-                  itemBuilder: (BuildContext context, int index) =>
-                      _sudokuGrid[index],
-                ),
-              ),
-            ),
-          ),
-        ),
-        Flexible(
-          flex: 6,
-          child: AspectRatio(
-              aspectRatio: 5 / 2,
-              child:
-                  Container(padding: EdgeInsets.all(2), child: _moveButtons)),
-        ),
-        Flexible(
-          flex: 2,
-          child: AspectRatio(
-            aspectRatio: 15 / 2,
-            child: Container(
-              child: _gameButtons,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _makeBodyRow(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Flexible(child: Container()),
-        Container(
-          width: getBodyWidth(context),
-          child: _makeGameCol(true),
-        ),
-        Flexible(child: Container()),
-      ],
-    );
   }
 }
