@@ -1096,8 +1096,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
     return Container(
       padding: _getBoardPadding(index),
       child: LettuceBoardButton(
-        buttonColor: _getCellColor(
-            index ~/ problem.board_size, index % problem.board_size),
+        buttonColor: color,
         hoverColor: CustomStyles.nord13,
         highlightColor: CustomStyles.nord13,
         splashColor: CustomStyles.nord12,
