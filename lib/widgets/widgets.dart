@@ -28,15 +28,64 @@ class LettuceIconButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
+    return FlatButton(
       color: buttonColor,
-      child: InkWell(
-        onTap: onTap,
-        splashColor: splashColor,
-        highlightColor: highlightColor,
-        hoverColor: hoverColor,
-        child: Center(
-          child: Icon(icon, size: iconSize, color: iconColor),
+      onPressed: onTap,
+      splashColor: splashColor,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0.0)),
+      child: Center(
+        child: Icon(
+          icon,
+          size: iconSize,
+          color: iconColor,
+        ),
+      ),
+    );
+  }
+}
+
+class LettuceBoardButton extends StatelessWidget {
+  const LettuceBoardButton({
+    this.label,
+    this.textColor,
+    this.textAlign,
+    this.buttonColor,
+    this.textSize,
+    this.splashColor,
+    this.highlightColor,
+    this.hoverColor,
+    this.onTap,
+  });
+
+  final String label;
+  final Color textColor;
+  final Color buttonColor;
+  final double textSize;
+  final TextAlign textAlign;
+  final Color splashColor;
+  final Color highlightColor;
+  final Color hoverColor;
+  final Function onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return FlatButton(
+      color: buttonColor,
+      onPressed: onTap,
+      splashColor: splashColor,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0.0)),
+      child: Center(
+        child: AutoSizeText(
+          label,
+          textAlign: TextAlign.center,
+          maxLines: 1,
+          stepGranularity: 1,
+          minFontSize: 1,
+          maxFontSize: textSize,
+          style: TextStyle(
+            color: textColor,
+            fontSize: textSize,
+          ),
         ),
       ),
     );
@@ -68,25 +117,19 @@ class LettuceButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
+    return FlatButton(
       color: buttonColor,
-      child: InkWell(
-        onTap: onTap,
-        splashColor: splashColor,
-        highlightColor: highlightColor,
-        hoverColor: hoverColor,
-        child: Center(
-          child: AutoSizeText(
-            label,
-            textAlign: TextAlign.center,
-            maxLines: 1,
-            stepGranularity: 1,
-            minFontSize: 1,
-            maxFontSize: textSize,
-            style: TextStyle(
-              color: textColor,
-              fontSize: textSize,
-            ),
+      onPressed: onTap,
+      splashColor: splashColor,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0.0)),
+      child: Center(
+        child: Text(
+          label,
+          textAlign: TextAlign.center,
+          maxLines: 1,
+          style: TextStyle(
+            color: textColor,
+            fontSize: textSize,
           ),
         ),
       ),
@@ -130,7 +173,7 @@ class LettuceRadio extends StatelessWidget {
               label,
               style: TextStyle(
                 color: CustomStyles.nord3,
-                fontSize: 14,
+                fontSize: 15,
               ),
             ),
           ],

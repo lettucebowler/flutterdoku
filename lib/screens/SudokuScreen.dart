@@ -180,18 +180,18 @@ class _SudokuScreenState extends State<SudokuScreen> {
           padding: const EdgeInsets.all(0.0),
           children: [
             Container(
-              height:130,
+              height: 130,
               child: const DrawerHeader(
-              child: Center(
-                child: Text(
-                  'Settings',
-                  style: CustomStyles.titleText,
+                child: Center(
+                  child: Text(
+                    'Settings',
+                    style: CustomStyles.titleText,
+                  ),
+                ),
+                decoration: BoxDecoration(
+                  color: CustomStyles.nord3,
                 ),
               ),
-              decoration: BoxDecoration(
-                color: CustomStyles.nord3,
-              ),
-            ),
             ),
             Row(
               children: [
@@ -355,21 +355,17 @@ class _SudokuScreenState extends State<SudokuScreen> {
                               aspectRatio: 2.5,
                               child: Container(
                                 padding: EdgeInsets.fromLTRB(0, 0, 2, 2),
-                                child: FlatButton(
-                                  color: CustomStyles.nord3,
+                                child: LettuceButton(
+                                  buttonColor: CustomStyles.nord3,
+                                  hoverColor: CustomStyles.nord2,
+                                  highlightColor: CustomStyles.nord1,
                                   splashColor: CustomStyles.nord0,
-                                  onPressed: () => _solveGameAndApply(),
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(0.0)),
-                                  child: AutoSizeText(
-                                    'Solve game',
-                                    textAlign: TextAlign.center,
-                                    maxLines: 1,
-                                    style: TextStyle(
-                                      color: CustomStyles.nord6,
-                                      fontSize: 17,
-                                    ),
-                                  ),
+                                  label: 'Solve Game',
+                                  textColor: CustomStyles.nord6,
+                                  textSize: 24,
+                                  onTap: () {
+                                    _solveGameAndApply();
+                                  },
                                 ),
                               ),
                             ),
@@ -379,21 +375,17 @@ class _SudokuScreenState extends State<SudokuScreen> {
                               aspectRatio: 2.5,
                               child: Container(
                                 padding: EdgeInsets.fromLTRB(2, 0, 0, 2),
-                                child: FlatButton(
-                                  color: CustomStyles.nord3,
+                                child: LettuceButton(
+                                  buttonColor: CustomStyles.nord3,
+                                  hoverColor: CustomStyles.nord2,
+                                  highlightColor: CustomStyles.nord1,
                                   splashColor: CustomStyles.nord0,
-                                  onPressed: () => _resetBoard(problem),
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(0.0)),
-                                  child: AutoSizeText(
-                                    'Reset Game',
-                                    textAlign: TextAlign.center,
-                                    maxLines: 1,
-                                    style: TextStyle(
-                                      color: CustomStyles.nord6,
-                                      fontSize: 17,
-                                    ),
-                                  ),
+                                  label: 'Reset Game',
+                                  textColor: CustomStyles.nord6,
+                                  textSize: 24,
+                                  onTap: () {
+                                    _resetBoard(problem);
+                                  },
                                 ),
                               ),
                             ),
@@ -404,22 +396,18 @@ class _SudokuScreenState extends State<SudokuScreen> {
                         aspectRatio: 5,
                         child: Container(
                           padding: EdgeInsets.only(top: 2),
-                          child: FlatButton(
-                            color: CustomStyles.nord3,
-                            splashColor: CustomStyles.nord0,
-                            onPressed: () => _newGameAndSave(),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(0.0)),
-                            child: AutoSizeText(
-                              'New Game',
-                              textAlign: TextAlign.center,
-                              maxLines: 1,
-                              style: TextStyle(
-                                color: CustomStyles.nord6,
-                                fontSize: 17,
-                              ),
-                            ),
-                          ),
+                          child: LettuceButton(
+                                  buttonColor: CustomStyles.nord3,
+                                  hoverColor: CustomStyles.nord2,
+                                  highlightColor: CustomStyles.nord1,
+                                  splashColor: CustomStyles.nord0,
+                                  label: 'New Game',
+                                  textColor: CustomStyles.nord6,
+                                  textSize: 24,
+                                  onTap: () {
+                                    _newGameAndSave();
+                                  },
+                                ),
                         ),
                       ),
                     ],
@@ -1107,7 +1095,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
     String toPlace = cellNum == 0 ? '' : cellNum.toString();
     return Container(
       padding: _getBoardPadding(index),
-      child: LettuceButton(
+      child: LettuceBoardButton(
         buttonColor: _getCellColor(
             index ~/ problem.board_size, index % problem.board_size),
         hoverColor: CustomStyles.nord13,
