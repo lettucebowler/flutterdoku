@@ -1,2 +1,2 @@
-./deploy-web.sh
-./deploy-mobile.sh
+./deployment/deploy-web.sh
+./deployment/deploy-mobile.sh

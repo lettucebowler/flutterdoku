@@ -32,6 +32,7 @@ class LettuceIconButton extends StatelessWidget {
       color: buttonColor,
       onPressed: onTap,
       splashColor: splashColor,
+      hoverColor: hoverColor,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0.0)),
       child: Center(
         child: Icon(
@@ -73,6 +74,7 @@ class LettuceBoardButton extends StatelessWidget {
       color: buttonColor,
       onPressed: onTap,
       splashColor: splashColor,
+      hoverColor: hoverColor,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0.0)),
       child: Center(
         child: AutoSizeText(
@@ -121,6 +123,7 @@ class LettuceButton extends StatelessWidget {
       color: buttonColor,
       onPressed: onTap,
       splashColor: splashColor,
+      hoverColor: hoverColor,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0.0)),
       child: Center(
         child: Text(
