@@ -21,7 +21,6 @@ class SudokuScreen extends StatefulWidget {
 }
 
 class _SudokuScreenState extends State<SudokuScreen> {
-  var menuHeight = 70;
   SolvingAssistant _assistant;
   FocusNode focusNode = FocusNode();
   var _actionMap;
@@ -141,27 +140,6 @@ class _SudokuScreenState extends State<SudokuScreen> {
     };
   }
 
-  void _shiftFocus(int rowOffset, int colOffset) {
-    if (_cellSelected()) {
-      setState(() {
-        var currentState = problem.getCurrentState() as SudokuState;
-        var currentBoard = currentState.getTiles();
-        var num = currentBoard[selectedRow][selectedCol];
-        _whiteoutBoard(num, selectedRow, selectedCol);
-        selectedRow = ((selectedRow + rowOffset) % problem.board_size);
-        selectedCol = ((selectedCol + colOffset) % problem.board_size);
-        if (_digitGood(selectedNum) && selectedNum == 1) {
-          _doMove(selectedNum, selectedRow, selectedCol);
-        }
-        _updateCells(selectedRow, selectedCol);
-      });
-    }
-  }
-
-  bool _digitGood(int num) {
-    return num > -1 && num <= 10;
-  }
-
   @override
   Widget build(BuildContext context) {
     FocusScope.of(context).requestFocus(focusNode);
@@ -214,7 +192,9 @@ class _SudokuScreenState extends State<SudokuScreen> {
                           Switch(
                             value: doPeerCells.value,
                             onChanged: (bool value) {
-                              _toggleBoolWrapper(doPeerCells);
+                              setState(() {
+                                doPeerCells.value = value;
+                              });
                               _populateGridList();
                             },
                             activeColor: CustomStyles.nord3,
@@ -238,7 +218,9 @@ class _SudokuScreenState extends State<SudokuScreen> {
                           Switch(
                             value: doPeerDigits.value,
                             onChanged: (bool value) {
-                              _toggleBoolWrapper(doPeerDigits);
+                              setState(() {
+                                doPeerDigits.value = value;
+                              });
                               _populateGridList();
                             },
                             activeColor: CustomStyles.nord3,
@@ -262,7 +244,9 @@ class _SudokuScreenState extends State<SudokuScreen> {
                           Switch(
                             value: doMistakes.value,
                             onChanged: (bool value) {
-                              _toggleBoolWrapper(doMistakes);
+                              setState(() {
+                                doMistakes.value = value;
+                              });
                               _populateGridList();
                             },
                             activeColor: CustomStyles.nord3,
@@ -278,7 +262,9 @@ class _SudokuScreenState extends State<SudokuScreen> {
                         value: 0,
                         groupValue: legalityRadio.value,
                         onChanged: (int value) {
-                          _setIntWrapper(value, legalityRadio);
+                          setState(() {
+                            legalityRadio.value = value;
+                          });
                           _populateGridList();
                         },
                       ),
@@ -288,7 +274,9 @@ class _SudokuScreenState extends State<SudokuScreen> {
                         value: 1,
                         groupValue: legalityRadio.value,
                         onChanged: (int value) {
-                          _setIntWrapper(value, legalityRadio);
+                          setState(() {
+                            legalityRadio.value = value;
+                          });
                           _populateGridList();
                         },
                       ),
@@ -334,7 +322,9 @@ class _SudokuScreenState extends State<SudokuScreen> {
                         value: 0,
                         groupValue: selectionRadio.value,
                         onChanged: (int value) {
-                          _setIntWrapper(value, selectionRadio);
+                          setState(() {
+                            selectionRadio.value = value;
+                          });
                           // _populateGridList();
                         },
                       ),
@@ -344,8 +334,9 @@ class _SudokuScreenState extends State<SudokuScreen> {
                         value: 1,
                         groupValue: selectionRadio.value,
                         onChanged: (int value) {
-                          _setIntWrapper(value, selectionRadio);
-                          // _populateGridList();
+                          setState(() {
+                            selectionRadio.value = value;
+                          });
                         },
                       ),
                       Row(
@@ -397,17 +388,17 @@ class _SudokuScreenState extends State<SudokuScreen> {
                         child: Container(
                           padding: EdgeInsets.only(top: 2),
                           child: LettuceButton(
-                                  buttonColor: CustomStyles.nord3,
-                                  hoverColor: CustomStyles.nord2,
-                                  highlightColor: CustomStyles.nord1,
-                                  splashColor: CustomStyles.nord0,
-                                  label: 'New Game',
-                                  textColor: CustomStyles.nord6,
-                                  textSize: 24,
-                                  onTap: () {
-                                    _newGameAndSave();
-                                  },
-                                ),
+                            buttonColor: CustomStyles.nord3,
+                            hoverColor: CustomStyles.nord2,
+                            highlightColor: CustomStyles.nord1,
+                            splashColor: CustomStyles.nord0,
+                            label: 'New Game',
+                            textColor: CustomStyles.nord6,
+                            textSize: 24,
+                            onTap: () {
+                              _newGameAndSave();
+                            },
+                          ),
                         ),
                       ),
                     ],
@@ -416,279 +407,6 @@ class _SudokuScreenState extends State<SudokuScreen> {
                 const Spacer(flex: 1),
               ],
             ),
-            // Row(
-            //   children: [
-            //     const Spacer(flex: 2),
-            //     Expanded(
-            //       flex: 33,
-            //       child: Column(
-            //         crossAxisAlignment: CrossAxisAlignment.start,
-            //         children: [
-            //           Row(
-            //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //             children: [
-            //               const Text(
-            //                 'Highlight Peer Cells',
-            //                 style: TextStyle(
-            //                   color: CustomStyles.nord3,
-            //                   fontSize: 17,
-            //                 ),
-            //                 textAlign: TextAlign.left,
-            //               ),
-            //               Switch(
-            //                 value: doPeerCells.value,
-            //                 onChanged: (bool value) {
-            //                   _toggleBoolWrapper(doPeerCells);
-            //                   _populateGridList();
-            //                 },
-            //                 activeColor: CustomStyles.nord3,
-            //                 inactiveThumbColor: CustomStyles.nord3,
-            //                 activeTrackColor: CustomStyles.nord14,
-            //                 inactiveTrackColor: CustomStyles.nord15,
-            //               ),
-            //             ],
-            //           ),
-            //           // _doPeerCellsToggle,
-            //
-            //           Text(
-            //             'Selection Order',
-            //             style: TextStyle(
-            //               color: CustomStyles.nord3,
-            //               fontSize: 17,
-            //             ),
-            //             textAlign: TextAlign.left,
-            //           ),
-            //           Row(
-            //             mainAxisAlignment: MainAxisAlignment.end,
-            //             children: [
-            //               Container(
-            //                 width: 130,
-            //                 child: getStyledRadio(
-            //                     'Cell First', 0, selectionRadio, (var val) {
-            //                   _setIntWrapper(0, selectionRadio);
-            //                   // _populateGridList();
-            //                 }),
-            //               ),
-            //               Container(
-            //                 width: 110,
-            //                 child: getStyledRadio(
-            //                     'Digit First', 1, selectionRadio, (var val) {
-            //                   _setIntWrapper(1, selectionRadio);
-            //                   selectedNum = -1;
-            //                   // _populateGridList();
-            //                 }),
-            //               ),
-            //               Padding(
-            //                   padding: EdgeInsets.only(
-            //                 right: 4,
-            //               )),
-            //             ],
-            //           ),
-            //           const Text(
-            //             'Initial Hints',
-            //             textAlign: TextAlign.left,
-            //             style: TextStyle(
-            //               color: CustomStyles.nord3,
-            //               fontSize: 17,
-            //             ),
-            //           ),
-            //         ],
-            //       ),
-            //     ),
-            //     const Spacer(flex: 2),
-            //   ],
-            // ),
-            // Row(
-            //   children: [
-            //     const Spacer(flex: 2),
-            //     Expanded(
-            //       flex: 33,
-            //       child: Slider(
-            //         value: initialHints.value.toDouble(),
-            //         onChanged: (double val) =>
-            //             _setIntWrapper(val.toInt(), initialHints),
-            //         min: 17,
-            //         max: 50,
-            //       ),
-            //     ),
-            //     AnimatedSwitcher(
-            //       duration: const Duration(milliseconds: 300),
-            //       transitionBuilder:
-            //           (Widget child, Animation<double> animation) =>
-            //               ScaleTransition(
-            //         child: child,
-            //         scale: animation,
-            //         // sizeFactor: animation,
-            //       ),
-            //       child: initialHints.value > 17
-            //           ? IconButton(
-            //               color: CustomStyles.nord0,
-            //               key: ValueKey(0),
-            //               icon: Icon(
-            //                 Icons.remove_circle,
-            //                 color: CustomStyles.nord11,
-            //               ),
-            //               onPressed: initialHints.value > 17
-            //                   ? () {
-            //                       _setIntWrapper(
-            //                           initialHints.value - 1, initialHints);
-            //                     }
-            //                   : () {},
-            //             )
-            //           : IconButton(
-            //               color: CustomStyles.nord0,
-            //               key: ValueKey(1),
-            //               icon: Icon(
-            //                 Icons.remove_circle,
-            //                 color: CustomStyles.nord6,
-            //               ),
-            //               onPressed: initialHints.value > 17
-            //                   ? () {
-            //                       _setIntWrapper(
-            //                           initialHints.value - 1, initialHints);
-            //                     }
-            //                   : () {},
-            //             ),
-            //     ),
-            //     Text(initialHints.value.toString()),
-            //     AnimatedSwitcher(
-            //       duration: const Duration(milliseconds: 300),
-            //       transitionBuilder:
-            //           (Widget child, Animation<double> animation) =>
-            //               ScaleTransition(
-            //         child: child,
-            //         scale: animation,
-            //         // sizeFactor: animation,
-            //       ),
-            //       child: initialHints.value < 50
-            //           ? IconButton(
-            //               key: ValueKey(0),
-            //               icon: Icon(
-            //                 Icons.add_circle,
-            //                 color: CustomStyles.nord14,
-            //               ),
-            //               onPressed: () {
-            //                 _setIntWrapper(
-            //                     initialHints.value + 1, initialHints);
-            //               })
-            //           : IconButton(
-            //               key: ValueKey(1),
-            //               icon: Icon(
-            //                 Icons.add_circle,
-            //                 color: CustomStyles.nord6,
-            //               ),
-            //               onPressed: () {},
-            //             ),
-            //     ),
-            //     const Spacer(flex: 2),
-            //   ],
-            // ),
-            // Row(
-            //   children: [
-            //     const Spacer(flex: 2),
-            //     Expanded(
-            //       flex: 33,
-            //       child: AspectRatio(
-            //         aspectRatio: 3,
-            //         child: Container(
-            //           height: 120,
-            //           child: Column(
-            //             children: [
-            //               Expanded(
-            //                 child: Row(
-            //                   children: [
-            //                     Expanded(
-            //                       child: AspectRatio(
-            //                         aspectRatio: 1,
-            //                         child: Container(
-            //                           padding: EdgeInsets.fromLTRB(0, 0, 2, 2),
-            //                           child: FlatButton(
-            //                             color: CustomStyles.nord3,
-            //                             splashColor: CustomStyles.nord0,
-            //                             onPressed: () => _solveGameAndApply(),
-            //                             shape: RoundedRectangleBorder(
-            //                                 borderRadius:
-            //                                     BorderRadius.circular(0.0)),
-            //                             child: AutoSizeText(
-            //                               'Solve game',
-            //                               textAlign: TextAlign.center,
-            //                               maxLines: 1,
-            //                               style: TextStyle(
-            //                                 color: CustomStyles.nord6,
-            //                                 fontSize: 17,
-            //                               ),
-            //                             ),
-            //                           ),
-            //                         ),
-            //                       ),
-            //                     ),
-            //                     Expanded(
-            //                       child: AspectRatio(
-            //                         aspectRatio: 1,
-            //                         child: Container(
-            //                           padding: EdgeInsets.fromLTRB(2, 0, 0, 2),
-            //                           child: FlatButton(
-            //                             color: CustomStyles.nord3,
-            //                             splashColor: CustomStyles.nord0,
-            //                             onPressed: () => _resetBoard(problem),
-            //                             shape: RoundedRectangleBorder(
-            //                                 borderRadius:
-            //                                     BorderRadius.circular(0.0)),
-            //                             child: AutoSizeText(
-            //                               'Reset Game',
-            //                               textAlign: TextAlign.center,
-            //                               maxLines: 1,
-            //                               style: TextStyle(
-            //                                 color: CustomStyles.nord6,
-            //                                 fontSize: 17,
-            //                               ),
-            //                             ),
-            //                           ),
-            //                         ),
-            //                       ),
-            //                     ),
-            //                   ],
-            //                 ),
-            //               ),
-            //               Expanded(
-            //                 child: Row(
-            //                   children: [
-            //                     Expanded(
-            //                       child: AspectRatio(
-            //                         aspectRatio: 1,
-            //                         child: Container(
-            //                           padding: EdgeInsets.only(top: 2),
-            //                           child: FlatButton(
-            //                             color: CustomStyles.nord3,
-            //                             splashColor: CustomStyles.nord0,
-            //                             onPressed: () => _newGameAndSave(),
-            //                             shape: RoundedRectangleBorder(
-            //                                 borderRadius:
-            //                                     BorderRadius.circular(0.0)),
-            //                             child: AutoSizeText(
-            //                               'New Game',
-            //                               textAlign: TextAlign.center,
-            //                               maxLines: 1,
-            //                               style: TextStyle(
-            //                                 color: CustomStyles.nord6,
-            //                                 fontSize: 17,
-            //                               ),
-            //                             ),
-            //                           ),
-            //                         ),
-            //                       ),
-            //                     ),
-            //                   ],
-            //                 ),
-            //               ),
-            //             ],
-            //           ),
-            //         ),
-            //       ),
-            //     ),
-            //     const Spacer(flex: 2),
-            //   ],
-            // ),
           ],
         ),
       ),
@@ -852,11 +570,28 @@ class _SudokuScreenState extends State<SudokuScreen> {
     );
   }
 
+  void _shiftFocus(int rowOffset, int colOffset) {
+    if (cellSelected()) {
+      setState(() {
+        var currentState = problem.getCurrentState() as SudokuState;
+        var currentBoard = currentState.getTiles();
+        var num = currentBoard[selectedRow][selectedCol];
+        _whiteoutBoard(num, selectedRow, selectedCol);
+        selectedRow = ((selectedRow + rowOffset) % problem.board_size);
+        selectedCol = ((selectedCol + colOffset) % problem.board_size);
+        if (digitGood(selectedNum) && selectedNum == 1) {
+          _doMove(selectedNum, selectedRow, selectedCol);
+        }
+        _updateCells(selectedRow, selectedCol);
+      });
+    }
+  }
+
   void _newGame() {
     setState(() {
       problem = SudokuProblem.withMoreHints(initialHints.value - 17);
       _assistant = SolvingAssistant(problem);
-      _resetGlobals();
+      resetGlobals();
       _populateGridList();
     });
   }
@@ -866,57 +601,20 @@ class _SudokuScreenState extends State<SudokuScreen> {
     saveGame();
   }
 
-  void _resetGlobals() {
-    selectedRow = -1;
-    selectedCol = -1;
-    selectedNum = -1;
-    hintsGiven.clear();
-    movesDone.clear();
-  }
-
   void _resetBoard(Problem problem) {
     setState(() {
       _assistant.reset();
-      _resetGlobals();
+      resetGlobals();
       _populateGridList();
     });
-  }
-
-  EdgeInsets _getBoardPadding(int index) {
-    var row = index ~/ problem.board_size;
-    var col = index % problem.board_size;
-    var thickness = 2;
-    var defaultThickness = 0.5;
-    var isTop = row == 0;
-    var isLeft = col == 0;
-    var isBottom = row % problem.cell_size == problem.cell_size - 1;
-    var isRight = col % problem.cell_size == problem.cell_size - 1;
-    var top = isTop ? thickness : defaultThickness;
-    var left = isLeft ? thickness : defaultThickness;
-    var bottom = isBottom ? thickness : defaultThickness;
-    var right = isRight ? thickness : defaultThickness;
-
-    return EdgeInsets.fromLTRB(
-        left.toDouble(), top.toDouble(), right.toDouble(), bottom.toDouble());
-  }
-
-  bool _givenAsHint(int row, int col) {
-    bool hint = false;
-    for (List pair in hintsGiven) {
-      if (pair[0] == row && pair[1] == col) {
-        hint = true;
-        break;
-      }
-    }
-    return hint;
   }
 
   void _doMove(int num, int row, int col) {
     bool numGood = num > -1 && num < 11;
     if (!_assistant.isProblemSolved() &&
-        _cellSelected() &&
+        cellSelected() &&
         numGood &&
-        _digitGood(num)) {
+        digitGood(num)) {
       SudokuState initialState = problem.getInitialState();
       var initialBoard = initialState.getTiles();
 
@@ -938,7 +636,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
       }
       var changeIndex = row * problem.board_size + col % problem.board_size;
       _sudokuGrid[changeIndex] =
-          _makeBoardButton(changeIndex, _getCellColor(row, col));
+          _makeBoardButton(changeIndex, getCellColor(row, col));
     }
   }
 
@@ -987,62 +685,6 @@ class _SudokuScreenState extends State<SudokuScreen> {
     });
   }
 
-  bool _cellSelected() {
-    return selectedRow != -1 && selectedCol != -1;
-  }
-
-  Color _getCellColor(int row, int col) {
-    Color peerCell = CustomStyles.nord8;
-    Color background = CustomStyles.nord6;
-    Color peerDigit = CustomStyles.nord9;
-    Color success = CustomStyles.nord14;
-    Color wrong = CustomStyles.nord12;
-    Color selected = CustomStyles.nord13;
-    Color color = background;
-
-    SudokuState currentState = problem.getCurrentState();
-    List currentBoard = currentState.getTiles();
-
-    bool rowSelected = row == selectedRow;
-    bool colSelected = col == selectedCol;
-    bool isSelected = rowSelected && colSelected;
-
-    bool floorSelected =
-        row ~/ problem.cell_size == selectedRow ~/ problem.cell_size;
-    bool towerSelected =
-        col ~/ problem.cell_size == selectedCol ~/ problem.cell_size;
-    bool blockSelected = floorSelected && towerSelected;
-
-    bool doCells = doPeerCells.value;
-    bool doDigits = doPeerDigits.value;
-    bool isPeerCell = _cellSelected() &&
-        !isSelected &&
-        (rowSelected || colSelected || blockSelected);
-    bool nonZero = _cellSelected() && currentBoard[row][col] != 0;
-    bool isPeerDigit = _cellSelected() &&
-        currentBoard[row][col] == currentBoard[selectedRow][selectedCol] &&
-        nonZero;
-    bool peerCellNotPeerDigit = isPeerCell && !isPeerDigit;
-
-    if (problem.success()) {
-      return success;
-    } else if (_cellSelected()) {
-      if (peerCellNotPeerDigit && doCells) {
-        return peerCell;
-      } else if (isPeerDigit && nonZero && !isSelected && doDigits) {
-        return isPeerCell && !problem.isLegal(row, col) && doMistakes.value
-            ? wrong
-            : peerDigit;
-      } else if (isSelected) {
-        return selected;
-      } else {
-        return color;
-      }
-    } else {
-      return color;
-    }
-  }
-
   void _whiteoutBoard(int num, int row, int col) {
     var currentState = problem.getCurrentState() as SudokuState;
     var currentBoard = currentState.getTiles();
@@ -1062,26 +704,12 @@ class _SudokuScreenState extends State<SudokuScreen> {
     }
   }
 
-  void _toggleBoolWrapper(VariableWrapper setting) {
-    setState(() {
-      setting.value = !setting.value;
-      saveToPrefs();
-    });
-  }
-
-  void _setIntWrapper(int value, VariableWrapper setting) {
-    setState(() {
-      setting.value = value;
-      saveToPrefs();
-    });
-  }
-
   void _populateGridList() {
     _sudokuGrid =
         List.generate(problem.board_size * problem.board_size, (index) {
       return _makeBoardButton(
           index,
-          _getCellColor(
+          getCellColor(
               index ~/ problem.board_size, index % problem.board_size));
     });
   }
@@ -1094,13 +722,13 @@ class _SudokuScreenState extends State<SudokuScreen> {
     var cellNum = currentBoard[row][col];
     String toPlace = cellNum == 0 ? '' : cellNum.toString();
     return Container(
-      padding: _getBoardPadding(index),
+      padding: getBoardPadding(index),
       child: LettuceBoardButton(
         buttonColor: color,
         hoverColor: CustomStyles.nord13,
         highlightColor: CustomStyles.nord13,
         splashColor: CustomStyles.nord12,
-        textColor: _getTextColor(row, col),
+        textColor: getTextColor(row, col, problem),
         textSize: 40,
         label: toPlace,
         onTap: () {
@@ -1113,7 +741,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
   void _selectCell(int row, int col) {
     var currentState = problem.currentState as SudokuState;
     var currentBoard = currentState.getTiles();
-    if (_cellSelected()) {
+    if (cellSelected()) {
       var num = currentBoard[selectedRow][selectedCol];
       _whiteoutBoard(num, selectedRow, selectedCol);
     }
@@ -1132,11 +760,11 @@ class _SudokuScreenState extends State<SudokuScreen> {
         for (var i = 0; i < problem.board_size; i++) {
           var rowIndex = getIndex(row, i, problem.board_size);
           _sudokuGrid[rowIndex] =
-              _makeBoardButton(rowIndex, _getCellColor(row, i));
+              _makeBoardButton(rowIndex, getCellColor(row, i));
 
           var colIndex = getIndex(i, col, problem.board_size);
           _sudokuGrid[colIndex] =
-              _makeBoardButton(colIndex, _getCellColor(i, col));
+              _makeBoardButton(colIndex, getCellColor(i, col));
 
           var blockRow = row ~/ problem.cell_size * problem.cell_size;
           var blockCol = col ~/ problem.cell_size * problem.cell_size;
@@ -1144,7 +772,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
               blockCol + i % problem.cell_size, problem.board_size);
           _sudokuGrid[blockIndex] = _makeBoardButton(
               blockIndex,
-              _getCellColor(blockRow + i ~/ problem.cell_size,
+              getCellColor(blockRow + i ~/ problem.cell_size,
                   blockCol + i % problem.cell_size));
         }
       }
@@ -1156,13 +784,13 @@ class _SudokuScreenState extends State<SudokuScreen> {
           for (var j = 0; j < problem.board_size; j++) {
             if (currentBoard[i][j] == num && num != 0) {
               var k = getIndex(i, j, problem.board_size);
-              _sudokuGrid[k] = _makeBoardButton(k, _getCellColor(i, j));
+              _sudokuGrid[k] = _makeBoardButton(k, getCellColor(i, j));
             }
           }
         }
       }
       var index = getIndex(row, col, problem.board_size);
-      _sudokuGrid[index] = _makeBoardButton(index, _getCellColor(row, col));
+      _sudokuGrid[index] = _makeBoardButton(index, getCellColor(row, col));
     } else {
       _populateGridList();
     }
@@ -1185,7 +813,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
             if (selectionRadio.value == 1) {
               selectedNum = num;
             } else {
-              if (_cellSelected()) {
+              if (cellSelected()) {
                 _doMoveAndApply(num, selectedRow, selectedCol);
               }
             }
@@ -1205,30 +833,11 @@ class _SudokuScreenState extends State<SudokuScreen> {
         if (selectionRadio.value == 1) {
           selectedNum = 0;
         } else {
-          if (_cellSelected()) {
+          if (cellSelected()) {
             _doMoveAndApply(0, selectedRow, selectedCol);
           }
         }
       },
     ));
-  }
-
-  Color _getTextColor(int row, int col) {
-    SudokuState initialState = problem.getInitialState();
-    var initialBoard = initialState.getTiles();
-    var initialHint = initialBoard[row][col] != 0;
-    var legal = problem.isLegal(row, col);
-    var correct = problem.isCorrect(row, col);
-    var doLegality = legalityRadio.value == 1;
-    Color color = CustomStyles.nord10;
-
-    color =
-        doMistakes.value && doLegality && !legal ? CustomStyles.nord11 : color;
-    color = doMistakes.value && !doLegality && !correct
-        ? CustomStyles.nord11
-        : color;
-    color = initialHint ? CustomStyles.nord3 : color;
-    color = _givenAsHint(row, col) ? CustomStyles.nord3 : color;
-    return color;
   }
 }

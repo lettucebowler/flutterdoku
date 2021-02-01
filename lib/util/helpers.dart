@@ -3,6 +3,7 @@ import 'package:lettuce_sudoku/domains/sudoku/SudokuProblem.dart';
 import 'package:lettuce_sudoku/domains/sudoku/SudokuState.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:lettuce_sudoku/util/globals.dart';
+import 'package:lettuce_sudoku/util/CustomStyles.dart';
 
 Future<bool> readFromPrefs() async {
   final prefs = await SharedPreferences.getInstance();
@@ -149,3 +150,119 @@ MaterialColor getMaterialColor(Color color) {
 int getIndex(int row, int col, int rowLength) {
   return row * rowLength + col % rowLength;
 }
+
+Color getTextColor(int row, int col, SudokuProblem problem) {
+    SudokuState initialState = problem.getInitialState();
+    var initialBoard = initialState.getTiles();
+    var initialHint = initialBoard[row][col] != 0;
+    var legal = problem.isLegal(row, col);
+    var correct = problem.isCorrect(row, col);
+    var doLegality = legalityRadio.value == 1;
+    Color color = CustomStyles.nord10;
+
+    color =
+        doMistakes.value && doLegality && !legal ? CustomStyles.nord11 : color;
+    color = doMistakes.value && !doLegality && !correct
+        ? CustomStyles.nord11
+        : color;
+    color = initialHint ? CustomStyles.nord3 : color;
+    color = givenAsHint(row, col) ? CustomStyles.nord3 : color;
+    return color;
+  }
+
+  bool givenAsHint(int row, int col) {
+    bool hint = false;
+    for (List pair in hintsGiven) {
+      if (pair[0] == row && pair[1] == col) {
+        hint = true;
+        break;
+      }
+    }
+    return hint;
+  }
+
+  bool cellSelected() {
+    return selectedRow != -1 && selectedCol != -1;
+  }
+
+  Color getCellColor(int row, int col) {
+    Color peerCell = CustomStyles.nord8;
+    Color background = CustomStyles.nord6;
+    Color peerDigit = CustomStyles.nord9;
+    Color success = CustomStyles.nord14;
+    Color wrong = CustomStyles.nord12;
+    Color selected = CustomStyles.nord13;
+    Color color = background;
+
+    SudokuState currentState = problem.getCurrentState();
+    List currentBoard = currentState.getTiles();
+
+    bool rowSelected = row == selectedRow;
+    bool colSelected = col == selectedCol;
+    bool isSelected = rowSelected && colSelected;
+
+    bool floorSelected =
+        row ~/ problem.cell_size == selectedRow ~/ problem.cell_size;
+    bool towerSelected =
+        col ~/ problem.cell_size == selectedCol ~/ problem.cell_size;
+    bool blockSelected = floorSelected && towerSelected;
+
+    bool doCells = doPeerCells.value;
+    bool doDigits = doPeerDigits.value;
+    bool isPeerCell = cellSelected() &&
+        !isSelected &&
+        (rowSelected || colSelected || blockSelected);
+    bool nonZero = cellSelected() && currentBoard[row][col] != 0;
+    bool isPeerDigit = cellSelected() &&
+        currentBoard[row][col] == currentBoard[selectedRow][selectedCol] &&
+        nonZero;
+    bool peerCellNotPeerDigit = isPeerCell && !isPeerDigit;
+
+    if (problem.success()) {
+      return success;
+    } else if (cellSelected()) {
+      if (peerCellNotPeerDigit && doCells) {
+        return peerCell;
+      } else if (isPeerDigit && nonZero && !isSelected && doDigits) {
+        return isPeerCell && !problem.isLegal(row, col) && doMistakes.value
+            ? wrong
+            : peerDigit;
+      } else if (isSelected) {
+        return selected;
+      } else {
+        return color;
+      }
+    } else {
+      return color;
+    }
+  }
+
+  EdgeInsets getBoardPadding(int index) {
+    var row = index ~/ problem.board_size;
+    var col = index % problem.board_size;
+    var thickness = 2;
+    var defaultThickness = 0.5;
+    var isTop = row == 0;
+    var isLeft = col == 0;
+    var isBottom = row % problem.cell_size == problem.cell_size - 1;
+    var isRight = col % problem.cell_size == problem.cell_size - 1;
+    var top = isTop ? thickness : defaultThickness;
+    var left = isLeft ? thickness : defaultThickness;
+    var bottom = isBottom ? thickness : defaultThickness;
+    var right = isRight ? thickness : defaultThickness;
+
+    return EdgeInsets.fromLTRB(
+        left.toDouble(), top.toDouble(), right.toDouble(), bottom.toDouble());
+  }
+
+  void resetGlobals() {
+    selectedRow = -1;
+    selectedCol = -1;
+    selectedNum = -1;
+    hintsGiven.clear();
+    movesDone.clear();
+  }
+
+  bool digitGood(int num) {
+    return num > -1 && num <= 10;
+  }
