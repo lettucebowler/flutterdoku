@@ -179,7 +179,9 @@ class _SudokuScreenState extends State<SudokuScreen> {
         child: ListView(
           padding: const EdgeInsets.all(0.0),
           children: [
-            const DrawerHeader(
+            Container(
+              height:130,
+              child: const DrawerHeader(
               child: Center(
                 child: Text(
                   'Settings',
@@ -190,9 +192,10 @@ class _SudokuScreenState extends State<SudokuScreen> {
                 color: CustomStyles.nord3,
               ),
             ),
+            ),
             Row(
               children: [
-                const Spacer(flex: 2),
+                const Spacer(flex: 1),
                 Expanded(
                   flex: 33,
                   child: Column(
@@ -345,10 +348,84 @@ class _SudokuScreenState extends State<SudokuScreen> {
                           // _populateGridList();
                         },
                       ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: AspectRatio(
+                              aspectRatio: 2.5,
+                              child: Container(
+                                padding: EdgeInsets.fromLTRB(0, 0, 2, 2),
+                                child: FlatButton(
+                                  color: CustomStyles.nord3,
+                                  splashColor: CustomStyles.nord0,
+                                  onPressed: () => _solveGameAndApply(),
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(0.0)),
+                                  child: AutoSizeText(
+                                    'Solve game',
+                                    textAlign: TextAlign.center,
+                                    maxLines: 1,
+                                    style: TextStyle(
+                                      color: CustomStyles.nord6,
+                                      fontSize: 17,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: AspectRatio(
+                              aspectRatio: 2.5,
+                              child: Container(
+                                padding: EdgeInsets.fromLTRB(2, 0, 0, 2),
+                                child: FlatButton(
+                                  color: CustomStyles.nord3,
+                                  splashColor: CustomStyles.nord0,
+                                  onPressed: () => _resetBoard(problem),
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(0.0)),
+                                  child: AutoSizeText(
+                                    'Reset Game',
+                                    textAlign: TextAlign.center,
+                                    maxLines: 1,
+                                    style: TextStyle(
+                                      color: CustomStyles.nord6,
+                                      fontSize: 17,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      AspectRatio(
+                        aspectRatio: 5,
+                        child: Container(
+                          padding: EdgeInsets.only(top: 2),
+                          child: FlatButton(
+                            color: CustomStyles.nord3,
+                            splashColor: CustomStyles.nord0,
+                            onPressed: () => _newGameAndSave(),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(0.0)),
+                            child: AutoSizeText(
+                              'New Game',
+                              textAlign: TextAlign.center,
+                              maxLines: 1,
+                              style: TextStyle(
+                                color: CustomStyles.nord6,
+                                fontSize: 17,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
-                const Spacer(flex: 2),
+                const Spacer(flex: 1),
               ],
             ),
             // Row(
