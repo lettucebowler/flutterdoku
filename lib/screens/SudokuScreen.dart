@@ -469,7 +469,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
                         children: [
                           Expanded(
                             child: AspectRatio(
-                              aspectRatio: 2.5,
+                              aspectRatio: 3,
                               child: Container(
                                 padding: EdgeInsets.fromLTRB(0, 0, 2, 2),
                                 child: LettuceButton(
@@ -489,7 +489,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
                           ),
                           Expanded(
                             child: AspectRatio(
-                              aspectRatio: 2.5,
+                              aspectRatio: 3,
                               child: Container(
                                 padding: EdgeInsets.fromLTRB(2, 0, 0, 2),
                                 child: LettuceButton(
@@ -509,24 +509,24 @@ class _SudokuScreenState extends State<SudokuScreen> {
                           ),
                         ],
                       ),
-                      // AspectRatio(
-                      //   aspectRatio: 5,
-                      //   child: Container(
-                      //     padding: EdgeInsets.only(top: 2),
-                      //     child: LettuceButton(
-                      //       buttonColor: CustomStyles.nord3,
-                      //       hoverColor: CustomStyles.nord2,
-                      //       highlightColor: CustomStyles.nord1,
-                      //       splashColor: CustomStyles.nord0,
-                      //       label: 'New Game',
-                      //       textColor: CustomStyles.nord6,
-                      //       textSize: 24,
-                      //       onTap: () {
-                      //         _newGameAndSave();
-                      //       },
-                      //     ),
-                      //   ),
-                      // ),
+                      AspectRatio(
+                        aspectRatio: 6,
+                        child: Container(
+                          padding: EdgeInsets.only(top: 2),
+                          child: LettuceButton(
+                            buttonColor: CustomStyles.nord3,
+                            hoverColor: CustomStyles.nord2,
+                            highlightColor: CustomStyles.nord1,
+                            splashColor: CustomStyles.nord0,
+                            label: 'New Game',
+                            textColor: CustomStyles.nord6,
+                            textSize: 24,
+                            onTap: () {
+                              _newGameAndSave();
+                            },
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
