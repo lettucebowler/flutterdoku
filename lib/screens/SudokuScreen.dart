@@ -173,7 +173,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
             ),
             Row(
               children: [
-                const Spacer(flex: 1),
+                Container(width: 4),
                 Expanded(
                   flex: 33,
                   child: Column(
@@ -280,19 +280,6 @@ class _SudokuScreenState extends State<SudokuScreen> {
                           _populateGridList();
                         },
                       ),
-                      // Row(
-                      //   children: [
-                      //     Text(
-                      //       'Selection Order',
-                      //       style: TextStyle(
-                      //         color: CustomStyles.nord3,
-                      //         fontSize: 17,
-                      //       ),
-                      //       textAlign: TextAlign.left,
-                      //     ),
-                      //     Spacer(),
-                      //   ],
-                      // ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -322,10 +309,11 @@ class _SudokuScreenState extends State<SudokuScreen> {
                         value: 0,
                         groupValue: selectionRadio.value,
                         onChanged: (int value) {
-                          setState(() {
-                            selectionRadio.value = value;
-                          });
-                          // _populateGridList();
+                          setState(
+                            () {
+                              selectionRadio.value = value;
+                            },
+                          );
                         },
                       ),
                       LettuceRadio(
@@ -334,10 +322,119 @@ class _SudokuScreenState extends State<SudokuScreen> {
                         value: 1,
                         groupValue: selectionRadio.value,
                         onChanged: (int value) {
-                          setState(() {
-                            selectionRadio.value = value;
-                          });
+                          setState(
+                            () {
+                              selectionRadio.value = value;
+                            },
+                          );
                         },
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Initial Hints',
+                            style: TextStyle(
+                              color: CustomStyles.nord3,
+                              fontSize: 17,
+                            ),
+                            textAlign: TextAlign.left,
+                          ),
+                          Visibility(
+                            visible: false,
+                            maintainSize: true,
+                            maintainAnimation: true,
+                            maintainState: true,
+                            child: Switch(
+                              value: doMistakes.value,
+                              onChanged: null,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Slider(
+                              value: initialHints.value.toDouble(),
+                              onChanged: (double val) {
+                                setState(
+                                  () {
+                                    initialHints.value = val.toInt();
+                                  },
+                                );
+                              },
+                              min: 17,
+                              max: 50,
+                            ),
+                          ),
+                          AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 300),
+                            transitionBuilder:
+                                (Widget child, Animation<double> animation) =>
+                                    ScaleTransition(
+                              child: child,
+                              scale: animation,
+                            ),
+                            child: initialHints.value > 17
+                                ? IconButton(
+                                    key: ValueKey(0),
+                                    icon: Icon(
+                                      Icons.remove_circle,
+                                      color: CustomStyles.nord11,
+                                    ),
+                                    onPressed: () {
+                                      setState(
+                                        () {
+                                          initialHints.value -= 1;
+                                        },
+                                      );
+                                    },
+                                  )
+                                : IconButton(
+                                    hoverColor: CustomStyles.nord0,
+                                    key: ValueKey(1),
+                                    icon: Icon(
+                                      Icons.remove_circle,
+                                      color: CustomStyles.nord6,
+                                    ),
+                                    onPressed: () {},
+                                  ),
+                          ),
+                          Text(initialHints.value.toString()),
+                          AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 300),
+                            transitionBuilder:
+                                (Widget child, Animation<double> animation) =>
+                                    ScaleTransition(
+                              child: child,
+                              scale: animation,
+                            ),
+                            child: initialHints.value < 50
+                                ? IconButton(
+                                    key: ValueKey(0),
+                                    icon: Icon(
+                                      Icons.add_circle,
+                                      color: CustomStyles.nord14,
+                                    ),
+                                    onPressed: () {
+                                      setState(
+                                        () {
+                                          initialHints.value += 1;
+                                        },
+                                      );
+                                    },
+                                  )
+                                : IconButton(
+                                    key: ValueKey(1),
+                                    icon: Icon(
+                                      Icons.add_circle,
+                                      color: CustomStyles.nord6,
+                                    ),
+                                    onPressed: () {},
+                                  ),
+                          ),
+                        ],
                       ),
                       Row(
                         children: [
@@ -404,7 +501,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
                     ],
                   ),
                 ),
-                const Spacer(flex: 1),
+                Container(width: 4),
               ],
             ),
           ],
