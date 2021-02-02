@@ -392,7 +392,6 @@ class _SudokuScreenState extends State<SudokuScreen> {
                                     },
                                   )
                                 : IconButton(
-                                    hoverColor: CustomStyles.nord0,
                                     key: ValueKey(1),
                                     icon: Icon(
                                       Icons.remove_circle,
