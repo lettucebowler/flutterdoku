@@ -480,24 +480,24 @@ class _SudokuScreenState extends State<SudokuScreen> {
                           ),
                         ],
                       ),
-                      AspectRatio(
-                        aspectRatio: 5,
-                        child: Container(
-                          padding: EdgeInsets.only(top: 2),
-                          child: LettuceButton(
-                            buttonColor: CustomStyles.nord3,
-                            hoverColor: CustomStyles.nord2,
-                            highlightColor: CustomStyles.nord1,
-                            splashColor: CustomStyles.nord0,
-                            label: 'New Game',
-                            textColor: CustomStyles.nord6,
-                            textSize: 24,
-                            onTap: () {
-                              _newGameAndSave();
-                            },
-                          ),
-                        ),
-                      ),
+                      // AspectRatio(
+                      //   aspectRatio: 5,
+                      //   child: Container(
+                      //     padding: EdgeInsets.only(top: 2),
+                      //     child: LettuceButton(
+                      //       buttonColor: CustomStyles.nord3,
+                      //       hoverColor: CustomStyles.nord2,
+                      //       highlightColor: CustomStyles.nord1,
+                      //       splashColor: CustomStyles.nord0,
+                      //       label: 'New Game',
+                      //       textColor: CustomStyles.nord6,
+                      //       textSize: 24,
+                      //       onTap: () {
+                      //         _newGameAndSave();
+                      //       },
+                      //     ),
+                      //   ),
+                      // ),
                     ],
                   ),
                 ),
@@ -579,7 +579,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
                             children: <Widget>[
                               Flexible(
                                 fit: FlexFit.tight,
-                                flex: 2,
+                                flex: 3,
                                 child: AspectRatio(
                                   aspectRatio: 1,
                                   child: Container(
@@ -602,15 +602,15 @@ class _SudokuScreenState extends State<SudokuScreen> {
                               ),
                               Flexible(
                                 fit: FlexFit.tight,
-                                flex: 2,
+                                flex: 1,
                                 child: AspectRatio(
                                   aspectRatio: 1,
                                   child: Container(
                                     padding: EdgeInsets.all(2),
-                                    child: LettuceButton(
-                                      label: 'Get Hint',
-                                      textColor: CustomStyles.nord6,
-                                      textSize: 24,
+                                    child: LettuceIconButton(
+                                      icon: Icons.search_sharp,
+                                      iconColor: CustomStyles.nord6,
+                                      iconSize: 24,
                                       textAlign: TextAlign.center,
                                       buttonColor: CustomStyles.nord3,
                                       hoverColor: CustomStyles.nord2,
