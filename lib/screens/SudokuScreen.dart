@@ -178,83 +178,113 @@ class _SudokuScreenState extends State<SudokuScreen> {
                   flex: 33,
                   child: Column(
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text(
-                            'Highlight Peer Cells',
-                            style: TextStyle(
-                              color: CustomStyles.nord3,
-                              fontSize: 17,
-                            ),
-                            textAlign: TextAlign.left,
+                      Material(
+                        child: InkWell(
+                          onTap: () {
+                            setState(() {
+                              doPeerCells.value = !doPeerCells.value;
+                            });
+                            _populateGridList();
+                          },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text(
+                                'Highlight Peer Cells',
+                                style: TextStyle(
+                                  color: CustomStyles.nord3,
+                                  fontSize: 17,
+                                ),
+                                textAlign: TextAlign.left,
+                              ),
+                              Switch(
+                                value: doPeerCells.value,
+                                onChanged: (bool value) {
+                                  setState(() {
+                                    doPeerCells.value = value;
+                                  });
+                                  _populateGridList();
+                                },
+                                activeColor: CustomStyles.nord3,
+                                inactiveThumbColor: CustomStyles.nord3,
+                                activeTrackColor: CustomStyles.nord14,
+                                inactiveTrackColor: CustomStyles.nord15,
+                              ),
+                            ],
                           ),
-                          Switch(
-                            value: doPeerCells.value,
-                            onChanged: (bool value) {
-                              setState(() {
-                                doPeerCells.value = value;
-                              });
-                              _populateGridList();
-                            },
-                            activeColor: CustomStyles.nord3,
-                            inactiveThumbColor: CustomStyles.nord3,
-                            activeTrackColor: CustomStyles.nord14,
-                            inactiveTrackColor: CustomStyles.nord15,
-                          ),
-                        ],
+                        ),
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text(
-                            'Highlight Peer Digits',
-                            style: TextStyle(
-                              color: CustomStyles.nord3,
-                              fontSize: 17,
-                            ),
-                            textAlign: TextAlign.left,
+                      Material(
+                        child: InkWell(
+                          onTap: () {
+                            setState(() {
+                              doPeerDigits.value = !doPeerDigits.value;
+                            });
+                            _populateGridList();
+                          },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text(
+                                'Highlight Peer Digits',
+                                style: TextStyle(
+                                  color: CustomStyles.nord3,
+                                  fontSize: 17,
+                                ),
+                                textAlign: TextAlign.left,
+                              ),
+                              Switch(
+                                value: doPeerDigits.value,
+                                onChanged: (bool value) {
+                                  setState(() {
+                                    doPeerDigits.value = value;
+                                  });
+                                  _populateGridList();
+                                },
+                                activeColor: CustomStyles.nord3,
+                                inactiveThumbColor: CustomStyles.nord3,
+                                activeTrackColor: CustomStyles.nord14,
+                                inactiveTrackColor: CustomStyles.nord15,
+                              ),
+                            ],
                           ),
-                          Switch(
-                            value: doPeerDigits.value,
-                            onChanged: (bool value) {
-                              setState(() {
-                                doPeerDigits.value = value;
-                              });
-                              _populateGridList();
-                            },
-                            activeColor: CustomStyles.nord3,
-                            inactiveThumbColor: CustomStyles.nord3,
-                            activeTrackColor: CustomStyles.nord14,
-                            inactiveTrackColor: CustomStyles.nord15,
-                          ),
-                        ],
+                        ),
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'Show Mistakes',
-                            style: TextStyle(
-                              color: CustomStyles.nord3,
-                              fontSize: 17,
-                            ),
-                            textAlign: TextAlign.left,
+                      Material(
+                        child: InkWell(
+                          onTap: () {
+                            setState(() {
+                              doMistakes.value = !doMistakes.value;
+                            });
+                            _populateGridList();
+                          },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Show Mistakes',
+                                style: TextStyle(
+                                  color: CustomStyles.nord3,
+                                  fontSize: 17,
+                                ),
+                                textAlign: TextAlign.left,
+                              ),
+                              Switch(
+                                value: doMistakes.value,
+                                onChanged: (bool value) {
+                                  setState(() {
+                                    doMistakes.value = value;
+                                  });
+                                  _populateGridList();
+                                },
+                                activeColor: CustomStyles.nord3,
+                                inactiveThumbColor: CustomStyles.nord3,
+                                activeTrackColor: CustomStyles.nord14,
+                                inactiveTrackColor: CustomStyles.nord15,
+                              ),
+                            ],
                           ),
-                          Switch(
-                            value: doMistakes.value,
-                            onChanged: (bool value) {
-                              setState(() {
-                                doMistakes.value = value;
-                              });
-                              _populateGridList();
-                            },
-                            activeColor: CustomStyles.nord3,
-                            inactiveThumbColor: CustomStyles.nord3,
-                            activeTrackColor: CustomStyles.nord14,
-                            inactiveTrackColor: CustomStyles.nord15,
-                          ),
-                        ],
+                        ),
                       ),
                       LettuceRadio(
                         label: 'Correctness',
