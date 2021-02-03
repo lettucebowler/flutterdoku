@@ -470,20 +470,39 @@ class _SudokuScreenState extends State<SudokuScreen> {
                           Expanded(
                             child: AspectRatio(
                               aspectRatio: 3,
-                              child: Container(
-                                padding: EdgeInsets.fromLTRB(0, 0, 2, 2),
-                                child: LettuceButton(
-                                  buttonColor: CustomStyles.nord3,
-                                  hoverColor: CustomStyles.nord2,
-                                  highlightColor: CustomStyles.nord1,
-                                  splashColor: CustomStyles.nord0,
-                                  label: 'Solve Game',
-                                  textColor: CustomStyles.nord6,
-                                  textSize: 24,
-                                  onTap: () {
-                                    _solveGameAndApply();
-                                  },
-                                ),
+                              child: AnimatedSwitcher(
+                                duration: const Duration(milliseconds: 10),
+                                child: !problem.success()
+                                    ? Container(
+                                        padding:
+                                            EdgeInsets.fromLTRB(0, 0, 2, 2),
+                                        child: LettuceButton(
+                                          buttonColor: CustomStyles.nord3,
+                                          hoverColor: CustomStyles.nord2,
+                                          highlightColor: CustomStyles.nord1,
+                                          label: 'Solve Game',
+                                          textColor: CustomStyles.nord6,
+                                          textSize: 24,
+                                          onTap: () {
+                                            _solveGameAndApply();
+                                          },
+                                        ),
+                                      )
+                                    : Container(
+                                        padding:
+                                            EdgeInsets.fromLTRB(0, 0, 2, 2),
+                                        child: LettuceButton(
+                                          buttonColor: CustomStyles.nord3,
+                                          hoverColor: CustomStyles.nord2,
+                                          highlightColor: CustomStyles.nord1,
+                                          label: 'Reset Game',
+                                          textColor: CustomStyles.nord6,
+                                          textSize: 24,
+                                          onTap: () {
+                                            _resetBoard(problem);
+                                          },
+                                        ),
+                                      ),
                               ),
                             ),
                           ),
@@ -497,11 +516,11 @@ class _SudokuScreenState extends State<SudokuScreen> {
                                   hoverColor: CustomStyles.nord2,
                                   highlightColor: CustomStyles.nord1,
                                   splashColor: CustomStyles.nord0,
-                                  label: 'Reset Game',
+                                  label: 'New Game',
                                   textColor: CustomStyles.nord6,
                                   textSize: 24,
                                   onTap: () {
-                                    _resetBoard(problem);
+                                    _newGameAndSave();
                                   },
                                 ),
                               ),
@@ -509,23 +528,8 @@ class _SudokuScreenState extends State<SudokuScreen> {
                           ),
                         ],
                       ),
-                      AspectRatio(
-                        aspectRatio: 6,
-                        child: Container(
-                          padding: EdgeInsets.only(top: 2),
-                          child: LettuceButton(
-                            buttonColor: CustomStyles.nord3,
-                            hoverColor: CustomStyles.nord2,
-                            highlightColor: CustomStyles.nord1,
-                            splashColor: CustomStyles.nord0,
-                            label: 'New Game',
-                            textColor: CustomStyles.nord6,
-                            textSize: 24,
-                            onTap: () {
-                              _newGameAndSave();
-                            },
-                          ),
-                        ),
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(0, 2, 0, 0),
                       ),
                     ],
                   ),
@@ -587,6 +591,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
                           padding: EdgeInsets.all(2),
                           child: GridView.builder(
                             itemCount: _moveGrid.length,
+                            physics: const NeverScrollableScrollPhysics(),
                             gridDelegate:
                                 SliverGridDelegateWithFixedCrossAxisCount(
                                     crossAxisCount: 5,
@@ -931,7 +936,6 @@ class _SudokuScreenState extends State<SudokuScreen> {
           buttonColor: CustomStyles.nord3,
           hoverColor: CustomStyles.nord2,
           highlightColor: CustomStyles.nord1,
-          splashColor: CustomStyles.nord0,
           textSize: 36,
           textColor: CustomStyles.nord6,
           label: num.toString(),
@@ -951,7 +955,6 @@ class _SudokuScreenState extends State<SudokuScreen> {
       buttonColor: CustomStyles.nord3,
       hoverColor: CustomStyles.nord2,
       highlightColor: CustomStyles.nord1,
-      splashColor: CustomStyles.nord0,
       icon: Icons.clear_sharp,
       iconSize: 36,
       iconColor: CustomStyles.nord6,
