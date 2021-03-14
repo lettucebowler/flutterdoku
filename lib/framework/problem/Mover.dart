@@ -55,9 +55,9 @@ abstract class Mover {
 //            throw new RuntimeException("Bad move name: " + moveName);
       print('Bad move name: ' + moveName);
     }
-    return function(state);
+    return function!(state);
   }
 
-  List<String> moveNames;
-  Map<String, Function(State)> moveMap;
+  late List<String> moveNames;
+  late Map<String, Function(State)> moveMap;
 }

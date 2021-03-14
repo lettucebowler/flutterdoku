@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -12,28 +14,24 @@ import 'package:lettuce_sudoku/util/helpers.dart';
 import 'package:lettuce_sudoku/widgets/widgets.dart';
 
 class SudokuScreen extends StatefulWidget {
-  SudokuScreen({Key key, this.title}) : super(key: key);
-
-  final String title;
+  SudokuScreen({Key? key, this.title}) : super(key: key);
+  final String? title;
 
   @override
   _SudokuScreenState createState() => _SudokuScreenState();
 }
 
 class _SudokuScreenState extends State<SudokuScreen> {
-  SolvingAssistant _assistant;
+  late SolvingAssistant _assistant;
   FocusNode focusNode = FocusNode();
-  var _actionMap;
+  late var _actionMap;
 
-  List<Widget> _sudokuGrid = List(81);
-  List<Widget> _moveGrid = List(10);
+  late List<Widget> _sudokuGrid;
+  late List<Widget> _moveGrid;
 
   @override
   void initState() {
     super.initState();
-    if (problem == null) {
-      _newGameAndSave();
-    }
     _assistant = SolvingAssistant(problem);
     _populateGridList();
     _populateMoveGrid();
@@ -143,7 +141,6 @@ class _SudokuScreenState extends State<SudokuScreen> {
   @override
   Widget build(BuildContext context) {
     FocusScope.of(context).requestFocus(focusNode);
-
     return Scaffold(
       appBar: AppBar(
         title: const AutoSizeText(
@@ -476,14 +473,32 @@ class _SudokuScreenState extends State<SudokuScreen> {
                                     ? Container(
                                         padding:
                                             EdgeInsets.fromLTRB(0, 0, 2, 2),
-                                        child: LettuceButton(
-                                          buttonColor: CustomStyles.nord3,
-                                          hoverColor: CustomStyles.nord2,
-                                          highlightColor: CustomStyles.nord1,
-                                          label: 'Solve Game',
-                                          textColor: CustomStyles.nord6,
-                                          textSize: 24,
-                                          onTap: () {
+                                        child: TextButton(
+                                          style: ButtonStyle(
+                                            backgroundColor:
+                                                MaterialStateProperty.all(
+                                                    CustomStyles.nord3),
+                                            shape: MaterialStateProperty.all(
+                                                RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            0.0))),
+                                            overlayColor:
+                                                MaterialStateProperty.all(
+                                                    CustomStyles.nord0),
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              'Solve Game',
+                                              textAlign: TextAlign.center,
+                                              maxLines: 1,
+                                              style: TextStyle(
+                                                color: CustomStyles.nord6,
+                                                fontSize: 24,
+                                              ),
+                                            ),
+                                          ),
+                                          onPressed: () {
                                             _solveGameAndApply();
                                           },
                                         ),
@@ -491,14 +506,32 @@ class _SudokuScreenState extends State<SudokuScreen> {
                                     : Container(
                                         padding:
                                             EdgeInsets.fromLTRB(0, 0, 2, 2),
-                                        child: LettuceButton(
-                                          buttonColor: CustomStyles.nord3,
-                                          hoverColor: CustomStyles.nord2,
-                                          highlightColor: CustomStyles.nord1,
-                                          label: 'Reset Game',
-                                          textColor: CustomStyles.nord6,
-                                          textSize: 24,
-                                          onTap: () {
+                                        child: TextButton(
+                                          style: ButtonStyle(
+                                            backgroundColor:
+                                                MaterialStateProperty.all(
+                                                    CustomStyles.nord3),
+                                            shape: MaterialStateProperty.all(
+                                                RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            0.0))),
+                                            overlayColor:
+                                                MaterialStateProperty.all(
+                                                    CustomStyles.nord0),
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              'Reset Game',
+                                              textAlign: TextAlign.center,
+                                              maxLines: 1,
+                                              style: TextStyle(
+                                                color: CustomStyles.nord6,
+                                                fontSize: 24,
+                                              ),
+                                            ),
+                                          ),
+                                          onPressed: () {
                                             _resetBoard(problem);
                                           },
                                         ),
@@ -511,15 +544,29 @@ class _SudokuScreenState extends State<SudokuScreen> {
                               aspectRatio: 3,
                               child: Container(
                                 padding: EdgeInsets.fromLTRB(2, 0, 0, 2),
-                                child: LettuceButton(
-                                  buttonColor: CustomStyles.nord3,
-                                  hoverColor: CustomStyles.nord2,
-                                  highlightColor: CustomStyles.nord1,
-                                  splashColor: CustomStyles.nord0,
-                                  label: 'New Game',
-                                  textColor: CustomStyles.nord6,
-                                  textSize: 24,
-                                  onTap: () {
+                                child: TextButton(
+                                  style: ButtonStyle(
+                                    backgroundColor: MaterialStateProperty.all(
+                                        CustomStyles.nord3),
+                                    shape: MaterialStateProperty.all(
+                                        RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(0.0))),
+                                    overlayColor: MaterialStateProperty.all(
+                                        CustomStyles.nord0),
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      'New',
+                                      textAlign: TextAlign.center,
+                                      maxLines: 1,
+                                      style: TextStyle(
+                                        color: CustomStyles.nord6,
+                                        fontSize: 24,
+                                      ),
+                                    ),
+                                  ),
+                                  onPressed: () {
                                     _newGameAndSave();
                                   },
                                 ),
@@ -545,10 +592,8 @@ class _SudokuScreenState extends State<SudokuScreen> {
         focusNode: focusNode,
         onKey: (event) {
           if (event.runtimeType == RawKeyDownEvent) {
-            Function action = _actionMap[event.data.logicalKey];
-            if (action != null) {
-              action();
-            }
+            Function action = _actionMap[event.data.logicalKey] ?? () {};
+            action();
           }
         },
         child: Container(
@@ -575,7 +620,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
                               itemCount: _sudokuGrid.length,
                               gridDelegate:
                                   SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: problem.board_size),
+                                      crossAxisCount: problem.boardSize),
                               itemBuilder: (BuildContext context, int index) =>
                                   _sudokuGrid[index],
                             ),
@@ -618,16 +663,31 @@ class _SudokuScreenState extends State<SudokuScreen> {
                                   aspectRatio: 1,
                                   child: Container(
                                     padding: EdgeInsets.all(2),
-                                    child: LettuceButton(
-                                      label: 'New Game',
-                                      textColor: CustomStyles.nord6,
-                                      textSize: 24,
-                                      textAlign: TextAlign.center,
-                                      buttonColor: CustomStyles.nord3,
-                                      hoverColor: CustomStyles.nord2,
-                                      highlightColor: CustomStyles.nord1,
-                                      splashColor: CustomStyles.nord0,
-                                      onTap: () {
+                                    child: TextButton(
+                                      style: ButtonStyle(
+                                        backgroundColor:
+                                            MaterialStateProperty.all(
+                                                CustomStyles.nord3),
+                                        shape: MaterialStateProperty.all(
+                                            RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                        0.0))),
+                                        overlayColor: MaterialStateProperty.all(
+                                            CustomStyles.nord0),
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          'New Game',
+                                          textAlign: TextAlign.center,
+                                          maxLines: 1,
+                                          style: TextStyle(
+                                            color: CustomStyles.nord6,
+                                            fontSize: 30,
+                                          ),
+                                        ),
+                                      ),
+                                      onPressed: () {
                                         _newGameAndSave();
                                       },
                                     ),
@@ -641,16 +701,8 @@ class _SudokuScreenState extends State<SudokuScreen> {
                                   aspectRatio: 1,
                                   child: Container(
                                     padding: EdgeInsets.all(2),
-                                    child: LettuceIconButton(
-                                      icon: Icons.search_sharp,
-                                      iconColor: CustomStyles.nord6,
-                                      iconSize: 24,
-                                      textAlign: TextAlign.center,
-                                      buttonColor: CustomStyles.nord3,
-                                      hoverColor: CustomStyles.nord2,
-                                      highlightColor: CustomStyles.nord1,
-                                      splashColor: CustomStyles.nord0,
-                                      onTap: () {
+                                    child: TextButton(
+                                      onPressed: () {
                                         if (selectionRadio.value == 1) {
                                           selectedNum = 10;
                                         } else {
@@ -658,6 +710,25 @@ class _SudokuScreenState extends State<SudokuScreen> {
                                               10, selectedRow, selectedCol);
                                         }
                                       },
+                                      style: ButtonStyle(
+                                        backgroundColor:
+                                            MaterialStateProperty.all(
+                                                CustomStyles.nord3),
+                                        shape: MaterialStateProperty.all(
+                                            RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                        0.0))),
+                                        overlayColor: MaterialStateProperty.all(
+                                            CustomStyles.nord0),
+                                      ),
+                                      child: Center(
+                                        child: Icon(
+                                          Icons.search_sharp,
+                                          size: 30,
+                                          color: CustomStyles.nord6,
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -669,18 +740,29 @@ class _SudokuScreenState extends State<SudokuScreen> {
                                   aspectRatio: 1,
                                   child: Container(
                                     padding: EdgeInsets.all(2),
-                                    child: LettuceIconButton(
-                                      icon: Icons.undo_sharp,
-                                      iconColor: CustomStyles.nord6,
-                                      iconSize: 30,
-                                      textAlign: TextAlign.center,
-                                      buttonColor: CustomStyles.nord3,
-                                      hoverColor: CustomStyles.nord2,
-                                      highlightColor: CustomStyles.nord1,
-                                      splashColor: CustomStyles.nord0,
-                                      onTap: () {
+                                    child: TextButton(
+                                      onPressed: () {
                                         _undoMove();
                                       },
+                                      style: ButtonStyle(
+                                        backgroundColor:
+                                            MaterialStateProperty.all(
+                                                CustomStyles.nord3),
+                                        shape: MaterialStateProperty.all(
+                                            RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                        0.0))),
+                                        overlayColor: MaterialStateProperty.all(
+                                            CustomStyles.nord0),
+                                      ),
+                                      child: Center(
+                                        child: Icon(
+                                          Icons.undo_sharp,
+                                          size: 30,
+                                          color: CustomStyles.nord6,
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -703,18 +785,8 @@ class _SudokuScreenState extends State<SudokuScreen> {
 
   void _shiftFocus(int rowOffset, int colOffset) {
     if (cellSelected()) {
-      setState(() {
-        var currentState = problem.getCurrentState() as SudokuState;
-        var currentBoard = currentState.getTiles();
-        var num = currentBoard[selectedRow][selectedCol];
-        _whiteoutBoard(num, selectedRow, selectedCol);
-        selectedRow = ((selectedRow + rowOffset) % problem.board_size);
-        selectedCol = ((selectedCol + colOffset) % problem.board_size);
-        if (digitGood(selectedNum) && selectedNum == 1) {
-          _doMove(selectedNum, selectedRow, selectedCol);
-        }
-        _updateCells(selectedRow, selectedCol);
-      });
+      _selectCell((selectedRow + rowOffset) % problem.boardSize,
+          (selectedCol + colOffset) % problem.boardSize);
     }
   }
 
@@ -746,13 +818,13 @@ class _SudokuScreenState extends State<SudokuScreen> {
         cellSelected() &&
         numGood &&
         digitGood(num)) {
-      SudokuState initialState = problem.getInitialState();
+      SudokuState? initialState = problem.getInitialState() as SudokuState;
       var initialBoard = initialState.getTiles();
 
       var notInitialHint = initialBoard[row][col] == 0;
       if (notInitialHint) {
         if (num == 10) {
-          SudokuState finalState = problem.getFinalState();
+          SudokuState? finalState = problem.getFinalState() as SudokuState;
           List finalBoard = finalState.getTiles();
           num = finalBoard[row][col];
           hintsGiven.add([row, col]);
@@ -765,7 +837,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
             col.toString();
         _assistant.tryMove(move);
       }
-      var changeIndex = row * problem.board_size + col % problem.board_size;
+      var changeIndex = row * problem.boardSize + col % problem.boardSize;
       _sudokuGrid[changeIndex] =
           _makeBoardButton(changeIndex, getCellColor(row, col));
     }
@@ -786,21 +858,24 @@ class _SudokuScreenState extends State<SudokuScreen> {
   }
 
   void _doMoveAndApply(int num, int row, int col) {
-    var currentState = problem.currentState as SudokuState;
-    var currentBoard = currentState.getTiles();
-    _doMove(num, row, col);
-    movesDone.add(Move(currentBoard[row][col], num, row, col));
-    _whiteoutBoard(
-        currentBoard[selectedRow][selectedCol], selectedRow, selectedCol);
-    saveGame();
-    _updateCells(row, col);
-    setState(() {});
+    setState(
+      () {
+        var currentState = problem.currentState as SudokuState;
+        var currentBoard = currentState.getTiles();
+        _doMove(num, row, col);
+        movesDone.add(Move(currentBoard[row][col], num, row, col));
+        _whiteoutBoard(
+            currentBoard[selectedRow][selectedCol], selectedRow, selectedCol);
+        saveGame();
+        _updateCells(row, col);
+      },
+    );
   }
 
   void _solveGame() {
     selectedRow = 0;
     selectedCol = 0;
-    int boardSize = problem.board_size;
+    int boardSize = problem.boardSize;
     for (var i = 0; i < boardSize; i++) {
       for (var j = 0; j < boardSize; j++) {
         _doMove(10, i, j);
@@ -809,26 +884,28 @@ class _SudokuScreenState extends State<SudokuScreen> {
   }
 
   void _solveGameAndApply() {
-    setState(() {
-      _solveGame();
-      _populateGridList();
-      saveGame();
-    });
+    setState(
+      () {
+        _solveGame();
+        _populateGridList();
+        saveGame();
+      },
+    );
   }
 
   void _whiteoutBoard(int num, int row, int col) {
     var currentState = problem.getCurrentState() as SudokuState;
     var currentBoard = currentState.getTiles();
-    for (var i = 0; i < problem.board_size; i++) {
-      for (var j = 0; j < problem.board_size; j++) {
+    for (var i = 0; i < problem.boardSize; i++) {
+      for (var j = 0; j < problem.boardSize; j++) {
         var sameRow = i == row;
         var sameCol = j == col;
-        var sameFloor = i ~/ problem.cell_size == row ~/ problem.cell_size;
-        var sameTower = j ~/ problem.cell_size == col ~/ problem.cell_size;
+        var sameFloor = i ~/ problem.cellSize == row ~/ problem.cellSize;
+        var sameTower = j ~/ problem.cellSize == col ~/ problem.cellSize;
         var sameBlock = sameFloor && sameTower;
         var sameNum = num == currentBoard[i][j] && num != 0;
         if (sameRow || sameCol || sameBlock || sameNum) {
-          var index = getIndex(i, j, problem.board_size);
+          var index = getIndex(i, j, problem.boardSize);
           _sudokuGrid[index] = _makeBoardButton(index, CustomStyles.nord6);
         }
       }
@@ -836,94 +913,123 @@ class _SudokuScreenState extends State<SudokuScreen> {
   }
 
   void _populateGridList() {
-    _sudokuGrid =
-        List.generate(problem.board_size * problem.board_size, (index) {
-      return _makeBoardButton(
-          index,
-          getCellColor(
-              index ~/ problem.board_size, index % problem.board_size));
+    _sudokuGrid = List.generate(problem.boardSize * problem.boardSize, (index) {
+      return _makeBoardButton(index,
+          getCellColor(index ~/ problem.boardSize, index % problem.boardSize));
     });
   }
 
   Widget _makeBoardButton(int index, Color color) {
-    var row = index ~/ problem.board_size;
-    var col = index % problem.board_size;
-    SudokuState currentState = problem.getCurrentState();
+    var row = index ~/ problem.boardSize;
+    var col = index % problem.boardSize;
+    SudokuState currentState = problem.getCurrentState() as SudokuState;
     List currentBoard = currentState.getTiles();
     var cellNum = currentBoard[row][col];
     String toPlace = cellNum == 0 ? '' : cellNum.toString();
+    var splashColor = CustomStyles.nord12;
+    var textColor = getTextColor(row, col, problem);
+    double textSize = 40;
+    var buttonColor = color;
     return Container(
       padding: getBoardPadding(index),
-      child: LettuceBoardButton(
-        buttonColor: color,
-        hoverColor: CustomStyles.nord13,
-        highlightColor: CustomStyles.nord13,
-        splashColor: CustomStyles.nord12,
-        textColor: getTextColor(row, col, problem),
-        textSize: 40,
-        label: toPlace,
-        onTap: () {
+      child: TextButton(
+        style: ButtonStyle(
+          backgroundColor: MaterialStateProperty.all(buttonColor),
+          shape: MaterialStateProperty.all(
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(0.0))),
+          overlayColor: MaterialStateProperty.all(splashColor),
+        ),
+        onPressed: () {
           _selectCell(row, col);
         },
+        child: Center(
+          child: AutoSizeText(
+            toPlace,
+            textAlign: TextAlign.center,
+            maxLines: 1,
+            stepGranularity: 1,
+            minFontSize: 20,
+            maxFontSize: textSize,
+            style: TextStyle(
+              color: textColor,
+              fontSize: textSize,
+            ),
+          ),
+        ),
       ),
     );
   }
 
   void _selectCell(int row, int col) {
-    var currentState = problem.currentState as SudokuState;
-    var currentBoard = currentState.getTiles();
-    if (cellSelected()) {
-      var num = currentBoard[selectedRow][selectedCol];
-      _whiteoutBoard(num, selectedRow, selectedCol);
-    }
-    selectedRow = row;
-    selectedCol = col;
-    if (selectionRadio.value == 1 && selectedNum > -1 && selectedNum <= 10) {
-      _doMove(selectedNum, row, col);
-    }
-    _updateCells(selectedRow, selectedCol);
-    setState(() {});
+    setState(
+      () {
+        var currentState = problem.currentState as SudokuState;
+        var currentBoard = currentState.getTiles();
+        if (cellSelected()) {
+          var num = currentBoard[selectedRow][selectedCol];
+          _whiteoutBoard(num, selectedRow, selectedCol);
+        }
+        selectedRow = row;
+        selectedCol = col;
+        if (selectionRadio.value == 1 &&
+            selectedNum > -1 &&
+            selectedNum <= 10) {
+          _doMove(selectedNum, row, col);
+        }
+        _updateCells(selectedRow, selectedCol);
+      },
+    );
   }
 
   void _updateCells(int row, int col) {
     if (!problem.success()) {
       if (doPeerCells.value) {
-        for (var i = 0; i < problem.board_size; i++) {
-          var rowIndex = getIndex(row, i, problem.board_size);
+        for (var i = 0; i < problem.boardSize; i++) {
+          var rowIndex = getIndex(row, i, problem.boardSize);
           _sudokuGrid[rowIndex] =
               _makeBoardButton(rowIndex, getCellColor(row, i));
 
-          var colIndex = getIndex(i, col, problem.board_size);
+          var colIndex = getIndex(i, col, problem.boardSize);
           _sudokuGrid[colIndex] =
               _makeBoardButton(colIndex, getCellColor(i, col));
 
-          var blockRow = row ~/ problem.cell_size * problem.cell_size;
-          var blockCol = col ~/ problem.cell_size * problem.cell_size;
-          var blockIndex = getIndex(blockRow + i ~/ problem.cell_size,
-              blockCol + i % problem.cell_size, problem.board_size);
+          var blockRow = row ~/ problem.cellSize * problem.cellSize;
+          var blockCol = col ~/ problem.cellSize * problem.cellSize;
+          var blockIndex = getIndex(blockRow + i ~/ problem.cellSize,
+              blockCol + i % problem.cellSize, problem.boardSize);
           _sudokuGrid[blockIndex] = _makeBoardButton(
               blockIndex,
-              getCellColor(blockRow + i ~/ problem.cell_size,
-                  blockCol + i % problem.cell_size));
+              getCellColor(blockRow + i ~/ problem.cellSize,
+                  blockCol + i % problem.cellSize));
         }
       }
       if (doPeerDigits.value) {
         var currentState = problem.getCurrentState() as SudokuState;
         var currentBoard = currentState.getTiles();
         var num = currentState.getTiles()[row][col];
-        for (var i = 0; i < problem.board_size; i++) {
-          for (var j = 0; j < problem.board_size; j++) {
+        for (var i = 0; i < problem.boardSize; i++) {
+          for (var j = 0; j < problem.boardSize; j++) {
             if (currentBoard[i][j] == num && num != 0) {
-              var k = getIndex(i, j, problem.board_size);
+              var k = getIndex(i, j, problem.boardSize);
               _sudokuGrid[k] = _makeBoardButton(k, getCellColor(i, j));
             }
           }
         }
       }
-      var index = getIndex(row, col, problem.board_size);
+      var index = getIndex(row, col, problem.boardSize);
       _sudokuGrid[index] = _makeBoardButton(index, getCellColor(row, col));
     } else {
       _populateGridList();
+    }
+  }
+
+  void _buttonMove(var num) {
+    if (selectionRadio.value == 1) {
+      selectedNum = num;
+    } else {
+      if (cellSelected()) {
+        _doMoveAndApply(num, selectedRow, selectedCol);
+      }
     }
   }
 
@@ -931,42 +1037,58 @@ class _SudokuScreenState extends State<SudokuScreen> {
     _moveGrid = List.generate(
       9,
       (index) {
-        int num = (index + 1) % (problem.board_size + 1);
-        return LettuceButton(
-          buttonColor: CustomStyles.nord3,
-          hoverColor: CustomStyles.nord2,
-          highlightColor: CustomStyles.nord1,
-          textSize: 36,
-          textColor: CustomStyles.nord6,
-          label: num.toString(),
-          onTap: () {
-            if (selectionRadio.value == 1) {
-              selectedNum = num;
-            } else {
-              if (cellSelected()) {
-                _doMoveAndApply(num, selectedRow, selectedCol);
-              }
-            }
+        int num = (index + 1) % (problem.boardSize + 1);
+        var buttonColor = CustomStyles.nord3;
+        var splashColor = CustomStyles.nord2;
+        var textColor = CustomStyles.nord6;
+        double textSize = 36;
+        return TextButton(
+          onPressed: () {
+            _buttonMove(num);
           },
+          style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all(buttonColor),
+            shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(0.0))),
+            overlayColor: MaterialStateProperty.all(splashColor),
+          ),
+          child: Center(
+            child: Text(
+              num.toString(),
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              style: TextStyle(
+                color: textColor,
+                fontSize: textSize,
+              ),
+            ),
+          ),
         );
       },
     );
-    _moveGrid.add(LettuceIconButton(
-      buttonColor: CustomStyles.nord3,
-      hoverColor: CustomStyles.nord2,
-      highlightColor: CustomStyles.nord1,
-      icon: Icons.clear_sharp,
-      iconSize: 36,
-      iconColor: CustomStyles.nord6,
-      onTap: () {
-        if (selectionRadio.value == 1) {
-          selectedNum = 0;
-        } else {
-          if (cellSelected()) {
-            _doMoveAndApply(0, selectedRow, selectedCol);
-          }
-        }
+    var num = 0;
+    var buttonColor = CustomStyles.nord3;
+    var splashColor = CustomStyles.nord2;
+    var iconColor = CustomStyles.nord6;
+    var icon = Icons.clear_sharp;
+    double iconSize = 36;
+    _moveGrid.add(TextButton(
+      onPressed: () {
+        _buttonMove(num);
       },
+      style: ButtonStyle(
+        backgroundColor: MaterialStateProperty.all(buttonColor),
+        shape: MaterialStateProperty.all(
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(0.0))),
+        overlayColor: MaterialStateProperty.all(splashColor),
+      ),
+      child: Center(
+        child: Icon(
+          icon,
+          size: iconSize,
+          color: iconColor,
+        ),
+      ),
     ));
   }
 }

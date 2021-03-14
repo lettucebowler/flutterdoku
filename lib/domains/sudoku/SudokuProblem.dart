@@ -4,9 +4,9 @@ import 'SudokuState.dart';
 import 'SudokuMover.dart';
 
 class SudokuProblem extends Problem {
-  Sudoku sudoku;
-  int cell_size;
-  int board_size;
+  late Sudoku sudoku;
+  late int cellSize;
+  late int boardSize;
 
   SudokuProblem() : super() {
     super.setName('Sudoku');
@@ -18,17 +18,17 @@ class SudokuProblem extends Problem {
         'row or column that contains the same number. '
         'The game is finished when the grid is full.');
     sudoku = Sudoku();
-    cell_size = 3;
-    board_size = cell_size * cell_size;
-    super.setMover(SudokuMover(cell_size * cell_size));
-    super.setInitialState(SudokuState(sudoku.initial_board));
+    cellSize = 3;
+    boardSize = cellSize * cellSize;
+    super.setMover(SudokuMover(cellSize * cellSize));
+    super.setInitialState(SudokuState(sudoku.initialBoard));
     super.setCurrentState(super.getInitialState());
-    super.setFinalState(SudokuState(sudoku.final_board));
+    super.setFinalState(SudokuState(sudoku.finalBoard));
   }
 
-  SudokuProblem.withMoreHints(int hint_offset) : super() {
-    cell_size = 3;
-    board_size = cell_size * cell_size;
+  SudokuProblem.withMoreHints(int hintOffset) : super() {
+    cellSize = 3;
+    boardSize = cellSize * cellSize;
     super.setName('Sudoku');
     super.setIntroduction(
         'Place the numbers 1-9 in each of the three 3x3 grids. '
@@ -37,15 +37,14 @@ class SudokuProblem extends Problem {
         'for each cell in the grid, there can be no other cell with the same '
         'row or column that contains the same number. '
         'The game is finished when the grid is full.');
-    sudoku = Sudoku.withMoreHints(hint_offset);
-    super.setMover(SudokuMover(cell_size * cell_size));
-    super.setInitialState(SudokuState(sudoku.initial_board));
+    sudoku = Sudoku.withMoreHints(hintOffset);
+    super.setMover(SudokuMover(cellSize * cellSize));
+    super.setInitialState(SudokuState(sudoku.initialBoard));
     super.setCurrentState(super.getInitialState());
-    super.setFinalState(SudokuState(sudoku.final_board));
+    super.setFinalState(SudokuState(sudoku.finalBoard));
   }
 
-  SudokuProblem.resume(
-      List initial_board, List current_board, List final_board)
+  SudokuProblem.resume(List initialBoard, List currentBoard, List finalBoard)
       : super() {
     super.setName('Sudoku');
     super.setIntroduction(
@@ -55,13 +54,13 @@ class SudokuProblem extends Problem {
         'for each cell in the grid, there can be no other cell with the same '
         'row or column that contains the same number. '
         'The game is finished when the grid is full.');
-    cell_size = 3;
-    board_size = cell_size * cell_size;
+    cellSize = 3;
+    boardSize = cellSize * cellSize;
     // sudoku = Sudoku.(cell_size, hint_offset, initial_board, final_board);
-    super.setMover(SudokuMover(cell_size * cell_size));
-    super.setInitialState(SudokuState(initial_board));
-    super.setCurrentState(SudokuState(current_board));
-    super.setFinalState(SudokuState(final_board));
+    super.setMover(SudokuMover(cellSize * cellSize));
+    super.setInitialState(SudokuState(initialBoard));
+    super.setCurrentState(SudokuState(currentBoard));
+    super.setFinalState(SudokuState(finalBoard));
   }
 
   Sudoku getSudoku() {
@@ -69,13 +68,13 @@ class SudokuProblem extends Problem {
   }
 
   bool isInitialHint(int row, int col) {
-    SudokuState state = getInitialState();
+    var state = getInitialState() as SudokuState;
     return (state.getTiles()[row][col] != 0);
   }
 
   bool isCorrect(int row, int col) {
-    SudokuState current = getCurrentState();
-    SudokuState goal = getFinalState();
+    var current = getCurrentState() as SudokuState;
+    var goal = getFinalState() as SudokuState;
     return (current.getTiles()[row][col] == goal.getTiles()[row][col]);
   }
 
@@ -86,11 +85,11 @@ class SudokuProblem extends Problem {
   }
 
   bool _checkRowForDuplicates(int row, int col) {
-    SudokuState current_state = getCurrentState();
-    var current_tiles = current_state.getTiles();
+    var currentState = getCurrentState() as SudokuState;
+    var currentTiles = currentState.getTiles();
     var count = 0;
-    for (int i = 0; i < board_size; i++) {
-      if (current_tiles[row][i] == current_tiles[row][col]) {
+    for (int i = 0; i < boardSize; i++) {
+      if (currentTiles[row][i] == currentTiles[row][col]) {
         count++;
       }
     }
@@ -98,11 +97,11 @@ class SudokuProblem extends Problem {
   }
 
   bool _checkColForDuplicates(int row, int col) {
-    SudokuState current_state = getCurrentState();
-    var current_tiles = current_state.getTiles();
+    var current_state = getCurrentState() as SudokuState;
+    var currentTiles = current_state.getTiles();
     var count = 0;
-    for (var i = 0; i < board_size; i++) {
-      if (current_tiles[i][col] == current_tiles[row][col]) {
+    for (var i = 0; i < boardSize; i++) {
+      if (currentTiles[i][col] == currentTiles[row][col]) {
         count++;
       }
     }
@@ -110,15 +109,15 @@ class SudokuProblem extends Problem {
   }
 
   bool _checkBlockForDuplicates(int row, int col) {
-    SudokuState current_state = getCurrentState();
-    var current_tiles = current_state.getTiles();
+    var currentState = getCurrentState() as SudokuState;
+    var currentTiles = currentState.getTiles();
     var count = 0;
-    var start_row = row ~/ cell_size * cell_size;
-    var start_col = col ~/ cell_size * cell_size;
-    for (var i = 0; i < cell_size; i++) {
-      for (var j = 0; j < cell_size; j++) {
-        if (current_tiles[start_row + i][start_col + j] ==
-            current_tiles[row][col]) {
+    var startRow = row ~/ cellSize * cellSize;
+    var startCol = col ~/ cellSize * cellSize;
+    for (var i = 0; i < cellSize; i++) {
+      for (var j = 0; j < cellSize; j++) {
+        if (currentTiles[startRow + i][startCol + j] ==
+            currentTiles[row][col]) {
           count++;
         }
       }
@@ -128,12 +127,12 @@ class SudokuProblem extends Problem {
 
   bool checkRowCompletion(int row) {
     var complete = true;
-    SudokuState current_state = getCurrentState();
-    SudokuState final_state = getFinalState();
-    var current_tiles = current_state.getTiles();
-    var final_tiles = final_state.getTiles();
-    for (var i = 0; i < current_tiles.length; i++) {
-      if (current_tiles[row][i] != final_tiles[row][i]) {
+    var currentState = getCurrentState() as SudokuState;
+    var finalState = getFinalState() as SudokuState;
+    var currentTiles = currentState.getTiles();
+    var finalTiles = finalState.getTiles();
+    for (var i = 0; i < currentTiles.length; i++) {
+      if (currentTiles[row][i] != finalTiles[row][i]) {
         complete = false;
         break;
       }
@@ -143,12 +142,12 @@ class SudokuProblem extends Problem {
 
   bool checkColCompletion(int col) {
     var complete = true;
-    SudokuState current_state = getCurrentState();
-    SudokuState final_state = getFinalState();
-    var current_tiles = current_state.getTiles();
-    var final_tiles = final_state.getTiles();
-    for (var i = 0; i < current_tiles.length; i++) {
-      if (current_tiles[i][col] != final_tiles[i][col]) {
+    var currentState = getCurrentState() as SudokuState;
+    var finalState = getFinalState() as SudokuState;
+    var currentTiles = currentState.getTiles();
+    var finalTiles = finalState.getTiles();
+    for (var i = 0; i < currentTiles.length; i++) {
+      if (currentTiles[i][col] != finalTiles[i][col]) {
         complete = false;
         break;
       }
@@ -158,16 +157,16 @@ class SudokuProblem extends Problem {
 
   bool checkBlockCompletion(int row, int col) {
     var complete = true;
-    SudokuState current_state = getCurrentState();
-    SudokuState final_state = getFinalState();
-    var current_tiles = current_state.getTiles();
-    var final_tiles = final_state.getTiles();
-    var start_row = row ~/ cell_size * cell_size;
-    var start_col = col ~/ cell_size * cell_size;
-    for (var i = 0; i < cell_size; i++) {
-      for (var j = 0; j < cell_size; j++) {
-        if (current_tiles[start_row + i][start_col + j] !=
-            final_tiles[start_row + i][start_col + j]) {
+    var currentState = getCurrentState() as SudokuState;
+    var finalState = getFinalState() as SudokuState;
+    var currentTiles = currentState.getTiles();
+    var finalTiles = finalState.getTiles();
+    var startRow = row ~/ cellSize * cellSize;
+    var startCol = col ~/ cellSize * cellSize;
+    for (var i = 0; i < cellSize; i++) {
+      for (var j = 0; j < cellSize; j++) {
+        if (currentTiles[startRow + i][startCol + j] !=
+            finalTiles[startRow + i][startCol + j]) {
           complete = false;
         }
       }
@@ -184,13 +183,13 @@ class SudokuProblem extends Problem {
     var buffer = StringBuffer();
     var space = '';
     var divider = _makeDivider();
-    for (var i = 0; i < cell_size; i++) {
+    for (var i = 0; i < cellSize; i++) {
       buffer.write(space);
       buffer.write(divider);
       space = '\n';
-      for (var j = 0; j < cell_size; j++) {
+      for (var j = 0; j < cellSize; j++) {
         buffer.write(space);
-        buffer.write(_rowToString(board[(i * cell_size + j) % board_size]));
+        buffer.write(_rowToString(board[(i * cellSize + j) % boardSize]));
       }
     }
     buffer.write(space + divider);
@@ -200,14 +199,14 @@ class SudokuProblem extends Problem {
   String _rowToString(List board) {
     var buffer = StringBuffer();
     var spacer = '';
-    for (var i = 0; i < board_size; i++) {
-      if (i % cell_size == 0) {
+    for (var i = 0; i < boardSize; i++) {
+      if (i % cellSize == 0) {
         spacer = '|';
       }
 
       buffer.write(spacer);
-      var to_place = board[i] == 0 ? ' ' : board[i];
-      buffer.write(to_place);
+      var toPlace = board[i] == 0 ? ' ' : board[i];
+      buffer.write(toPlace);
       spacer = ' ';
     }
     buffer.write('|');
@@ -216,10 +215,10 @@ class SudokuProblem extends Problem {
 
   String _makeDivider() {
     var buffer = StringBuffer();
-    for (var i = 0; i < cell_size + 1; i++) {
+    for (var i = 0; i < cellSize + 1; i++) {
       buffer.write('+');
-      if (i < cell_size) {
-        for (var j = 0; j < cell_size * 2 - 1; j++) {
+      if (i < cellSize) {
+        for (var j = 0; j < cellSize * 2 - 1; j++) {
           buffer.write('-');
         }
       }

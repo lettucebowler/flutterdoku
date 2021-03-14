@@ -1,25 +1,25 @@
 import 'dart:math';
 
 class Sudoku {
-  int board_size;
-  int cell_size;
-  List initial_board;
-  List final_board;
+  int boardSize = 3;
+  int cellSize = 9;
+  late List initialBoard;
+  late List finalBoard;
 
   Sudoku() {
     _initialize();
     _scrambleBoards();
   }
 
-  Sudoku.withMoreHints(int hint_offset) {
+  Sudoku.withMoreHints(int hintOffset) {
     _initialize();
     _scrambleBoards();
-    _addClues(hint_offset);
+    _addClues(hintOffset);
   }
 
   void _initialize() {
-    cell_size = 3;
-    board_size = cell_size * cell_size;
+    cellSize = 3;
+    boardSize = cellSize * cellSize;
     var root = [
       [
         // Board 1
@@ -97,9 +97,9 @@ class Sudoku {
         ]
       ],
     ];
-    var root_pos = _getRandom(root.length);
-    initial_board = root[root_pos][0];
-    final_board = root[root_pos][1];
+    var rootPos = _getRandom(root.length);
+    initialBoard = root[rootPos][0];
+    finalBoard = root[rootPos][1];
   }
 
   void _scrambleBoards() {
@@ -112,39 +112,39 @@ class Sudoku {
     _rotateBoards();
   }
 
-  void _addClues(int hint_offset) {
+  void _addClues(int hintOffset) {
     var pos1;
     var pos2;
     var i;
-    for (i = 0; i < hint_offset; i++) {
+    for (i = 0; i < hintOffset; i++) {
       do {
-        pos1 = _getRandom(board_size);
-        pos2 = _getRandom(board_size);
-      } while (initial_board[pos1][pos2] != 0);
-      initial_board[pos1][pos2] = final_board[pos1][pos2];
+        pos1 = _getRandom(boardSize);
+        pos2 = _getRandom(boardSize);
+      } while (initialBoard[pos1][pos2] != 0);
+      initialBoard[pos1][pos2] = finalBoard[pos1][pos2];
     }
   }
 
   void _transposeBoards() {
     var r = _getRandom(2);
     if (r % 2 == 0) {
-      _transposeBoard(initial_board);
-      _transposeBoard(final_board);
+      _transposeBoard(initialBoard);
+      _transposeBoard(finalBoard);
     }
   }
 
   void _transposeBoard(List board) {
-    var temp = List(board_size);
-    for (var i = 0; i < board_size; i++) {
-      temp[i] = List(board_size);
+    var temp = []..length = boardSize;
+    for (var i = 0; i < boardSize; i++) {
+      temp[i] = []..length = boardSize;
     }
-    for (var i = 0; i < board_size; i++) {
-      for (var j = 0; j < board_size; j++) {
+    for (var i = 0; i < boardSize; i++) {
+      for (var j = 0; j < boardSize; j++) {
         temp[i][j] = board[j][i];
       }
     }
-    for (var i = 0; i < board_size; i++) {
-      for (var j = 0; j < board_size; j++) {
+    for (var i = 0; i < boardSize; i++) {
+      for (var j = 0; j < boardSize; j++) {
         board[i][j] = temp[i][j];
       }
     }
@@ -153,8 +153,8 @@ class Sudoku {
   void _rotateBoards() {
     var rotations = _getRandom(4);
     for (var i = 0; i < rotations; i++) {
-      _rotateBoard(board_size, initial_board);
-      _rotateBoard(board_size, final_board);
+      _rotateBoard(boardSize, initialBoard);
+      _rotateBoard(boardSize, finalBoard);
     }
   }
 
@@ -171,18 +171,18 @@ class Sudoku {
   }
 
   void _randomizeDigits() {
-    var digits = List(board_size);
-    for (var i = 0; i < board_size; i++) {
+    var digits = []..length = boardSize;
+    for (var i = 0; i < boardSize; i++) {
       digits[i] = i + 1;
     }
     digits = _getRandomizedOrder(digits);
-    for (var i = 0; i < board_size; i++) {
-      for (var j = 0; j < board_size; j++) {
-        var temp = final_board[i][j];
-        final_board[i][j] = digits[temp - 1];
-        temp = initial_board[i][j];
+    for (var i = 0; i < boardSize; i++) {
+      for (var j = 0; j < boardSize; j++) {
+        var temp = finalBoard[i][j];
+        finalBoard[i][j] = digits[temp - 1];
+        temp = initialBoard[i][j];
         if (temp != 0) {
-          initial_board[i][j] = digits[temp - 1];
+          initialBoard[i][j] = digits[temp - 1];
         }
       }
     }
@@ -192,25 +192,25 @@ class Sudoku {
     var r = Random();
     var array = List<int>.from(arr);
     for (var i = 0; i < array.length; i++) {
-      var random_pos = r.nextInt(array.length);
+      var randomPos = r.nextInt(array.length);
       var temp = array[i];
-      array[i] = array[random_pos];
-      array[random_pos] = temp;
+      array[i] = array[randomPos];
+      array[randomPos] = temp;
     }
     return array;
   }
 
   List _getNewPosOrder() {
-    var indices = List(board_size);
-    for (var i = 0; i < board_size; i++) {
+    var indices = []..length = boardSize;
+    for (var i = 0; i < boardSize; i++) {
       indices[i] = i;
     }
 
-    for (var i = 0; i < cell_size; i++) {
-      var new_order = indices.sublist(i * cell_size, i * cell_size + cell_size);
-      new_order = _getRandomizedOrder(new_order);
-      for (var j = 0; j < cell_size; j++) {
-        indices[i * cell_size + j] = new_order[j];
+    for (var i = 0; i < cellSize; i++) {
+      var newOrder = indices.sublist(i * cellSize, i * cellSize + cellSize);
+      newOrder = _getRandomizedOrder(newOrder);
+      for (var j = 0; j < cellSize; j++) {
+        indices[i * cellSize + j] = newOrder[j];
       }
     }
     return indices;
@@ -218,46 +218,42 @@ class Sudoku {
 
   void _scrambleRows() {
     var indices = _getNewPosOrder();
-    var initial_copy =
-        List.generate(board_size, (i) => List(board_size), growable: false);
-    var final_copy =
-        List.generate(board_size, (i) => List(board_size), growable: false);
+    var initialCopy = List.generate(boardSize, (i) => []..length = boardSize);
+    var finalCopy = List.generate(boardSize, (i) => []..length = boardSize);
 
-    for (var i = 0; i < board_size; i++) {
-      for (var j = 0; j < board_size; j++) {
-        initial_copy[i][j] = initial_board[indices[i]][j];
-        final_copy[i][j] = final_board[indices[i]][j];
+    for (var i = 0; i < boardSize; i++) {
+      for (var j = 0; j < boardSize; j++) {
+        initialCopy[i][j] = initialBoard[indices[i]][j];
+        finalCopy[i][j] = finalBoard[indices[i]][j];
       }
     }
 
-    initial_board = _copyTiles(initial_copy);
-    final_board = _copyTiles(final_copy);
+    initialBoard = _copyTiles(initialCopy);
+    finalBoard = _copyTiles(finalCopy);
   }
 
   void _scrambleCols() {
     var indices = _getNewPosOrder();
-    var initial_copy =
-        List.generate(board_size, (i) => List(board_size), growable: false);
-    var final_copy =
-        List.generate(board_size, (i) => List(board_size), growable: false);
+    var initialCopy = List.generate(boardSize, (i) => []..length = boardSize);
+    var finalCopy = List.generate(boardSize, (i) => []..length = boardSize);
 
-    for (var i = 0; i < board_size; i++) {
-      for (var j = 0; j < board_size; j++) {
-        initial_copy[i][j] = initial_board[i][indices[j]];
-        final_copy[i][j] = final_board[i][indices[j]];
+    for (var i = 0; i < boardSize; i++) {
+      for (var j = 0; j < boardSize; j++) {
+        initialCopy[i][j] = initialBoard[i][indices[j]];
+        finalCopy[i][j] = finalBoard[i][indices[j]];
       }
     }
 
-    initial_board = _copyTiles(initial_copy);
-    final_board = _copyTiles(final_copy);
+    initialBoard = _copyTiles(initialCopy);
+    finalBoard = _copyTiles(finalCopy);
   }
 
   static List _copyTiles(List source) {
     var rows = source.length;
     var columns = source[0].length;
-    var dest = List(rows);
+    var dest = []..length = rows;
     for (var r = 0; r < rows; r++) {
-      dest[r] = List(columns);
+      dest[r] = []..length = columns;
       for (var c = 0; c < columns; c++) {
         dest[r][c] = source[r][c];
       }
@@ -266,45 +262,41 @@ class Sudoku {
   }
 
   void _scrambleFloors() {
-    var indices = _getNewPosOrder().sublist(0, cell_size);
-    var initial_copy =
-        List.generate(board_size, (i) => List(board_size), growable: false);
-    var final_copy =
-        List.generate(board_size, (i) => List(board_size), growable: false);
-    for (var i = 0; i < cell_size; i++) {
-      for (var j = 0; j < board_size; j++) {
-        for (var k = 0; k < cell_size; k++) {
-          initial_copy[indices[i] * cell_size + k][j] =
-              initial_board[i * cell_size + k][j];
-          final_copy[indices[i] * cell_size + k][j] =
-              final_board[i * cell_size + k][j];
+    var indices = _getNewPosOrder().sublist(0, cellSize);
+    var initialCopy = List.generate(boardSize, (i) => []..length = boardSize);
+    var finalCopy = List.generate(boardSize, (i) => []..length = boardSize);
+    for (var i = 0; i < cellSize; i++) {
+      for (var j = 0; j < boardSize; j++) {
+        for (var k = 0; k < cellSize; k++) {
+          initialCopy[indices[i] * cellSize + k][j] =
+              initialBoard[i * cellSize + k][j];
+          finalCopy[indices[i] * cellSize + k][j] =
+              finalBoard[i * cellSize + k][j];
         }
       }
     }
 
-    initial_board = _copyTiles(initial_copy);
-    final_board = _copyTiles(final_copy);
+    initialBoard = _copyTiles(initialCopy);
+    finalBoard = _copyTiles(finalCopy);
   }
 
   void _scrambleTowers() {
-    var indices = _getNewPosOrder().sublist(0, cell_size);
-    var initial_copy =
-        List.generate(board_size, (i) => List(board_size), growable: false);
-    var final_copy =
-        List.generate(board_size, (i) => List(board_size), growable: false);
-    for (var i = 0; i < cell_size; i++) {
-      for (var j = 0; j < board_size; j++) {
-        for (var k = 0; k < cell_size; k++) {
-          initial_copy[j][indices[i] * cell_size + k] =
-              initial_board[j][i * cell_size + k];
-          final_copy[j][indices[i] * cell_size + k] =
-              final_board[j][i * cell_size + k];
+    var indices = _getNewPosOrder().sublist(0, cellSize);
+    var initialCopy = List.generate(boardSize, (i) => []..length = boardSize);
+    var finalCopy = List.generate(boardSize, (i) => []..length = boardSize);
+    for (var i = 0; i < cellSize; i++) {
+      for (var j = 0; j < boardSize; j++) {
+        for (var k = 0; k < cellSize; k++) {
+          initialCopy[j][indices[i] * cellSize + k] =
+              initialBoard[j][i * cellSize + k];
+          finalCopy[j][indices[i] * cellSize + k] =
+              finalBoard[j][i * cellSize + k];
         }
       }
     }
 
-    initial_board = _copyTiles(initial_copy);
-    final_board = _copyTiles(final_copy);
+    initialBoard = _copyTiles(initialCopy);
+    finalBoard = _copyTiles(finalCopy);
   }
 
   int _getRandom(int max) {
@@ -315,9 +307,9 @@ class Sudoku {
   @override
   String toString() {
     var buffer = StringBuffer();
-    buffer.write(_boardToString(final_board));
+    buffer.write(_boardToString(finalBoard));
     buffer.write('\n');
-    buffer.write(_boardToString(initial_board));
+    buffer.write(_boardToString(initialBoard));
     return buffer.toString();
   }
 
@@ -325,13 +317,13 @@ class Sudoku {
     var buffer = StringBuffer();
     var space = '';
     var divider = _makeDivider();
-    for (var i = 0; i < cell_size; i++) {
+    for (var i = 0; i < cellSize; i++) {
       buffer.write(space);
       buffer.write(divider);
       space = '\n';
-      for (var j = 0; j < cell_size; j++) {
+      for (var j = 0; j < cellSize; j++) {
         buffer.write(space);
-        buffer.write(_rowToString(board[(i * cell_size + j) % board_size]));
+        buffer.write(_rowToString(board[(i * cellSize + j) % boardSize]));
       }
     }
     buffer.write(space + divider);
@@ -341,14 +333,14 @@ class Sudoku {
   String _rowToString(List board) {
     var buffer = StringBuffer();
     var spacer = '';
-    for (var i = 0; i < board_size; i++) {
-      if (i % cell_size == 0) {
+    for (var i = 0; i < boardSize; i++) {
+      if (i % cellSize == 0) {
         spacer = '|';
       }
 
       buffer.write(spacer);
-      var to_place = board[i] == 0 ? ' ' : board[i];
-      buffer.write(to_place);
+      var toPlace = board[i] == 0 ? ' ' : board[i];
+      buffer.write(toPlace);
       spacer = ' ';
     }
     buffer.write('|');
@@ -357,10 +349,10 @@ class Sudoku {
 
   String _makeDivider() {
     var buffer = StringBuffer();
-    for (var i = 0; i < cell_size + 1; i++) {
+    for (var i = 0; i < cellSize + 1; i++) {
       buffer.write('+');
-      if (i < cell_size) {
-        for (var j = 0; j < cell_size * 2 - 1; j++) {
+      if (i < cellSize) {
+        for (var j = 0; j < cellSize * 2 - 1; j++) {
           buffer.write('-');
         }
       }

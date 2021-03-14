@@ -9,7 +9,7 @@ import 'package:lettuce_sudoku/util/helpers.dart';
 import 'SudokuScreen.dart';
 
 class LoadingScreen extends StatefulWidget {
-  LoadingScreen({Key key, this.title}) : super(key: key);
+  LoadingScreen({Key? key, required this.title}) : super(key: key);
 
   final String title;
 

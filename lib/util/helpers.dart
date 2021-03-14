@@ -46,15 +46,15 @@ saveGame() async {
   String initialString = "";
   String currentString = "";
   String finalString = "";
-  SudokuState initialState = problem.getInitialState();
+  SudokuState initialState = problem.getInitialState() as SudokuState;
   List initialBoard = initialState.getTiles();
-  SudokuState currentState = problem.getCurrentState();
+  SudokuState currentState = problem.getCurrentState() as SudokuState;
   List currentBoard = currentState.getTiles();
-  SudokuState finalState = problem.getFinalState();
+  SudokuState finalState = problem.getFinalState() as SudokuState;
   List finalBoard = finalState.getTiles();
 
-  for (int i = 0; i < problem.board_size; i++) {
-    for (int j = 0; j < problem.board_size; j++) {
+  for (int i = 0; i < problem.boardSize; i++) {
+    for (int j = 0; j < problem.boardSize; j++) {
       initialString += initialBoard[i][j].toString();
       currentString += currentBoard[i][j].toString();
       finalString += finalBoard[i][j].toString();
@@ -89,9 +89,9 @@ Future<bool> applyGameState() async {
   final finalString = prefs.getString('finalBoard') ?? '';
   final hintString = prefs.getString('hintsGiven') ?? '';
   final moveString = prefs.getString('movesDone') ?? '';
-  List initialBoard = List.generate(9, (i) => List(9), growable: false);
-  List currentBoard = List.generate(9, (i) => List(9), growable: false);
-  List finalBoard = List.generate(9, (i) => List(9), growable: false);
+  List initialBoard = List.generate(9, (i) => []..length = 9);
+  List currentBoard = List.generate(9, (i) => []..length = 9);
+  List finalBoard = List.generate(9, (i) => []..length = 9);
 
   if (initialString != '' && currentString != '' && finalString != '') {
     for (int i = 0; i < initialString.length; i++) {
@@ -110,7 +110,7 @@ Future<bool> applyGameState() async {
   }
 
   movesDone = [];
-  for(var i = 0; i < moveString.length ~/ 4; i++) {
+  for (var i = 0; i < moveString.length ~/ 4; i++) {
     int oldNum = int.parse(moveString[i * 4]);
     int newNum = int.parse(moveString[i * 4 + 1]);
     int row = int.parse(moveString[i * 4 + 2]);
@@ -152,117 +152,116 @@ int getIndex(int row, int col, int rowLength) {
 }
 
 Color getTextColor(int row, int col, SudokuProblem problem) {
-    SudokuState initialState = problem.getInitialState();
-    var initialBoard = initialState.getTiles();
-    var initialHint = initialBoard[row][col] != 0;
-    var legal = problem.isLegal(row, col);
-    var correct = problem.isCorrect(row, col);
-    var doLegality = legalityRadio.value == 1;
-    Color color = CustomStyles.nord10;
+  SudokuState initialState = problem.getInitialState() as SudokuState;
+  var initialBoard = initialState.getTiles();
+  var initialHint = initialBoard[row][col] != 0;
+  var legal = problem.isLegal(row, col);
+  var correct = problem.isCorrect(row, col);
+  var doLegality = legalityRadio.value == 1;
+  Color color = CustomStyles.nord10;
 
-    color =
-        doMistakes.value && doLegality && !legal ? CustomStyles.nord11 : color;
-    color = doMistakes.value && !doLegality && !correct
-        ? CustomStyles.nord11
-        : color;
-    color = initialHint ? CustomStyles.nord3 : color;
-    color = givenAsHint(row, col) ? CustomStyles.nord3 : color;
-    return color;
-  }
+  color =
+      doMistakes.value && doLegality && !legal ? CustomStyles.nord11 : color;
+  color =
+      doMistakes.value && !doLegality && !correct ? CustomStyles.nord11 : color;
+  color = initialHint ? CustomStyles.nord3 : color;
+  color = givenAsHint(row, col) ? CustomStyles.nord3 : color;
+  return color;
+}
 
-  bool givenAsHint(int row, int col) {
-    bool hint = false;
-    for (List pair in hintsGiven) {
-      if (pair[0] == row && pair[1] == col) {
-        hint = true;
-        break;
-      }
+bool givenAsHint(int row, int col) {
+  bool hint = false;
+  for (List pair in hintsGiven) {
+    if (pair[0] == row && pair[1] == col) {
+      hint = true;
+      break;
     }
-    return hint;
   }
+  return hint;
+}
 
-  bool cellSelected() {
-    return selectedRow != -1 && selectedCol != -1;
-  }
+bool cellSelected() {
+  return selectedRow != -1 && selectedCol != -1;
+}
 
-  Color getCellColor(int row, int col) {
-    Color peerCell = CustomStyles.nord8;
-    Color background = CustomStyles.nord6;
-    Color peerDigit = CustomStyles.nord9;
-    Color success = CustomStyles.nord14;
-    Color wrong = CustomStyles.nord12;
-    Color selected = CustomStyles.nord13;
-    Color color = background;
+Color getCellColor(int row, int col) {
+  Color peerCell = CustomStyles.nord8;
+  Color background = CustomStyles.nord6;
+  Color peerDigit = CustomStyles.nord9;
+  Color success = CustomStyles.nord14;
+  Color wrong = CustomStyles.nord12;
+  Color selected = CustomStyles.nord13;
+  Color color = background;
 
-    SudokuState currentState = problem.getCurrentState();
-    List currentBoard = currentState.getTiles();
+  var currentState = problem.getCurrentState() as SudokuState;
+  List currentBoard = currentState.getTiles();
 
-    bool rowSelected = row == selectedRow;
-    bool colSelected = col == selectedCol;
-    bool isSelected = rowSelected && colSelected;
+  bool rowSelected = row == selectedRow;
+  bool colSelected = col == selectedCol;
+  bool isSelected = rowSelected && colSelected;
 
-    bool floorSelected =
-        row ~/ problem.cell_size == selectedRow ~/ problem.cell_size;
-    bool towerSelected =
-        col ~/ problem.cell_size == selectedCol ~/ problem.cell_size;
-    bool blockSelected = floorSelected && towerSelected;
+  bool floorSelected =
+      row ~/ problem.cellSize == selectedRow ~/ problem.cellSize;
+  bool towerSelected =
+      col ~/ problem.cellSize == selectedCol ~/ problem.cellSize;
+  bool blockSelected = floorSelected && towerSelected;
 
-    bool doCells = doPeerCells.value;
-    bool doDigits = doPeerDigits.value;
-    bool isPeerCell = cellSelected() &&
-        !isSelected &&
-        (rowSelected || colSelected || blockSelected);
-    bool nonZero = cellSelected() && currentBoard[row][col] != 0;
-    bool isPeerDigit = cellSelected() &&
-        currentBoard[row][col] == currentBoard[selectedRow][selectedCol] &&
-        nonZero;
-    bool peerCellNotPeerDigit = isPeerCell && !isPeerDigit;
+  bool doCells = doPeerCells.value;
+  bool doDigits = doPeerDigits.value;
+  bool isPeerCell = cellSelected() &&
+      !isSelected &&
+      (rowSelected || colSelected || blockSelected);
+  bool nonZero = cellSelected() && currentBoard[row][col] != 0;
+  bool isPeerDigit = cellSelected() &&
+      currentBoard[row][col] == currentBoard[selectedRow][selectedCol] &&
+      nonZero;
+  bool peerCellNotPeerDigit = isPeerCell && !isPeerDigit;
 
-    if (problem.success()) {
-      return success;
-    } else if (cellSelected()) {
-      if (peerCellNotPeerDigit && doCells) {
-        return peerCell;
-      } else if (isPeerDigit && nonZero && !isSelected && doDigits) {
-        return isPeerCell && !problem.isLegal(row, col) && doMistakes.value
-            ? wrong
-            : peerDigit;
-      } else if (isSelected) {
-        return selected;
-      } else {
-        return color;
-      }
+  if (problem.success()) {
+    return success;
+  } else if (cellSelected()) {
+    if (peerCellNotPeerDigit && doCells) {
+      return peerCell;
+    } else if (isPeerDigit && nonZero && !isSelected && doDigits) {
+      return isPeerCell && !problem.isLegal(row, col) && doMistakes.value
+          ? wrong
+          : peerDigit;
+    } else if (isSelected) {
+      return selected;
     } else {
       return color;
     }
+  } else {
+    return color;
   }
+}
 
-  EdgeInsets getBoardPadding(int index) {
-    var row = index ~/ problem.board_size;
-    var col = index % problem.board_size;
-    var thickness = 2;
-    var defaultThickness = 0.5;
-    var isTop = row == 0;
-    var isLeft = col == 0;
-    var isBottom = row % problem.cell_size == problem.cell_size - 1;
-    var isRight = col % problem.cell_size == problem.cell_size - 1;
-    var top = isTop ? thickness : defaultThickness;
-    var left = isLeft ? thickness : defaultThickness;
-    var bottom = isBottom ? thickness : defaultThickness;
-    var right = isRight ? thickness : defaultThickness;
+EdgeInsets getBoardPadding(int index) {
+  var row = index ~/ problem.boardSize;
+  var col = index % problem.boardSize;
+  var thickness = 2;
+  var defaultThickness = 0.5;
+  var isTop = row == 0;
+  var isLeft = col == 0;
+  var isBottom = row % problem.cellSize == problem.cellSize - 1;
+  var isRight = col % problem.cellSize == problem.cellSize - 1;
+  var top = isTop ? thickness : defaultThickness;
+  var left = isLeft ? thickness : defaultThickness;
+  var bottom = isBottom ? thickness : defaultThickness;
+  var right = isRight ? thickness : defaultThickness;
 
-    return EdgeInsets.fromLTRB(
-        left.toDouble(), top.toDouble(), right.toDouble(), bottom.toDouble());
-  }
+  return EdgeInsets.fromLTRB(
+      left.toDouble(), top.toDouble(), right.toDouble(), bottom.toDouble());
+}
 
-  void resetGlobals() {
-    selectedRow = -1;
-    selectedCol = -1;
-    selectedNum = -1;
-    hintsGiven.clear();
-    movesDone.clear();
-  }
+void resetGlobals() {
+  selectedRow = -1;
+  selectedCol = -1;
+  selectedNum = -1;
+  hintsGiven.clear();
+  movesDone.clear();
+}
 
-  bool digitGood(int num) {
-    return num > -1 && num <= 10;
-  }
+bool digitGood(int num) {
+  return num > -1 && num <= 10;
+}

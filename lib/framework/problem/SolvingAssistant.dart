@@ -84,15 +84,6 @@ class SolvingAssistant {
     }
   }
 
-  /*
-     * A JavaFX property indicating whether the problem has been solved.
-     */
-  bool problemSolved;
-
-//     boolProperty problemSolvedProperty() {
-//        return problemSolved;
-//    }
-
   bool isProblemSolved() {
     return problemSolved;
   }
@@ -101,9 +92,9 @@ class SolvingAssistant {
     problemSolved = (value);
   }
 
-  int moveCount;
-
-  Problem problem;
-  Mover mover;
-  bool moveLegal;
+  late bool problemSolved;
+  late int moveCount;
+  late Problem problem;
+  late Mover mover;
+  late bool moveLegal;
 }

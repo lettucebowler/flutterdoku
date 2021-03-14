@@ -14,7 +14,7 @@ int selectedNum = -1;
 double bodySpacing = 2;
 List hintsGiven = [];
 List movesDone = [];
-SudokuProblem problem;
+SudokuProblem problem = new SudokuProblem();
 
 class VariableWrapper {
   var value;
@@ -24,11 +24,10 @@ class VariableWrapper {
 }
 
 class Move {
-
-  int oldNum;
-  int newNum;
-  int row;
-  int col;
+  late int oldNum;
+  late int newNum;
+  late int row;
+  late int col;
 
   Move(oldNum, newNum, row, col) {
     this.oldNum = oldNum;

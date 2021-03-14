@@ -70,10 +70,10 @@ class Problem {
     return getCurrentState().equals(getFinalState());
   }
 
-  String name;
-  String introduction;
-  State initialState;
-  State currentState;
-  State finalState;
-  Mover mover;
+  late String name;
+  late String introduction;
+  late State initialState;
+  late State currentState;
+  late State finalState;
+  late Mover mover;
 }
