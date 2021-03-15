@@ -1,6 +1,5 @@
 import 'dart:core';
 import 'State.dart';
-import 'Mover.dart';
 
 /*
  * This class represents problems in a problem solving domain.
@@ -44,14 +43,6 @@ class Problem {
     this.finalState = finalState;
   }
 
-  Mover getMover() {
-    return mover;
-  }
-
-  void setMover(Mover mover) {
-    this.mover = mover;
-  }
-
   State getCurrentState() {
     return currentState;
   }
@@ -75,5 +66,4 @@ class Problem {
   late State initialState;
   late State currentState;
   late State finalState;
-  late Mover mover;
 }

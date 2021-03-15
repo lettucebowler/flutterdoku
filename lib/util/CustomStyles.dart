@@ -29,7 +29,6 @@ class CustomStyles {
   static const nord14 = Color(0xFFa3be8c);
   static const nord15 = Color(0xFFb48ead);
 
-
   static const MaterialColor themeColor = MaterialColor(
     theme,
     const <int, Color>{
@@ -46,15 +45,16 @@ class CustomStyles {
     },
   );
 
-  static const TextStyle boardText = TextStyle(
-    fontFamily: 'FiraCode',
-    fontSize: 26,
-    color: nord3,
-  );
-
   static const TextStyle titleText = TextStyle(
 //    fontFamily: 'FiraCode',
     fontSize: 30,
     color: nord6,
+  );
+
+  static ButtonStyle darkButtonStyle = ButtonStyle(
+    backgroundColor: MaterialStateProperty.all(CustomStyles.nord3),
+    shape: MaterialStateProperty.all(
+        RoundedRectangleBorder(borderRadius: BorderRadius.circular(0.0))),
+    overlayColor: MaterialStateProperty.all(CustomStyles.nord2),
   );
 }

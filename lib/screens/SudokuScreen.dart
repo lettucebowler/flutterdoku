@@ -7,7 +7,6 @@ import 'package:flutter/services.dart';
 import 'package:lettuce_sudoku/domains/sudoku/SudokuProblem.dart';
 import 'package:lettuce_sudoku/domains/sudoku/SudokuState.dart';
 import 'package:lettuce_sudoku/framework/problem/Problem.dart';
-import 'package:lettuce_sudoku/framework/problem/SolvingAssistant.dart';
 import 'package:lettuce_sudoku/util/CustomStyles.dart';
 import 'package:lettuce_sudoku/util/globals.dart';
 import 'package:lettuce_sudoku/util/helpers.dart';
@@ -22,7 +21,6 @@ class SudokuScreen extends StatefulWidget {
 }
 
 class _SudokuScreenState extends State<SudokuScreen> {
-  late SolvingAssistant _assistant;
   FocusNode focusNode = FocusNode();
   late var _actionMap;
 
@@ -32,7 +30,6 @@ class _SudokuScreenState extends State<SudokuScreen> {
   @override
   void initState() {
     super.initState();
-    _assistant = SolvingAssistant(problem);
     _populateGridList();
     _populateMoveGrid();
     _actionMap = {
@@ -532,7 +529,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
                                             ),
                                           ),
                                           onPressed: () {
-                                            _resetBoard(problem);
+                                            _resetBoard();
                                           },
                                         ),
                                       ),
@@ -791,12 +788,12 @@ class _SudokuScreenState extends State<SudokuScreen> {
   }
 
   void _newGame() {
-    setState(() {
-      problem = SudokuProblem.withMoreHints(initialHints.value - 17);
-      _assistant = SolvingAssistant(problem);
-      resetGlobals();
-      _populateGridList();
-    });
+    setState(
+      () {
+        problem = SudokuProblem.withMoreHints(initialHints.value - 17);
+        _resetBoard();
+      },
+    );
   }
 
   void _newGameAndSave() {
@@ -804,9 +801,9 @@ class _SudokuScreenState extends State<SudokuScreen> {
     saveGame();
   }
 
-  void _resetBoard(Problem problem) {
+  void _resetBoard() {
     setState(() {
-      _assistant.reset();
+      problem.reset();
       resetGlobals();
       _populateGridList();
     });
@@ -814,39 +811,22 @@ class _SudokuScreenState extends State<SudokuScreen> {
 
   void _doMove(int num, int row, int col) {
     bool numGood = num > -1 && num < 11;
-    if (!_assistant.isProblemSolved() &&
-        cellSelected() &&
-        numGood &&
-        digitGood(num)) {
-      SudokuState? initialState = problem.getInitialState() as SudokuState;
-      var initialBoard = initialState.getTiles();
-
+    if (!problem.success() && cellSelected() && numGood && digitGood(num)) {
+      var initialBoard = problem.getInitialState().getTiles();
       var notInitialHint = initialBoard[row][col] == 0;
       if (notInitialHint) {
         if (num == 10) {
-          SudokuState? finalState = problem.getFinalState() as SudokuState;
-          List finalBoard = finalState.getTiles();
+          List finalBoard = problem.getFinalState().getTiles();
           num = finalBoard[row][col];
           hintsGiven.add([row, col]);
         }
-        var move = 'Place ' +
-            num.toString() +
-            ' at ' +
-            row.toString() +
-            ' ' +
-            col.toString();
-        _assistant.tryMove(move);
+        problem.applyMove(num, row, col);
       }
-      var changeIndex = row * problem.boardSize + col % problem.boardSize;
-      _sudokuGrid[changeIndex] =
-          _makeBoardButton(changeIndex, getCellColor(row, col));
     }
   }
 
   void _undoMove() {
-    var initialState = problem.initialState as SudokuState;
-    var currentState = problem.currentState as SudokuState;
-    if (!currentState.equals(initialState) && movesDone.isNotEmpty) {
+    if (movesDone.isNotEmpty) {
       Move lastMove = movesDone.removeLast();
       var num = lastMove.oldNum;
       var row = lastMove.row;
@@ -860,8 +840,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
   void _doMoveAndApply(int num, int row, int col) {
     setState(
       () {
-        var currentState = problem.currentState as SudokuState;
-        var currentBoard = currentState.getTiles();
+        var currentBoard = problem.getCurrentState().getTiles();
         _doMove(num, row, col);
         movesDone.add(Move(currentBoard[row][col], num, row, col));
         _whiteoutBoard(
@@ -872,21 +851,10 @@ class _SudokuScreenState extends State<SudokuScreen> {
     );
   }
 
-  void _solveGame() {
-    selectedRow = 0;
-    selectedCol = 0;
-    int boardSize = problem.boardSize;
-    for (var i = 0; i < boardSize; i++) {
-      for (var j = 0; j < boardSize; j++) {
-        _doMove(10, i, j);
-      }
-    }
-  }
-
   void _solveGameAndApply() {
     setState(
       () {
-        _solveGame();
+        problem.solve();
         _populateGridList();
         saveGame();
       },
@@ -894,8 +862,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
   }
 
   void _whiteoutBoard(int num, int row, int col) {
-    var currentState = problem.getCurrentState() as SudokuState;
-    var currentBoard = currentState.getTiles();
+    var currentBoard = problem.getCurrentState().getTiles();
     for (var i = 0; i < problem.boardSize; i++) {
       for (var j = 0; j < problem.boardSize; j++) {
         var sameRow = i == row;
@@ -922,8 +889,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
   Widget _makeBoardButton(int index, Color color) {
     var row = index ~/ problem.boardSize;
     var col = index % problem.boardSize;
-    SudokuState currentState = problem.getCurrentState() as SudokuState;
-    List currentBoard = currentState.getTiles();
+    var currentBoard = problem.getCurrentState().getTiles();
     var cellNum = currentBoard[row][col];
     String toPlace = cellNum == 0 ? '' : cellNum.toString();
     var splashColor = CustomStyles.nord12;
@@ -932,27 +898,30 @@ class _SudokuScreenState extends State<SudokuScreen> {
     var buttonColor = color;
     return Container(
       padding: getBoardPadding(index),
-      child: TextButton(
-        style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all(buttonColor),
-          shape: MaterialStateProperty.all(
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(0.0))),
-          overlayColor: MaterialStateProperty.all(splashColor),
-        ),
-        onPressed: () {
-          _selectCell(row, col);
-        },
-        child: Center(
-          child: AutoSizeText(
-            toPlace,
-            textAlign: TextAlign.center,
-            maxLines: 1,
-            stepGranularity: 1,
-            minFontSize: 20,
-            maxFontSize: textSize,
-            style: TextStyle(
-              color: textColor,
-              fontSize: textSize,
+      child: AspectRatio(
+        aspectRatio: 1,
+        child: TextButton(
+          style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all(buttonColor),
+            shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(0.0))),
+            overlayColor: MaterialStateProperty.all(splashColor),
+          ),
+          onPressed: () {
+            _selectCell(row, col);
+          },
+          child: Center(
+            child: AutoSizeText(
+              toPlace,
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              stepGranularity: 1,
+              minFontSize: 22,
+              maxFontSize: textSize,
+              style: TextStyle(
+                color: textColor,
+                fontSize: textSize,
+              ),
             ),
           ),
         ),
@@ -963,8 +932,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
   void _selectCell(int row, int col) {
     setState(
       () {
-        var currentState = problem.currentState as SudokuState;
-        var currentBoard = currentState.getTiles();
+        var currentBoard = problem.getCurrentState().getTiles();
         if (cellSelected()) {
           var num = currentBoard[selectedRow][selectedCol];
           _whiteoutBoard(num, selectedRow, selectedCol);
@@ -1004,9 +972,8 @@ class _SudokuScreenState extends State<SudokuScreen> {
         }
       }
       if (doPeerDigits.value) {
-        var currentState = problem.getCurrentState() as SudokuState;
-        var currentBoard = currentState.getTiles();
-        var num = currentState.getTiles()[row][col];
+        var currentBoard = problem.getCurrentState().getTiles();
+        var num = currentBoard[row][col];
         for (var i = 0; i < problem.boardSize; i++) {
           for (var j = 0; j < problem.boardSize; j++) {
             if (currentBoard[i][j] == num && num != 0) {
@@ -1016,8 +983,6 @@ class _SudokuScreenState extends State<SudokuScreen> {
           }
         }
       }
-      var index = getIndex(row, col, problem.boardSize);
-      _sudokuGrid[index] = _makeBoardButton(index, getCellColor(row, col));
     } else {
       _populateGridList();
     }
@@ -1027,31 +992,22 @@ class _SudokuScreenState extends State<SudokuScreen> {
     if (selectionRadio.value == 1) {
       selectedNum = num;
     } else {
-      if (cellSelected()) {
-        _doMoveAndApply(num, selectedRow, selectedCol);
-      }
+      _doMoveAndApply(num, selectedRow, selectedCol);
     }
   }
 
   void _populateMoveGrid() {
+    var textColor = CustomStyles.nord6;
+    double textSize = 36;
     _moveGrid = List.generate(
       9,
       (index) {
         int num = (index + 1) % (problem.boardSize + 1);
-        var buttonColor = CustomStyles.nord3;
-        var splashColor = CustomStyles.nord2;
-        var textColor = CustomStyles.nord6;
-        double textSize = 36;
         return TextButton(
           onPressed: () {
             _buttonMove(num);
           },
-          style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.all(buttonColor),
-            shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(0.0))),
-            overlayColor: MaterialStateProperty.all(splashColor),
-          ),
+          style: CustomStyles.darkButtonStyle,
           child: Center(
             child: Text(
               num.toString(),
@@ -1066,27 +1022,16 @@ class _SudokuScreenState extends State<SudokuScreen> {
         );
       },
     );
-    var num = 0;
-    var buttonColor = CustomStyles.nord3;
-    var splashColor = CustomStyles.nord2;
-    var iconColor = CustomStyles.nord6;
-    var icon = Icons.clear_sharp;
-    double iconSize = 36;
     _moveGrid.add(TextButton(
       onPressed: () {
-        _buttonMove(num);
+        _buttonMove(0);
       },
-      style: ButtonStyle(
-        backgroundColor: MaterialStateProperty.all(buttonColor),
-        shape: MaterialStateProperty.all(
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(0.0))),
-        overlayColor: MaterialStateProperty.all(splashColor),
-      ),
+      style: CustomStyles.darkButtonStyle,
       child: Center(
         child: Icon(
-          icon,
-          size: iconSize,
-          color: iconColor,
+          Icons.clear_sharp,
+          size: textSize,
+          color: textColor,
         ),
       ),
     ));

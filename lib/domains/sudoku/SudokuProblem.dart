@@ -1,7 +1,6 @@
 import '../../framework/problem/Problem.dart';
 import 'Sudoku.dart';
 import 'SudokuState.dart';
-import 'SudokuMover.dart';
 
 class SudokuProblem extends Problem {
   late Sudoku sudoku;
@@ -20,7 +19,6 @@ class SudokuProblem extends Problem {
     sudoku = Sudoku();
     cellSize = 3;
     boardSize = cellSize * cellSize;
-    super.setMover(SudokuMover(cellSize * cellSize));
     super.setInitialState(SudokuState(sudoku.initialBoard));
     super.setCurrentState(super.getInitialState());
     super.setFinalState(SudokuState(sudoku.finalBoard));
@@ -38,7 +36,6 @@ class SudokuProblem extends Problem {
         'row or column that contains the same number. '
         'The game is finished when the grid is full.');
     sudoku = Sudoku.withMoreHints(hintOffset);
-    super.setMover(SudokuMover(cellSize * cellSize));
     super.setInitialState(SudokuState(sudoku.initialBoard));
     super.setCurrentState(super.getInitialState());
     super.setFinalState(SudokuState(sudoku.finalBoard));
@@ -57,10 +54,38 @@ class SudokuProblem extends Problem {
     cellSize = 3;
     boardSize = cellSize * cellSize;
     // sudoku = Sudoku.(cell_size, hint_offset, initial_board, final_board);
-    super.setMover(SudokuMover(cellSize * cellSize));
     super.setInitialState(SudokuState(initialBoard));
     super.setCurrentState(SudokuState(currentBoard));
     super.setFinalState(SudokuState(finalBoard));
+  }
+
+  @override
+  SudokuState getInitialState() {
+    return initialState as SudokuState;
+  }
+
+  @override
+  SudokuState getCurrentState() {
+    return currentState as SudokuState;
+  }
+
+  @override
+  SudokuState getFinalState() {
+    return finalState as SudokuState;
+  }
+
+  void reset() {
+    currentState = getInitialState();
+  }
+
+  void solve() {
+    currentState = getFinalState();
+  }
+
+  bool applyMove(int num, int row, int col) {
+    setCurrentState(SudokuState.applyMove(getCurrentState(), num, row, col));
+    var isLegalMove = isLegal(row, col);
+    return isLegalMove;
   }
 
   Sudoku getSudoku() {
@@ -68,13 +93,13 @@ class SudokuProblem extends Problem {
   }
 
   bool isInitialHint(int row, int col) {
-    var state = getInitialState() as SudokuState;
+    var state = getInitialState();
     return (state.getTiles()[row][col] != 0);
   }
 
   bool isCorrect(int row, int col) {
-    var current = getCurrentState() as SudokuState;
-    var goal = getFinalState() as SudokuState;
+    var current = getCurrentState();
+    var goal = getFinalState();
     return (current.getTiles()[row][col] == goal.getTiles()[row][col]);
   }
 
@@ -85,10 +110,10 @@ class SudokuProblem extends Problem {
   }
 
   bool _checkRowForDuplicates(int row, int col) {
-    var currentState = getCurrentState() as SudokuState;
+    var currentState = getCurrentState();
     var currentTiles = currentState.getTiles();
     var count = 0;
-    for (int i = 0; i < boardSize; i++) {
+    for (var i = 0; i < boardSize; i++) {
       if (currentTiles[row][i] == currentTiles[row][col]) {
         count++;
       }
@@ -97,7 +122,7 @@ class SudokuProblem extends Problem {
   }
 
   bool _checkColForDuplicates(int row, int col) {
-    var current_state = getCurrentState() as SudokuState;
+    var current_state = getCurrentState();
     var currentTiles = current_state.getTiles();
     var count = 0;
     for (var i = 0; i < boardSize; i++) {
@@ -109,7 +134,7 @@ class SudokuProblem extends Problem {
   }
 
   bool _checkBlockForDuplicates(int row, int col) {
-    var currentState = getCurrentState() as SudokuState;
+    var currentState = getCurrentState();
     var currentTiles = currentState.getTiles();
     var count = 0;
     var startRow = row ~/ cellSize * cellSize;
@@ -127,8 +152,8 @@ class SudokuProblem extends Problem {
 
   bool checkRowCompletion(int row) {
     var complete = true;
-    var currentState = getCurrentState() as SudokuState;
-    var finalState = getFinalState() as SudokuState;
+    var currentState = getCurrentState();
+    var finalState = getFinalState();
     var currentTiles = currentState.getTiles();
     var finalTiles = finalState.getTiles();
     for (var i = 0; i < currentTiles.length; i++) {
@@ -142,8 +167,8 @@ class SudokuProblem extends Problem {
 
   bool checkColCompletion(int col) {
     var complete = true;
-    var currentState = getCurrentState() as SudokuState;
-    var finalState = getFinalState() as SudokuState;
+    var currentState = getCurrentState();
+    var finalState = getFinalState();
     var currentTiles = currentState.getTiles();
     var finalTiles = finalState.getTiles();
     for (var i = 0; i < currentTiles.length; i++) {
@@ -157,8 +182,8 @@ class SudokuProblem extends Problem {
 
   bool checkBlockCompletion(int row, int col) {
     var complete = true;
-    var currentState = getCurrentState() as SudokuState;
-    var finalState = getFinalState() as SudokuState;
+    var currentState = getCurrentState();
+    var finalState = getFinalState();
     var currentTiles = currentState.getTiles();
     var finalTiles = finalState.getTiles();
     var startRow = row ~/ cellSize * cellSize;

@@ -46,11 +46,11 @@ saveGame() async {
   String initialString = "";
   String currentString = "";
   String finalString = "";
-  SudokuState initialState = problem.getInitialState() as SudokuState;
+  SudokuState initialState = problem.getInitialState();
   List initialBoard = initialState.getTiles();
-  SudokuState currentState = problem.getCurrentState() as SudokuState;
+  SudokuState currentState = problem.getCurrentState();
   List currentBoard = currentState.getTiles();
-  SudokuState finalState = problem.getFinalState() as SudokuState;
+  SudokuState finalState = problem.getFinalState();
   List finalBoard = finalState.getTiles();
 
   for (int i = 0; i < problem.boardSize; i++) {
@@ -152,9 +152,7 @@ int getIndex(int row, int col, int rowLength) {
 }
 
 Color getTextColor(int row, int col, SudokuProblem problem) {
-  SudokuState initialState = problem.getInitialState() as SudokuState;
-  var initialBoard = initialState.getTiles();
-  var initialHint = initialBoard[row][col] != 0;
+  var initialHint = problem.isInitialHint(row, col);
   var legal = problem.isLegal(row, col);
   var correct = problem.isCorrect(row, col);
   var doLegality = legalityRadio.value == 1;
@@ -193,7 +191,7 @@ Color getCellColor(int row, int col) {
   Color selected = CustomStyles.nord13;
   Color color = background;
 
-  var currentState = problem.getCurrentState() as SudokuState;
+  var currentState = problem.getCurrentState();
   List currentBoard = currentState.getTiles();
 
   bool rowSelected = row == selectedRow;

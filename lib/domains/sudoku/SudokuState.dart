@@ -54,7 +54,7 @@ class SudokuState implements State {
     if (o.runtimeType != SudokuState) {
       return false;
     }
-    SudokuState other = o as SudokuState;
+    var other = o as SudokuState;
     if (this == other) {
       return true;
     }
