@@ -13,13 +13,13 @@ class LettuceSudoku extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'LettuceSudoku',
+      title: 'Lettuce Sudoku',
       theme: ThemeData(
         primarySwatch: getMaterialColor(CustomStyles.nord3),
         visualDensity: VisualDensity.adaptivePlatformDensity,
         canvasColor: getMaterialColor(CustomStyles.nord6),
       ),
-      home: LoadingScreen(title: 'LettuceSudoku'),
+      home: LoadingScreen(title: 'Lettuce Sudoku'),
     );
   }
 }

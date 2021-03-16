@@ -5,8 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:lettuce_sudoku/domains/sudoku/SudokuProblem.dart';
-import 'package:lettuce_sudoku/domains/sudoku/SudokuState.dart';
-import 'package:lettuce_sudoku/framework/problem/Problem.dart';
 import 'package:lettuce_sudoku/util/CustomStyles.dart';
 import 'package:lettuce_sudoku/util/globals.dart';
 import 'package:lettuce_sudoku/util/helpers.dart';
@@ -141,8 +139,8 @@ class _SudokuScreenState extends State<SudokuScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const AutoSizeText(
-          'LettuceSudoku',
-          textAlign: TextAlign.center,
+          'Lettuce Sudoku',
+          textAlign: TextAlign.left,
           style: CustomStyles.titleText,
         ),
         brightness: Brightness.dark,
