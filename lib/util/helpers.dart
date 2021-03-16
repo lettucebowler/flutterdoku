@@ -62,17 +62,17 @@ saveGame() async {
   }
 
   String hintString = '';
-  for (var i = 0; i < hintsGiven.length; i++) {
-    hintString += hintsGiven[i][0].toString();
-    hintString += hintsGiven[i][1].toString();
+  for (List pair in hintsGiven) {
+    hintString += pair[0].toString();
+    hintString += pair[1].toString();
   }
 
   String moveString = '';
-  for (var i = 0; i < movesDone.length; i++) {
-    moveString += movesDone[i].oldNum.toString();
-    moveString += movesDone[i].newNum.toString();
-    moveString += movesDone[i].row.toString();
-    moveString += movesDone[i].col.toString();
+  for (Move move in movesDone) {
+    moveString += move.oldNum.toString();
+    moveString += move.newNum.toString();
+    moveString += move.row.toString();
+    moveString += move.col.toString();
   }
 
   prefs.setString('initialBoard', initialString);
@@ -179,7 +179,9 @@ bool givenAsHint(int row, int col) {
 }
 
 bool cellSelected() {
-  return selectedRow != -1 && selectedCol != -1;
+  var rowGood = selectedRow > -1 && selectedRow < 9;
+  var colGood = selectedCol > -1 && selectedCol < 9;
+  return rowGood && colGood;
 }
 
 Color getCellColor(int row, int col) {
