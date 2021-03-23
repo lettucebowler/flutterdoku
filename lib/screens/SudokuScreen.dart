@@ -461,25 +461,20 @@ class _SudokuScreenState extends State<SudokuScreen> {
                             child: AspectRatio(
                               aspectRatio: 3,
                               child: AnimatedSwitcher(
-                                duration: const Duration(milliseconds: 10),
+                                duration: const Duration(milliseconds: 0),
+                                transitionBuilder: (Widget child,
+                                        Animation<double> animation) =>
+                                    ScaleTransition(
+                                  child: child,
+                                  scale: animation,
+                                ),
                                 child: !problem.success()
                                     ? Container(
+                                        key: Key('solve'),
                                         padding:
                                             EdgeInsets.fromLTRB(0, 0, 2, 2),
                                         child: TextButton(
-                                          style: ButtonStyle(
-                                            backgroundColor:
-                                                MaterialStateProperty.all(
-                                                    CustomStyles.nord3),
-                                            shape: MaterialStateProperty.all(
-                                                RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            0.0))),
-                                            overlayColor:
-                                                MaterialStateProperty.all(
-                                                    CustomStyles.nord0),
-                                          ),
+                                          style: CustomStyles.darkButtonStyle,
                                           child: Center(
                                             child: Text(
                                               'Solve Game',
@@ -497,22 +492,11 @@ class _SudokuScreenState extends State<SudokuScreen> {
                                         ),
                                       )
                                     : Container(
+                                        key: Key('reset'),
                                         padding:
                                             EdgeInsets.fromLTRB(0, 0, 2, 2),
                                         child: TextButton(
-                                          style: ButtonStyle(
-                                            backgroundColor:
-                                                MaterialStateProperty.all(
-                                                    CustomStyles.nord3),
-                                            shape: MaterialStateProperty.all(
-                                                RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            0.0))),
-                                            overlayColor:
-                                                MaterialStateProperty.all(
-                                                    CustomStyles.nord0),
-                                          ),
+                                          style: CustomStyles.darkButtonStyle,
                                           child: Center(
                                             child: Text(
                                               'Reset Game',
@@ -538,16 +522,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
                               child: Container(
                                 padding: EdgeInsets.fromLTRB(2, 0, 0, 2),
                                 child: TextButton(
-                                  style: ButtonStyle(
-                                    backgroundColor: MaterialStateProperty.all(
-                                        CustomStyles.nord3),
-                                    shape: MaterialStateProperty.all(
-                                        RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(0.0))),
-                                    overlayColor: MaterialStateProperty.all(
-                                        CustomStyles.nord0),
-                                  ),
+                                  style: CustomStyles.darkButtonStyle,
                                   child: Center(
                                     child: Text(
                                       'New',
@@ -657,18 +632,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
                                   child: Container(
                                     padding: EdgeInsets.all(2),
                                     child: TextButton(
-                                      style: ButtonStyle(
-                                        backgroundColor:
-                                            MaterialStateProperty.all(
-                                                CustomStyles.nord3),
-                                        shape: MaterialStateProperty.all(
-                                            RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(
-                                                        0.0))),
-                                        overlayColor: MaterialStateProperty.all(
-                                            CustomStyles.nord0),
-                                      ),
+                                      style: CustomStyles.darkButtonStyle,
                                       child: Center(
                                         child: Text(
                                           'New Game',
@@ -703,18 +667,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
                                               10, selectedRow, selectedCol);
                                         }
                                       },
-                                      style: ButtonStyle(
-                                        backgroundColor:
-                                            MaterialStateProperty.all(
-                                                CustomStyles.nord3),
-                                        shape: MaterialStateProperty.all(
-                                            RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(
-                                                        0.0))),
-                                        overlayColor: MaterialStateProperty.all(
-                                            CustomStyles.nord0),
-                                      ),
+                                      style: CustomStyles.darkButtonStyle,
                                       child: Center(
                                         child: Icon(
                                           Icons.search_sharp,
@@ -737,18 +690,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
                                       onPressed: () {
                                         _undoMove();
                                       },
-                                      style: ButtonStyle(
-                                        backgroundColor:
-                                            MaterialStateProperty.all(
-                                                CustomStyles.nord3),
-                                        shape: MaterialStateProperty.all(
-                                            RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(
-                                                        0.0))),
-                                        overlayColor: MaterialStateProperty.all(
-                                            CustomStyles.nord0),
-                                      ),
+                                      style: CustomStyles.darkButtonStyle,
                                       child: Center(
                                         child: Icon(
                                           Icons.undo_sharp,
