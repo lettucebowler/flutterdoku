@@ -1,8 +1,8 @@
 import 'dart:math';
 
 class Sudoku {
-  int boardSize = 3;
-  int cellSize = 9;
+  int boardSize = 9;
+  int cellSize = 3;
   late List initialBoard;
   late List finalBoard;
 
@@ -11,15 +11,7 @@ class Sudoku {
     _scrambleBoards();
   }
 
-  Sudoku.withMoreHints(int hintOffset) {
-    _initialize();
-    _scrambleBoards();
-    _addClues(hintOffset);
-  }
-
   void _initialize() {
-    cellSize = 3;
-    boardSize = cellSize * cellSize;
     var root = [
       [
         // Board 1
@@ -112,16 +104,20 @@ class Sudoku {
     _rotateBoards();
   }
 
-  void _addClues(int hintOffset) {
-    var pos1;
-    var pos2;
-    var i;
-    for (i = 0; i < hintOffset; i++) {
-      do {
-        pos1 = _getRandom(boardSize);
-        pos2 = _getRandom(boardSize);
-      } while (initialBoard[pos1][pos2] != 0);
-      initialBoard[pos1][pos2] = finalBoard[pos1][pos2];
+  void addClues(int hintOffset) {
+    if (hintOffset >= 0 && hintOffset <= 81) {
+      var pos1;
+      var pos2;
+      var i;
+      for (i = 0; i < hintOffset; i++) {
+        do {
+          pos1 = _getRandom(boardSize);
+          pos2 = _getRandom(boardSize);
+        } while (initialBoard[pos1][pos2] != 0);
+        initialBoard[pos1][pos2] = finalBoard[pos1][pos2];
+      }
+    } else {
+      throw ArgumentError('Hint offset not in inclusive range 17..81.');
     }
   }
 
@@ -359,9 +355,4 @@ class Sudoku {
     }
     return buffer.toString();
   }
-}
-
-void main(List<String> arguments) {
-  var sudoku = Sudoku.withMoreHints(0);
-  print(sudoku.toString());
 }
