@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:lettuce_sudoku/domains/sudoku/SudokuProblem.dart';
-import 'package:lettuce_sudoku/domains/sudoku/SudokuState.dart';
+import 'package:dartdoku/domains/sudoku/SudokuProblem.dart';
+import 'package:dartdoku/domains/sudoku/SudokuState.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:lettuce_sudoku/util/globals.dart';
 import 'package:lettuce_sudoku/util/CustomStyles.dart';
+import 'package:dartdoku/dartdoku.dart' as dartdoku;
 
 Future<bool> readFromPrefs() async {
   final prefs = await SharedPreferences.getInstance();
@@ -119,6 +120,25 @@ Future<bool> applyGameState() async {
   }
 
   return true;
+}
+
+Future<SudokuProblem> getNextGame() async {
+  if (problems.length < 1) {
+    problems.addAll(await dartdoku.getProblems(17, 1));
+  }
+  if (problems.length < 5 && !makingGames) {
+    makingGames = true;
+    for (var i = 0; i < 8; i++) {
+      dartdoku.getProblems(17, 1).then((p) async {
+        problems.addAll(p);
+      });
+    }
+    makingGames = false;
+  }
+
+  var p = problems.removeAt(0);
+  p.addClues(initialHints.value - 17);
+  return p;
 }
 
 double getBodyWidth(context) {

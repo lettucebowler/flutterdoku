@@ -2,7 +2,6 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
-import 'package:lettuce_sudoku/domains/sudoku/SudokuProblem.dart';
 import 'package:lettuce_sudoku/util/CustomStyles.dart';
 import 'package:lettuce_sudoku/util/globals.dart';
 import 'package:lettuce_sudoku/util/helpers.dart';
@@ -22,6 +21,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
 
   late List<Widget> _sudokuGrid;
   late List<Widget> _moveGrid;
+  bool canClickNewGame = true;
 
   @override
   void initState() {
@@ -173,6 +173,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
                           onTap: () {
                             setState(() {
                               doPeerCells.value = !doPeerCells.value;
+                              saveToPrefs();
                             });
                             _populateGridList();
                           },
@@ -192,6 +193,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
                                 onChanged: (bool value) {
                                   setState(() {
                                     doPeerCells.value = value;
+                                    saveToPrefs();
                                   });
                                   _populateGridList();
                                 },
@@ -209,6 +211,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
                           onTap: () {
                             setState(() {
                               doPeerDigits.value = !doPeerDigits.value;
+                              saveToPrefs();
                             });
                             _populateGridList();
                           },
@@ -228,6 +231,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
                                 onChanged: (bool value) {
                                   setState(() {
                                     doPeerDigits.value = value;
+                                    saveToPrefs();
                                   });
                                   _populateGridList();
                                 },
@@ -245,6 +249,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
                           onTap: () {
                             setState(() {
                               doMistakes.value = !doMistakes.value;
+                              saveToPrefs();
                             });
                             _populateGridList();
                           },
@@ -264,6 +269,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
                                 onChanged: (bool value) {
                                   setState(() {
                                     doMistakes.value = value;
+                                    saveToPrefs();
                                   });
                                   _populateGridList();
                                 },
@@ -284,6 +290,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
                         onChanged: (int value) {
                           setState(() {
                             legalityRadio.value = value;
+                            saveToPrefs();
                           });
                           _populateGridList();
                         },
@@ -296,6 +303,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
                         onChanged: (int value) {
                           setState(() {
                             legalityRadio.value = value;
+                            saveToPrefs();
                           });
                           _populateGridList();
                         },
@@ -332,6 +340,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
                           setState(
                             () {
                               selectionRadio.value = value;
+                              saveToPrefs();
                             },
                           );
                         },
@@ -345,6 +354,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
                           setState(
                             () {
                               selectionRadio.value = value;
+                              saveToPrefs();
                             },
                           );
                         },
@@ -381,6 +391,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
                                 setState(
                                   () {
                                     initialHints.value = val.toInt();
+                                    saveToPrefs();
                                   },
                                 );
                               },
@@ -407,6 +418,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
                                       setState(
                                         () {
                                           initialHints.value -= 1;
+                                          saveToPrefs();
                                         },
                                       );
                                     },
@@ -440,6 +452,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
                                       setState(
                                         () {
                                           initialHints.value += 1;
+                                          saveToPrefs();
                                         },
                                       );
                                     },
@@ -725,17 +738,23 @@ class _SudokuScreenState extends State<SudokuScreen> {
     }
   }
 
-  void _newGame() {
-    setState(
-      () {
-        problem = SudokuProblem.withMoreHints(initialHints.value - 17);
-        _resetBoard();
-      },
-    );
+  Future<bool> _newGame() async {
+    if (canClickNewGame) {
+      canClickNewGame = false;
+      problem = await getNextGame();
+
+      setState(
+        () {
+          _resetBoard();
+        },
+      );
+      canClickNewGame = true;
+    }
+    return true;
   }
 
-  void _newGameAndSave() {
-    _newGame();
+  void _newGameAndSave() async {
+    await _newGame();
     saveGame();
   }
 

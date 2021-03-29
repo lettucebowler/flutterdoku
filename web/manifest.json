@@ -3,7 +3,7 @@
     "short_name": "Lettuce Sudoku",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#04c566a",
+    "background_color": "#4c566a",
     "theme_color": "#4c566a",
     "description": "Sudoku at it's Worst",
     "orientation": "portrait-primary",

@@ -5,7 +5,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:lettuce_sudoku/util/CustomStyles.dart';
 import 'package:lettuce_sudoku/util/helpers.dart';
-
+import 'package:lettuce_sudoku/util/globals.dart';
 import 'SudokuScreen.dart';
 
 class LoadingScreen extends StatefulWidget {
@@ -21,7 +21,12 @@ class _LoadingScreenState extends State<LoadingScreen> {
   @override
   void initState() {
     super.initState();
-    readFromPrefs().then((data) {
+    _asyncInitState();
+  }
+
+  Future<bool> _asyncInitState() async {
+    readFromPrefs().then((value) async {
+      problem = await getNextGame();
       applyGameState();
     });
 
@@ -30,6 +35,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (context) => game));
     });
+    return true;
   }
 
   @override
@@ -38,7 +44,6 @@ class _LoadingScreenState extends State<LoadingScreen> {
       body: Stack(
         children: [
           Container(
-            // width: MediaQuery.of(context).size.width,
             color: CustomStyles.nord3,
           ),
           Center(
@@ -60,7 +65,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
                           Spacer(),
                         ]),
                         // Padding(padding: EdgeInsets.only(top: 30)),
-                        Text('LettuceSudoku',
+                        Text('Lettuce Sudoku',
                             style: TextStyle(
                                 fontSize: 30, color: CustomStyles.nord6)),
                       ],

@@ -1,9 +1,8 @@
-import 'package:lettuce_sudoku/domains/sudoku/SudokuProblem.dart';
+import 'package:dartdoku/domains/sudoku/SudokuProblem.dart';
 
 VariableWrapper doPeerCells = VariableWrapper(true);
 VariableWrapper doPeerDigits = VariableWrapper(true);
 VariableWrapper doMistakes = VariableWrapper(true);
-
 VariableWrapper maxHints = VariableWrapper(5);
 VariableWrapper initialHints = VariableWrapper(30);
 VariableWrapper legalityRadio = VariableWrapper(0);
@@ -11,10 +10,12 @@ VariableWrapper selectionRadio = VariableWrapper(0);
 int selectedRow = -1;
 int selectedCol = -1;
 int selectedNum = -1;
+bool makingGames = false;
 double bodySpacing = 2;
 List hintsGiven = [];
 List movesDone = [];
-SudokuProblem problem = new SudokuProblem();
+late SudokuProblem problem;
+List<SudokuProblem> problems = <SudokuProblem>[];
 
 class VariableWrapper {
   var value;
