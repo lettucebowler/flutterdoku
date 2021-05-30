@@ -183,7 +183,6 @@ Color getTextColor(int row, int col, SudokuProblem problem) {
   color =
       doMistakes.value && !doLegality && !correct ? CustomStyles.nord11 : color;
   color = initialHint ? CustomStyles.nord3 : color;
-  color = givenAsHint(row, col) ? CustomStyles.nord3 : color;
   return color;
 }
 
@@ -259,16 +258,32 @@ Color getCellColor(int row, int col) {
 EdgeInsets getBoardPadding(int index) {
   var row = index ~/ problem.boardSize;
   var col = index % problem.boardSize;
-  var thickness = 2;
+  var thickness = 2.0;
   var defaultThickness = 0.5;
+
   var isTop = row == 0;
   var isLeft = col == 0;
-  var isBottom = row % problem.cellSize == problem.cellSize - 1;
-  var isRight = col % problem.cellSize == problem.cellSize - 1;
-  var top = isTop ? thickness : defaultThickness;
-  var left = isLeft ? thickness : defaultThickness;
-  var bottom = isBottom ? thickness : defaultThickness;
-  var right = isRight ? thickness : defaultThickness;
+  var isInnerBottom = row % problem.cellSize == problem.cellSize - 1;
+  var isInnerRight = col % problem.cellSize == problem.cellSize - 1;
+  var isBottom = row == problem.boardSize - 1;
+  var isRight = col == problem.boardSize - 1;
+
+  var top = isTop ? thickness + defaultThickness : defaultThickness;
+  var left = isLeft ? thickness + defaultThickness : defaultThickness;
+
+  var right = defaultThickness;
+  if (isRight) {
+    right = thickness + defaultThickness;
+  } else if (isInnerRight) {
+    right = thickness;
+  }
+
+  var bottom = defaultThickness;
+  if (isBottom) {
+    bottom = thickness + defaultThickness;
+  } else if (isInnerBottom) {
+    bottom = thickness;
+  }
 
   return EdgeInsets.fromLTRB(
       left.toDouble(), top.toDouble(), right.toDouble(), bottom.toDouble());

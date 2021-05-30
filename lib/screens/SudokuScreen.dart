@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -500,7 +502,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
                                             ),
                                           ),
                                           onPressed: () {
-                                            _solveGameAndApply();
+                                            _solveGame();
                                           },
                                         ),
                                       )
@@ -595,7 +597,10 @@ class _SudokuScreenState extends State<SudokuScreen> {
                         child: AspectRatio(
                           aspectRatio: 1,
                           child: Container(
-                            color: CustomStyles.nord3,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(9.0),
+                              color: CustomStyles.nord3,
+                            ),
                             child: GridView.builder(
                               physics: const NeverScrollableScrollPhysics(),
                               itemCount: _sudokuGrid.length,
@@ -763,6 +768,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
       problem.reset();
       resetGlobals();
       _populateGridList();
+      saveGame();
     });
   }
 
@@ -808,7 +814,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
     );
   }
 
-  void _solveGameAndApply() {
+  void _solveGame() {
     setState(
       () {
         problem.solve();
@@ -853,32 +859,39 @@ class _SudokuScreenState extends State<SudokuScreen> {
     var textColor = getTextColor(row, col, problem);
     double textSize = 40;
     var buttonColor = color;
+    var radius = Radius.circular(7.0);
+    var border = BorderRadius.only(
+      topLeft: index == 0 ? radius : Radius.zero,
+      topRight: index == problem.boardSize - 1 ? radius : Radius.zero,
+      bottomLeft: index == (problem.boardSize - 1) * problem.boardSize
+          ? radius
+          : Radius.zero,
+      bottomRight:
+          index == pow(problem.boardSize, 2) - 1 ? radius : Radius.zero,
+    );
     return Container(
       padding: getBoardPadding(index),
-      child: AspectRatio(
-        aspectRatio: 1,
-        child: TextButton(
-          style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.all(buttonColor),
-            shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(0.0))),
-            overlayColor: MaterialStateProperty.all(splashColor),
-          ),
-          onPressed: () {
-            _selectCell(row, col);
-          },
-          child: Center(
-            child: AutoSizeText(
-              toPlace,
-              textAlign: TextAlign.center,
-              maxLines: 1,
-              stepGranularity: 1,
-              minFontSize: 22,
-              maxFontSize: textSize,
-              style: TextStyle(
-                color: textColor,
-                fontSize: textSize,
-              ),
+      child: TextButton(
+        style: ButtonStyle(
+          backgroundColor: MaterialStateProperty.all(buttonColor),
+          shape: MaterialStateProperty.all(
+              RoundedRectangleBorder(borderRadius: border)),
+          overlayColor: MaterialStateProperty.all(splashColor),
+        ),
+        onPressed: () {
+          _selectCell(row, col);
+        },
+        child: Center(
+          child: AutoSizeText(
+            toPlace,
+            textAlign: TextAlign.center,
+            maxLines: 1,
+            stepGranularity: 1,
+            minFontSize: 22,
+            maxFontSize: textSize,
+            style: TextStyle(
+              color: textColor,
+              fontSize: textSize,
             ),
           ),
         ),
@@ -908,6 +921,9 @@ class _SudokuScreenState extends State<SudokuScreen> {
 
   void _updateCells(int row, int col) {
     if (!problem.success()) {
+      var selected = getIndex(row, col, problem.boardSize);
+      _sudokuGrid[selected] = _makeBoardButton(
+          getIndex(row, col, problem.boardSize), getCellColor(row, col));
       if (doPeerCells.value) {
         for (var i = 0; i < problem.boardSize; i++) {
           var rowIndex = getIndex(row, i, problem.boardSize);

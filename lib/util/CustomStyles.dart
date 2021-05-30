@@ -54,7 +54,9 @@ class CustomStyles {
   static ButtonStyle darkButtonStyle = ButtonStyle(
     backgroundColor: MaterialStateProperty.all(CustomStyles.nord3),
     shape: MaterialStateProperty.all(
-        RoundedRectangleBorder(borderRadius: BorderRadius.circular(0.0))),
+        RoundedRectangleBorder(borderRadius: BorderRadius.circular(9.0))),
     overlayColor: MaterialStateProperty.all(CustomStyles.nord2),
   );
+
+  static ButtonStyle boardButtonStyle = ButtonStyle();
 }
