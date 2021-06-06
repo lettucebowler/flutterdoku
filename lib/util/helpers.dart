@@ -44,23 +44,13 @@ saveToPrefs() async {
 
 saveGame() async {
   final prefs = await SharedPreferences.getInstance();
-  String initialString = "";
-  String currentString = "";
-  String finalString = "";
   SudokuState initialState = problem.getInitialState();
-  List initialBoard = initialState.getTiles();
   SudokuState currentState = problem.getCurrentState();
-  List currentBoard = currentState.getTiles();
   SudokuState finalState = problem.getFinalState();
-  List finalBoard = finalState.getTiles();
 
-  for (int i = 0; i < problem.boardSize; i++) {
-    for (int j = 0; j < problem.boardSize; j++) {
-      initialString += initialBoard[i][j].toString();
-      currentString += currentBoard[i][j].toString();
-      finalString += finalBoard[i][j].toString();
-    }
-  }
+  var initialString = SudokuProblem.boardToString(initialState);
+  var currentString = SudokuProblem.boardToString(currentState);
+  var finalString = SudokuProblem.boardToString(finalState);
 
   String hintString = '';
   for (List pair in hintsGiven) {
