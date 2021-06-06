@@ -12,7 +12,6 @@ int selectedCol = -1;
 int selectedNum = -1;
 bool makingGames = false;
 double bodySpacing = 2;
-List hintsGiven = [];
 List movesDone = [];
 late SudokuProblem problem;
 List<SudokuProblem> problems = <SudokuProblem>[];

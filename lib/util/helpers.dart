@@ -52,12 +52,6 @@ saveGame() async {
   var currentString = SudokuProblem.boardToString(currentState);
   var finalString = SudokuProblem.boardToString(finalState);
 
-  String hintString = '';
-  for (List pair in hintsGiven) {
-    hintString += pair[0].toString();
-    hintString += pair[1].toString();
-  }
-
   String moveString = '';
   for (Move move in movesDone) {
     moveString += move.oldNum.toString();
@@ -69,7 +63,6 @@ saveGame() async {
   prefs.setString('initialBoard', initialString);
   prefs.setString('currentBoard', currentString);
   prefs.setString('finalBoard', finalString);
-  prefs.setString('hintsGiven', hintString);
   prefs.setString('movesDone', moveString);
 }
 
@@ -78,26 +71,13 @@ Future<bool> applyGameState() async {
   final initialString = prefs.getString('initialBoard') ?? '';
   final currentString = prefs.getString('currentBoard') ?? '';
   final finalString = prefs.getString('finalBoard') ?? '';
-  final hintString = prefs.getString('hintsGiven') ?? '';
   final moveString = prefs.getString('movesDone') ?? '';
-  List initialBoard = List.generate(9, (i) => []..length = 9);
-  List currentBoard = List.generate(9, (i) => []..length = 9);
-  List finalBoard = List.generate(9, (i) => []..length = 9);
 
   if (initialString != '' && currentString != '' && finalString != '') {
-    for (int i = 0; i < initialString.length; i++) {
-      initialBoard[i ~/ 9][i % 9] = int.parse(initialString[i]);
-      currentBoard[i ~/ 9][i % 9] = int.parse(currentString[i]);
-      finalBoard[i ~/ 9][i % 9] = int.parse(finalString[i]);
-    }
+    var initialBoard = SudokuProblem.stringToBoard(initialString);
+    var currentBoard = SudokuProblem.stringToBoard(currentString);
+    var finalBoard = SudokuProblem.stringToBoard(finalString);
     problem = SudokuProblem.resume(initialBoard, currentBoard, finalBoard);
-  }
-
-  hintsGiven = [];
-  for (var i = 0; i < hintString.length ~/ 2; i++) {
-    int row = int.parse(hintString[i * 2]);
-    int col = int.parse(hintString[i * 2 + 1]);
-    hintsGiven.add([row, col]);
   }
 
   movesDone = [];
@@ -174,17 +154,6 @@ Color getTextColor(int row, int col, SudokuProblem problem) {
       doMistakes.value && !doLegality && !correct ? CustomStyles.nord11 : color;
   color = initialHint ? CustomStyles.nord3 : color;
   return color;
-}
-
-bool givenAsHint(int row, int col) {
-  bool hint = false;
-  for (List pair in hintsGiven) {
-    if (pair[0] == row && pair[1] == col) {
-      hint = true;
-      break;
-    }
-  }
-  return hint;
 }
 
 bool cellSelected() {
@@ -283,7 +252,6 @@ void resetGlobals() {
   selectedRow = -1;
   selectedCol = -1;
   selectedNum = -1;
-  hintsGiven.clear();
   movesDone.clear();
 }
 

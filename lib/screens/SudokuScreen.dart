@@ -781,7 +781,6 @@ class _SudokuScreenState extends State<SudokuScreen> {
         if (num == 10) {
           List finalBoard = problem.getFinalState().getTiles();
           num = finalBoard[row][col];
-          hintsGiven.add([row, col]);
         }
         problem.applyMove(num, row, col);
       }
