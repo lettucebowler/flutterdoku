@@ -773,8 +773,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
   }
 
   void _doMove(int num, int row, int col) {
-    bool numGood = num > -1 && num < 11;
-    if (!problem.success() && cellSelected() && numGood && digitGood(num)) {
+    if (!problem.success() && cellSelected() && digitGood(num)) {
       if (!problem.isInitialHint(row, col)) {
         if (num == 10) {
           List finalBoard = problem.finalState.board;
@@ -822,6 +821,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
   }
 
   void _whiteoutBoard(int num, int row, int col) {
+    print('white');
     var currentBoard = problem.currentState.board;
     for (var i = 0; i < problem.boardSize; i++) {
       for (var j = 0; j < problem.boardSize; j++) {
@@ -831,9 +831,11 @@ class _SudokuScreenState extends State<SudokuScreen> {
         var sameTower = j ~/ problem.cellSize == col ~/ problem.cellSize;
         var sameBlock = sameFloor && sameTower;
         var sameNum = num == currentBoard[i][j] && num != 0;
-        if (sameRow || sameCol || sameBlock || sameNum) {
+        if (sameRow || sameCol || sameBlock || !sameNum) {
           var index = getIndex(i, j, problem.boardSize);
+          // print('($i, $j)');
           _sudokuGrid[index] = _makeBoardButton(index, CustomStyles.nord6);
+          setState(() {});
         }
       }
     }
