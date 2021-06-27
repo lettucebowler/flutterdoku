@@ -44,9 +44,9 @@ saveToPrefs() async {
 
 saveGame() async {
   final prefs = await SharedPreferences.getInstance();
-  SudokuState initialState = problem.getInitialState();
-  SudokuState currentState = problem.getCurrentState();
-  SudokuState finalState = problem.getFinalState();
+  SudokuState initialState = problem.initialState;
+  SudokuState currentState = problem.currentState;
+  SudokuState finalState = problem.finalState;
 
   var initialString = SudokuProblem.boardToString(initialState);
   var currentString = SudokuProblem.boardToString(currentState);
@@ -74,10 +74,10 @@ Future<bool> applyGameState() async {
   final moveString = prefs.getString('movesDone') ?? '';
 
   if (initialString != '' && currentString != '' && finalString != '') {
-    var initialBoard = SudokuProblem.stringToBoard(initialString);
-    var currentBoard = SudokuProblem.stringToBoard(currentString);
-    var finalBoard = SudokuProblem.stringToBoard(finalString);
-    problem = SudokuProblem.resume(initialBoard, currentBoard, finalBoard);
+    var initialState = SudokuState.fromString(initialString);
+    var currentState = SudokuState.fromString(currentString);
+    var finalState = SudokuState.fromString(finalString);
+    problem = SudokuProblem.fromStates(initialState, currentState, finalState);
   }
 
   movesDone = [];
@@ -171,8 +171,8 @@ Color getCellColor(int row, int col) {
   Color selected = CustomStyles.nord13;
   Color color = background;
 
-  var currentState = problem.getCurrentState();
-  List currentBoard = currentState.getTiles();
+  var currentState = problem.currentState;
+  List currentBoard = currentState.board;
 
   bool rowSelected = row == selectedRow;
   bool colSelected = col == selectedCol;

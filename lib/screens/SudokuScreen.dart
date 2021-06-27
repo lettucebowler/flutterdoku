@@ -775,11 +775,9 @@ class _SudokuScreenState extends State<SudokuScreen> {
   void _doMove(int num, int row, int col) {
     bool numGood = num > -1 && num < 11;
     if (!problem.success() && cellSelected() && numGood && digitGood(num)) {
-      var initialBoard = problem.getInitialState().getTiles();
-      var notInitialHint = initialBoard[row][col] == 0;
-      if (notInitialHint) {
+      if (!problem.isInitialHint(row, col)) {
         if (num == 10) {
-          List finalBoard = problem.getFinalState().getTiles();
+          List finalBoard = problem.finalState.board;
           num = finalBoard[row][col];
         }
         problem.applyMove(num, row, col);
@@ -802,7 +800,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
   void _doMoveAndApply(int num, int row, int col) {
     setState(
       () {
-        var currentBoard = problem.getCurrentState().getTiles();
+        var currentBoard = problem.currentState.board;
         _doMove(num, row, col);
         movesDone.add(Move(currentBoard[row][col], num, row, col));
         _whiteoutBoard(
@@ -824,7 +822,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
   }
 
   void _whiteoutBoard(int num, int row, int col) {
-    var currentBoard = problem.getCurrentState().getTiles();
+    var currentBoard = problem.currentState.board;
     for (var i = 0; i < problem.boardSize; i++) {
       for (var j = 0; j < problem.boardSize; j++) {
         var sameRow = i == row;
@@ -851,7 +849,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
   Widget _makeBoardButton(int index, Color color) {
     var row = index ~/ problem.boardSize;
     var col = index % problem.boardSize;
-    var currentBoard = problem.getCurrentState().getTiles();
+    var currentBoard = problem.currentState.board;
     var cellNum = currentBoard[row][col];
     String toPlace = cellNum == 0 ? '' : cellNum.toString();
     var splashColor = CustomStyles.nord12;
@@ -901,7 +899,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
   void _selectCell(int row, int col) {
     setState(
       () {
-        var currentBoard = problem.getCurrentState().getTiles();
+        var currentBoard = problem.currentState.board;
         if (cellSelected()) {
           var num = currentBoard[selectedRow][selectedCol];
           _whiteoutBoard(num, selectedRow, selectedCol);
@@ -944,7 +942,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
         }
       }
       if (doPeerDigits.value) {
-        var currentBoard = problem.getCurrentState().getTiles();
+        var currentBoard = problem.currentState.board;
         var num = currentBoard[row][col];
         for (var i = 0; i < problem.boardSize; i++) {
           for (var j = 0; j < problem.boardSize; j++) {
