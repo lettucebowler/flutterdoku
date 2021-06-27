@@ -868,27 +868,29 @@ class _SudokuScreenState extends State<SudokuScreen> {
     );
     return Container(
       padding: getBoardPadding(index),
-      child: TextButton(
-        style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all(buttonColor),
-          shape: MaterialStateProperty.all(
-              RoundedRectangleBorder(borderRadius: border)),
-          overlayColor: MaterialStateProperty.all(splashColor),
-        ),
-        onPressed: () {
-          _selectCell(row, col);
-        },
-        child: Center(
-          child: AutoSizeText(
-            toPlace,
-            textAlign: TextAlign.center,
-            maxLines: 1,
-            stepGranularity: 1,
-            minFontSize: 22,
-            maxFontSize: textSize,
-            style: TextStyle(
-              color: textColor,
-              fontSize: textSize,
+      child: Center(
+        child: TextButton(
+          style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all(buttonColor),
+            shape: MaterialStateProperty.all(
+                RoundedRectangleBorder(borderRadius: border)),
+            overlayColor: MaterialStateProperty.all(splashColor),
+          ),
+          onPressed: () {
+            _selectCell(row, col);
+          },
+          child: Center(
+            child: AutoSizeText(
+              toPlace,
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              stepGranularity: 1,
+              minFontSize: 18,
+              maxFontSize: textSize,
+              style: TextStyle(
+                color: textColor,
+                fontSize: textSize,
+              ),
             ),
           ),
         ),
