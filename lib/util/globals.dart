@@ -13,7 +13,7 @@ int selectedNum = -1;
 bool makingGames = false;
 double bodySpacing = 2;
 List movesDone = [];
-late SudokuProblem problem;
+SudokuProblem problem = SudokuProblem();
 List<SudokuProblem> problems = <SudokuProblem>[];
 
 class VariableWrapper {
