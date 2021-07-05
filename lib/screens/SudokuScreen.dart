@@ -284,32 +284,6 @@ class _SudokuScreenState extends State<SudokuScreen> {
                           ),
                         ),
                       ),
-                      LettuceRadio(
-                        label: 'Correctness',
-                        padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                        value: 0,
-                        groupValue: legalityRadio.value,
-                        onChanged: (int value) {
-                          setState(() {
-                            legalityRadio.value = value;
-                            saveToPrefs();
-                          });
-                          _populateGridList();
-                        },
-                      ),
-                      LettuceRadio(
-                        label: 'Legality',
-                        padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                        value: 1,
-                        groupValue: legalityRadio.value,
-                        onChanged: (int value) {
-                          setState(() {
-                            legalityRadio.value = value;
-                            saveToPrefs();
-                          });
-                          _populateGridList();
-                        },
-                      ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [

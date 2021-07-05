@@ -13,22 +13,18 @@ Future<bool> readFromPrefs() async {
   final mistakes = prefs.getBool('doMistakes');
   final cellNow = prefs.getInt('cellFirst');
   final hints = prefs.getInt('initialHints');
-  final legality = prefs.getInt('legalityRadio');
-
   final hintsGood = hints != null && hints >= 17 && hints <= 50;
 
   doPeerCells.value = peerCells ?? true;
   doPeerDigits.value = peerDigits ?? true;
   doMistakes.value = mistakes ?? true;
   initialHints.value = hintsGood ? hints : 30;
-  legalityRadio.value = legality == 1 || legality == 0 ? legality : 0;
   selectionRadio.value = cellNow ?? 0;
   return true;
 }
 
 saveToPrefs() async {
   final prefs = await SharedPreferences.getInstance();
-  final legality = legalityRadio.value;
   final cells = doPeerCells.value;
   final digits = doPeerDigits.value;
   final mistakes = doMistakes.value;
@@ -38,7 +34,6 @@ saveToPrefs() async {
   prefs.setBool('doPeerDigits', digits);
   prefs.setBool('doMistakes', mistakes);
   prefs.setInt('cellFirst', cellNow);
-  prefs.setInt('legalityRadio', legality);
   prefs.setInt('initialHints', hints);
 }
 
@@ -137,14 +132,10 @@ int getIndex(int row, int col, int rowLength) {
 Color getTextColor(int row, int col, SudokuProblem problem) {
   var initialHint = problem.isInitialHint(row, col);
   var legal = problem.isLegal(row, col);
-  var correct = problem.isCorrect(row, col);
-  var doLegality = legalityRadio.value == 1;
+  var doLegality = doMistakes.value;
   Color color = CustomStyles.nord10;
 
-  color =
-      doMistakes.value && doLegality && !legal ? CustomStyles.nord11 : color;
-  color =
-      doMistakes.value && !doLegality && !correct ? CustomStyles.nord11 : color;
+  color = doLegality && !legal ? CustomStyles.nord11 : color;
   color = initialHint ? CustomStyles.nord3 : color;
   return color;
 }

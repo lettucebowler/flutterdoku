@@ -5,7 +5,6 @@ VariableWrapper doPeerDigits = VariableWrapper(true);
 VariableWrapper doMistakes = VariableWrapper(true);
 VariableWrapper maxHints = VariableWrapper(5);
 VariableWrapper initialHints = VariableWrapper(30);
-VariableWrapper legalityRadio = VariableWrapper(0);
 VariableWrapper selectionRadio = VariableWrapper(0);
 int selectedRow = -1;
 int selectedCol = -1;
