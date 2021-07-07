@@ -138,7 +138,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
     FocusScope.of(context).requestFocus(focusNode);
     return Scaffold(
       appBar: AppBar(
-        title: const AutoSizeText(
+        title: const Text(
           'Lettuce Sudoku',
           textAlign: TextAlign.left,
           style: CustomStyles.titleText,
