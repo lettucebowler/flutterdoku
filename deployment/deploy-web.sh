@@ -1,4 +1,4 @@
-flutter build web
+flutter build web --web-renderer canvaskit
 mkdir build/web/icons
 cp assets/icon/icon.png build/web/favicon.png
 cp assets/icon/Icon-192.png build/web/icons
