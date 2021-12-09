@@ -89,14 +89,24 @@ Future<bool> applyGameState() async {
 
 addGame(SudokuProblem p, int i) {
   problems.add(p);
-  print('adding game to list');
   if (i == 2) {
     makingGames = false;
   }
 }
 
 Future<SudokuProblem> getNextGame() async {
-  return await dartdoku.getProblem(initialHints.value);
+  if (problems.length >= 1) {
+    dartdoku.getProblem(17).then((problem) {
+      problems.add(problem);
+    });
+    return problems.removeAt(0);
+  }
+  dartdoku.getProblems(17, 2).then((problemList) {
+    for (SudokuProblem p in problemList) {
+      problems.add(p);
+    }
+  });
+  return await dartdoku.getProblem(17);
 }
 
 double getBodyWidth(context) {

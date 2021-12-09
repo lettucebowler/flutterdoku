@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:lettuce_sudoku/screens/LoadingScreen.dart';
 import 'package:lettuce_sudoku/util/CustomStyles.dart';
@@ -12,12 +12,19 @@ void main() async {
 class LettuceSudoku extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+       statusBarColor: CustomStyles.nord3,
+       statusBarBrightness: Brightness.dark,
+       statusBarIconBrightness: Brightness.light,
+    ));
     return MaterialApp(
       title: 'Lettuce Sudoku',
       theme: ThemeData(
         primarySwatch: getMaterialColor(CustomStyles.nord3),
         visualDensity: VisualDensity.adaptivePlatformDensity,
         canvasColor: getMaterialColor(CustomStyles.nord6),
+        backgroundColor: getMaterialColor(CustomStyles.nord6),
+        
       ),
       home: LoadingScreen(title: 'Lettuce Sudoku'),
     );
