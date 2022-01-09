@@ -95,18 +95,7 @@ addGame(SudokuProblem p, int i) {
 }
 
 Future<SudokuProblem> getNextGame() async {
-  if (problems.length >= 1) {
-    dartdoku.getProblem(17).then((problem) {
-      problems.add(problem);
-    });
-    return problems.removeAt(0);
-  }
-  dartdoku.getProblems(17, 2).then((problemList) {
-    for (SudokuProblem p in problemList) {
-      problems.add(p);
-    }
-  });
-  return await dartdoku.getProblem(17);
+  return await dartdoku.getProblem(initialHints.value);
 }
 
 double getBodyWidth(context) {
