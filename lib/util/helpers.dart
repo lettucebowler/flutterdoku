@@ -150,7 +150,7 @@ Color getCellColor(int row, int col) {
   Color background = CustomStyles.nord6;
   Color peerDigit = CustomStyles.nord9;
   Color success = CustomStyles.nord14;
-  Color wrong = CustomStyles.nord12;
+  Color wrong = CustomStyles.nord15;
   Color selected = CustomStyles.nord13;
   Color color = background;
 
@@ -166,9 +166,6 @@ Color getCellColor(int row, int col) {
   bool towerSelected =
       col ~/ problem.cellSize == selectedCol ~/ problem.cellSize;
   bool blockSelected = floorSelected && towerSelected;
-
-  bool doCells = doPeerCells.value;
-  bool doDigits = doPeerDigits.value;
   bool isPeerCell = cellSelected() &&
       !isSelected &&
       (rowSelected || colSelected || blockSelected);
@@ -176,25 +173,29 @@ Color getCellColor(int row, int col) {
   bool isPeerDigit = cellSelected() &&
       currentBoard[row][col] == currentBoard[selectedRow][selectedCol] &&
       nonZero;
-  bool peerCellNotPeerDigit = isPeerCell && !isPeerDigit;
 
   if (problem.success()) {
     return success;
-  } else if (cellSelected()) {
-    if (peerCellNotPeerDigit && doCells) {
-      return peerCell;
-    } else if (isPeerDigit && nonZero && !isSelected && doDigits) {
-      return isPeerCell && !problem.isLegal(row, col) && doMistakes.value
-          ? wrong
-          : peerDigit;
-    } else if (isSelected) {
-      return selected;
-    } else {
-      return color;
-    }
-  } else {
-    return color;
   }
+
+  if (isSelected) {
+    return selected;
+  }
+
+  if (doPeerCells.value && isPeerCell) {
+    if (isPeerDigit &&
+        doPeerDigits.value &&
+        !problem.isLegal(selectedRow, selectedCol)) {
+      return wrong;
+    }
+    return peerCell;
+  }
+
+  if (doPeerDigits.value && isPeerDigit) {
+    return peerDigit;
+  }
+
+  return color;
 }
 
 EdgeInsets getBoardPadding(int index) {
